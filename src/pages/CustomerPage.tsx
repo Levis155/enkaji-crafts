@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/CustomerPage.css';
 
 const CustomerPage = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
     return (

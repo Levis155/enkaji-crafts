@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
 interface CartItem {
@@ -92,7 +92,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  const placeOrder = async (shippingFee: number): Promise<boolean> => {
+  const placeOrder = async (): Promise<boolean> => {
     try {
       if (!isAuthenticated) {
         setError('Please login to place an order');

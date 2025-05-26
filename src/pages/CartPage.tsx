@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,7 +10,7 @@ const CartPage = () => {
   const { items, updateQuantity, removeItem, totalPrice } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [shippingFee, setShippingFee] = useState(120); // Default shipping fee
+  const [shippingFee] = useState(120); // Default shipping fee
   
   const inStockItems = items.filter(item => item.inStock);
   const outOfStockItems = items.filter(item => !item.inStock);
