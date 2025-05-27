@@ -12,7 +12,7 @@ const Hero = () => {
           Each product tells a story of tradition, skill, and cultural heritage.
         </p>
         <div className="hero-buttons">
-          <a href="#featured-products" className="btn">Shop Now</a>
+          <a href="#featured-products" className="btn btn-solid">Shop Now</a>
           <a href="#about-maasai" className="btn btn-outline">Learn More</a>
         </div>
       </div>

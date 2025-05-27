@@ -74,6 +74,10 @@
   color: white;
 }
 
+.btn-solid:hover{
+  color: white;
+}
+
 .hero .btn-outline:hover {
   background: white;
   color: var(--primary-color);

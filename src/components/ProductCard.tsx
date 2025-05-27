@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Rating from '@mui/material/Rating';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import '../styles/ProductCard.css';
@@ -16,19 +17,24 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ id, name, price, originalPrice, discount, image, rating, inStock }: ProductCardProps) => {
-  const { addItem } = useCart();
+  const { items, addItem, updateQuantity } = useCart();
   const { addItem: addToWishlist, isInWishlist, removeItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
-  const [showQuantityControl, setShowQuantityControl] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(0);
+
+  // Check if product is already in cart and set initial state
+  useEffect(() => {
+    const cartItem = items.find(item => item.id === id);
+    if (cartItem) {
+      setCartQuantity(cartItem.quantity);
+    } else {
+      setCartQuantity(0);
+    }
+  }, [items, id]);
 
   const handleAddToCart = () => {
     if (!inStock) return;
-    
-    if (!showQuantityControl) {
-      setShowQuantityControl(true);
-      return;
-    }
-    
+
     addItem({
       id,
       name,
@@ -39,10 +45,8 @@ const ProductCard = ({ id, name, price, originalPrice, discount, image, rating, 
       quantity,
       inStock
     });
-    
-    // Reset state after adding to cart
+
     setQuantity(1);
-    setShowQuantityControl(false);
   };
 
   const handleWishlistToggle = () => {
@@ -61,28 +65,22 @@ const ProductCard = ({ id, name, price, originalPrice, discount, image, rating, 
     }
   };
 
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity <= 0) {
+      updateQuantity(id, 0);
+      setCartQuantity(0);
+    } else {
+      updateQuantity(id, newQuantity);
+      setCartQuantity(newQuantity);
+    }
+  };
+
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
+    handleQuantityChange(cartQuantity + 1);
   };
 
   const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-    }
-  };
-
-  const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rating) {
-        stars.push(<span key={i} className="star filled">★</span>);
-      } else if (i - 0.5 <= rating) {
-        stars.push(<span key={i} className="star half-filled">★</span>);
-      } else {
-        stars.push(<span key={i} className="star">☆</span>);
-      }
-    }
-    return stars;
+    handleQuantityChange(cartQuantity - 1);
   };
 
   return (
@@ -91,58 +89,49 @@ const ProductCard = ({ id, name, price, originalPrice, discount, image, rating, 
         <Link to={`/product/${id}`}>
           <img src={image} alt={name} />
         </Link>
-        
+
         <button 
-          className={`wishlist-button ${isInWishlist(id) ? 'active' : ''}`}
+          className={`product-card-wishlist-button ${isInWishlist(id) ? 'active' : ''}`}
           onClick={handleWishlistToggle}
           aria-label={isInWishlist(id) ? "Remove from wishlist" : "Add to wishlist"}
         >
           {isInWishlist(id) ? '❤️' : '🤍'}
         </button>
-        
+
         {!inStock && (
           <div className="out-of-stock-label">Out of Stock</div>
         )}
       </div>
-      
+
       <div className="product-card-content">
         <Link to={`/product/${id}`}>
           <h3 className="product-name">{name}</h3>
         </Link>
-        
+
         <div className="product-price">
           <span className="current-price">Ksh {price.toLocaleString()}</span>
           <span className="original-price">Ksh {originalPrice.toLocaleString()}</span>
           <span className="discount-percentage">-{discount}%</span>
         </div>
-        
+
         <div className="product-rating">
-          {renderStars(rating)}
+          <Rating name="read-only" value={rating} sx={{ fontSize: "1.3rem" }} readOnly />
         </div>
-        
-        <div className="product-actions">
-          {showQuantityControl ? (
+
+        <div className="product-manipulation">
+          {cartQuantity > 0 ? (
             <div className="quantity-control">
               <button onClick={decrementQuantity} className="quantity-btn">-</button>
-              <span className="quantity">{quantity}</span>
+              <span className="quantity">{cartQuantity}</span>
               <button onClick={incrementQuantity} className="quantity-btn">+</button>
             </div>
           ) : (
             <button 
               onClick={handleAddToCart} 
-              className="add-to-cart-btn"
+              className="product-card-add-to-cart"
               disabled={!inStock}
             >
               {inStock ? 'Add to Cart' : 'Out of Stock'}
-            </button>
-          )}
-          
-          {showQuantityControl && (
-            <button 
-              className="add-to-cart-btn confirm" 
-              onClick={handleAddToCart}
-            >
-              Add
             </button>
           )}
         </div>

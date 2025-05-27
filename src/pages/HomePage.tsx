@@ -22,7 +22,7 @@ const HomePage = () => {
         
         <section id="featured-products" className="featured-products">
           <div className="container">
-            <h2 className="section-title">Featured Products</h2>
+            <h2 className="section-title">Products</h2>
             <div className="product-grid">
               {featuredProducts.map(product => (
                 <ProductCard
