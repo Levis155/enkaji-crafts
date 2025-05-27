@@ -26,7 +26,6 @@
 @media screen and (max-width: 1060px) {
   .logo {
     width: 30%;
-    /* background-color: lightblue; */
   }
 }
 
@@ -44,7 +43,6 @@
 .search-bar {
   width: 45%;
   margin: 0 20px;
-  /* background-color: lightpink; */
 }
 @media screen and (max-width: 66.25em) {
   .search-bar {
@@ -117,7 +115,6 @@
 @media screen and (max-width: 66.25em) {
   .header-icons {
     width: 25%;
-    /* background-color: lightgreen; */
   }
 }
 
@@ -130,7 +127,6 @@
 
 .header-icon-wrapper {
   position: relative;
-  /* margin-left: 20px; */
 }
 
 .header-icon,
@@ -205,8 +201,6 @@
   margin-right: 10px;
   font-size: 1rem;
 }
-
-/* Mobile Menu */
 .mobile-menu {
   width: 250px;
 }
@@ -230,8 +224,6 @@
   color: var(--primary-color);
   font-size: 1rem;
 }
-
-/* Minimized Header */
 .header-content.minimized {
   flex-wrap: wrap;
 }
