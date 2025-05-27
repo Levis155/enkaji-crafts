@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { MdOutlineExpandMore } from "react-icons/md";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Hero from '../components/Hero';
@@ -7,12 +8,16 @@ import { products } from '../data/products';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
-  const [featuredProducts, setFeaturedProducts] = useState(products);
+  const [visibleCount, setVisibleCount] = useState(4); // Initially show 4
+  const [visibleProducts, setVisibleProducts] = useState(products.slice(0, 4));
 
   useEffect(() => {
-    // In a real app, we might fetch featured products from an API
-    setFeaturedProducts(products.slice(0, 8));
-  }, []);
+    setVisibleProducts(products.slice(0, visibleCount));
+  }, [visibleCount]);
+
+  const handleSeeMore = () => {
+    setVisibleCount(prev => prev + 4);
+  };
 
   return (
     <div className="home-page">
@@ -24,7 +29,7 @@ const HomePage = () => {
           <div className="container">
             <h2 className="section-title">Products</h2>
             <div className="product-grid">
-              {featuredProducts.map(product => (
+              {visibleProducts.map(product => (
                 <ProductCard
                   key={product.id}
                   id={product.id}
@@ -38,6 +43,14 @@ const HomePage = () => {
                 />
               ))}
             </div>
+
+            {visibleCount < products.length && (
+              <div className="see-more-container">
+                <button onClick={handleSeeMore} className="see-more-button">
+                  See More <MdOutlineExpandMore />
+                </button>
+              </div>
+            )}
           </div>
         </section>
         
