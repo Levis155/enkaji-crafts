@@ -9,7 +9,6 @@ import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import LogoUrl from "../assets/red-dune-logo.png";
 import "../styles/Header.css";
 
 const Header = () => {
