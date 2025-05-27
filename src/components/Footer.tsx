@@ -1,4 +1,7 @@
 import { Link } from 'react-router-dom';
+import { FaTiktok, FaInstagram, FaPhoneAlt } from "react-icons/fa";
+import { FaXTwitter, FaLocationDot } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md"
 import '../styles/Footer.css';
 
 const Footer = () => {
@@ -13,9 +16,9 @@ const Footer = () => {
               Supporting traditional craftsmanship and sustainable livelihoods.
             </p>
             <div className="social-icons">
-              <a href="#" aria-label="Facebook"><span>📱</span></a>
-              <a href="#" aria-label="Instagram"><span>📷</span></a>
-              <a href="#" aria-label="Twitter"><span>🐦</span></a>
+              <a href="#" aria-label="tik-tok"><FaTiktok /></a>
+              <a href="#" aria-label="Instagram"><FaInstagram /></a>
+              <a href="#" aria-label="Twitter"><FaXTwitter /></a>
             </div>
           </div>
 
@@ -32,9 +35,9 @@ const Footer = () => {
 
           <div className="footer-section contact">
             <h3>Contact Us</h3>
-            <p><span>📞</span> +254 712 345 678</p>
-            <p><span>✉️</span> info@reddune.co.ke</p>
-            <p><span>🏠</span> Nairobi, Kenya</p>
+            <p><FaPhoneAlt /> +254 712 345 678</p>
+            <p><MdEmail /> info@reddune.co.ke</p>
+            <p><FaLocationDot /> Nairobi, Kenya</p>
           </div>
         </div>
         
