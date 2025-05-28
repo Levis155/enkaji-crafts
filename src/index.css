@@ -27,9 +27,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--text-color);
-  line-height: 1.6;
+  font-size: 1.6rem;
 }
-
+html {
+  font-size: 62.5%;
+}
+ul,
+ol {
+  list-style: none;
+}
 a {
   text-decoration: none;
   color: var(--primary-color);

@@ -105,16 +105,16 @@ const ProductCard = ({ id, name, price, originalPrice, discount, image, rating, 
 
       <div className="product-card-content">
         <Link to={`/product/${id}`}>
-          <h3 className="product-name">{name}</h3>
+          <h3 className="product-card-product-name">{name}</h3>
         </Link>
 
-        <div className="product-price">
-          <span className="current-price">Ksh {price.toLocaleString()}</span>
-          <span className="original-price">Ksh {originalPrice.toLocaleString()}</span>
-          <span className="discount-percentage">-{discount}%</span>
+        <div className="product-card-product-price">
+          <span className="current-price-of-product">Ksh {price.toLocaleString()}</span>
+          <span className="product-card-original-price">Ksh {originalPrice.toLocaleString()}</span>
+          <span className="product-card-discount-percentage">-{discount}%</span>
         </div>
 
-        <div className="product-rating">
+        <div className="product-card-rating">
           <Rating name="read-only" value={rating} sx={{ fontSize: "1.3rem" }} readOnly />
         </div>
 

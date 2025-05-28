@@ -1,51 +1,75 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import ProductCard from '../components/ProductCard';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
-import { getProductById, getRelatedProducts } from '../data/products';
-import { getReviewsByProductId } from '../data/reviews';
-import { Product, Review } from '../types';
-import '../styles/ProductDetailPage.css';
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import Rating from "@mui/material/Rating";
+import { IoLocationOutline, IoCheckmarkCircle } from "react-icons/io5";
+import { IoIosPricetag, IoIosCalendar } from "react-icons/io";
+import { TbTruckReturn } from "react-icons/tb";
+import { GoShareAndroid } from "react-icons/go";
+import { FaRegHeart } from "react-icons/fa";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+ // @ts-ignore
+import { Navigation } from "swiper";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import { getProductById, getRelatedProducts } from "../data/products";
+import { getReviewsByProductId } from "../data/reviews";
+import { Product, Review } from "../types";
+import "../styles/ProductDetailPage.css";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const { addItem } = useCart();
-  const { isInWishlist, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlist();
-  
+  const { items, updateQuantity, addItem } = useCart();
+  const {
+    isInWishlist,
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+  } = useWishlist();
+
   const [product, setProduct] = useState<Product | undefined>(undefined);
-  const [selectedVariation, setSelectedVariation] = useState<number | undefined>(undefined);
-  const [quantity, setQuantity] = useState(1);
+  const [selectedVariation, setSelectedVariation] = useState<
+    number | undefined
+  >(undefined);
+  const [cartQuantity, setCartQuantity] = useState(0);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  
+
   useEffect(() => {
     if (id) {
       const productId = parseInt(id);
       const foundProduct = getProductById(productId);
-      
+
       if (foundProduct) {
         setProduct(foundProduct);
-        
+
         // Set default variation if available
         if (foundProduct.variations && foundProduct.variations.length > 0) {
           setSelectedVariation(foundProduct.variations[0].id);
         }
-        
+
         // Get product reviews
         const productReviews = getReviewsByProductId(productId);
         setReviews(productReviews);
-        
+
         // Get related products
         const related = getRelatedProducts(productId, 4);
         setRelatedProducts(related);
+
+        //check if product is already in cart and set initial state
+        const cartItem = items.find((item) => item.id === productId);
+        if (cartItem) {
+          setCartQuantity(cartItem.quantity);
+        } else {
+          setCartQuantity(0);
+        }
       }
     }
-  }, [id]);
+  }, [items, id]);
 
   if (!product) {
     return (
@@ -60,23 +84,44 @@ const ProductDetailPage = () => {
   }
 
   const handleAddToCart = () => {
-    const variationName = selectedVariation && product.variations 
-      ? product.variations.find(v => v.id === selectedVariation)?.name 
-      : undefined;
-    
+    const variationName =
+      selectedVariation && product.variations
+        ? product.variations.find((v) => v.id === selectedVariation)?.name
+        : undefined;
+
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       originalPrice: product.originalPrice,
       discount: product.discount,
-      image: selectedVariation && product.variations 
-        ? product.variations.find(v => v.id === selectedVariation)?.image || product.image
-        : product.image,
-      quantity,
+      image:
+        selectedVariation && product.variations
+          ? product.variations.find((v) => v.id === selectedVariation)?.image ||
+            product.image
+          : product.image,
+      quantity: cartQuantity,
       variation: variationName,
-      inStock: product.inStock
+      inStock: product.inStock,
     });
+  };
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity <= 0) {
+      updateQuantity(product.id, 0);
+      setCartQuantity(0);
+    } else {
+      updateQuantity(product.id, newQuantity);
+      setCartQuantity(newQuantity);
+    }
+  };
+
+  const incrementQuantity = () => {
+    handleQuantityChange(cartQuantity + 1);
+  };
+
+  const decrementQuantity = () => {
+    handleQuantityChange(cartQuantity - 1);
   };
 
   const handleWishlistToggle = () => {
@@ -90,270 +135,335 @@ const ProductDetailPage = () => {
         originalPrice: product.originalPrice,
         discount: product.discount,
         image: product.image,
-        inStock: product.inStock
+        inStock: product.inStock,
       });
     }
   };
 
-  const selectedVariationImage = selectedVariation && product.variations
-    ? product.variations.find(v => v.id === selectedVariation)?.image
-    : product.image;
+  const selectedVariationImage =
+    selectedVariation && product.variations
+      ? product.variations.find((v) => v.id === selectedVariation)?.image
+      : product.image;
 
   return (
-    <div className="product-detail-page">
+    <>
       <Header />
-      <main className="container">
-        <div className="product-detail">
-          <div className="product-detail-left">
-            <div className="product-main-image">
-              <img 
-                src={selectedVariationImage} 
-                alt={product.name} 
-              />
-              {!product.inStock && (
-                <div className="out-of-stock-overlay">Out of Stock</div>
-              )}
-            </div>
-            
-            {product.variations && product.variations.length > 0 && (
-              <div className="product-variations">
-                {product.variations.map(variation => (
-                  <div 
-                    key={variation.id}
-                    className={`variation-item ${selectedVariation === variation.id ? 'active' : ''}`}
-                    onClick={() => setSelectedVariation(variation.id)}
-                  >
-                    <img src={variation.image} alt={variation.name} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          
-          <div className="product-detail-right">
-            <h1 className="product-title">{product.name}</h1>
-            
-            <div className="product-pricing">
-              <div className="price-info">
-                <span className="current-price">Ksh {product.price.toLocaleString()}</span>
-                <span className="original-price">Ksh {product.originalPrice.toLocaleString()}</span>
-                <span className="discount-tag">-{product.discount}%</span>
-              </div>
-              
-              <div className="product-rating">
-                <div className="stars">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <span 
-                      key={index} 
-                      className={`star ${index < Math.floor(product.rating) ? 'filled' : ''}`}
-                    >
-                      {index < Math.floor(product.rating) ? '★' : '☆'}
-                    </span>
-                  ))}
-                </div>
-                <span className="rating-count">({product.totalRatings} ratings)</span>
+      <div className="product-page-wrapper">
+        <div className="product-page-wrapper-col1">
+          <div className="product-container">
+            <div className="product-container-col1">
+              <div className="product-container-col1-img">
+                <img src={selectedVariationImage} alt={product.name} />
+                {!product.inStock && (
+                  <div className="out-of-stock-overlay">Out of Stock</div>
+                )}
               </div>
             </div>
-            
-            {user && (
-              <div className="shipping-info">
-                <span className="shipping-cost">
-                  Ksh 120 shipping to {user.shippingAddress.county}, {user.shippingAddress.town}
+            <div className="product-container-col2">
+              <p className="product-container-col2-headline">{product.name}</p>
+              <p className="product-container-col2-brand">
+                brand: <span>jbl</span> |{" "}
+                <span>
+                  <a href="">similar products from jbl</a>
                 </span>
-              </div>
-            )}
-            
-            <div className="stock-status">
-              <span className={product.inStock ? 'in-stock' : 'out-of-stock'}>
-                {product.inStock ? 'In Stock' : 'Out of Stock'}
-              </span>
-            </div>
-            
-            {product.variations && product.variations.length > 0 && (
-              <div className="variations-selection">
-                <h3>Variations:</h3>
-                <div className="variation-options">
-                  {product.variations.map(variation => (
-                    <button
-                      key={variation.id}
-                      className={`variation-button ${selectedVariation === variation.id ? 'active' : ''}`}
-                      onClick={() => setSelectedVariation(variation.id)}
-                    >
-                      {variation.name}
-                    </button>
-                  ))}
+              </p>
+              <div className="product-container-price-discount-container">
+                <p className="product-container-col2-price">
+                  ksh {product.price.toLocaleString()}
+                </p>
+
+                <div className="product-container-discount-container">
+                  <p className="product-container-discounted-figure">
+                    ksh {product.originalPrice.toLocaleString()}
+                  </p>
+                  <p className="product-container-percentage-discount">
+                    -{product.discount}%
+                  </p>
                 </div>
               </div>
-            )}
-            
-            <div className="product-actions">
-              <div className="quantity-selector">
-                <button 
-                  onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                  disabled={!product.inStock}
-                >
-                  -
-                </button>
-                <span>{quantity}</span>
-                <button 
-                  onClick={() => setQuantity(prev => prev + 1)}
-                  disabled={!product.inStock}
-                >
-                  +
-                </button>
+
+              {user ? (
+                <p className="product-container-col2-shipping">
+                  + shipping of ksh 120 to {user.shippingAddress.county},
+                  {user.shippingAddress.town}.
+                </p>
+              ) : (
+                <p className="product-container-col2-shipping">
+                  + shipping of ksh 120 to Nairobi CBD.
+                </p>
+              )}
+              <div className="product-cont-col2-rating">
+                <Rating name="read-only" value={4} readOnly />
               </div>
-              
-              <button 
-                className="add-to-cart-button"
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-              >
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-              </button>
-              
-              <button 
-                className={`wishlist-button ${isInWishlist(product.id) ? 'active' : ''}`}
-                onClick={handleWishlistToggle}
-              >
-                {isInWishlist(product.id) ? '❤️ In Wishlist' : '🤍 Add to Wishlist'}
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="product-info-tabs">
-          <div className="product-description">
-            <h2>Product Details</h2>
-            <p>{product.description}</p>
-          </div>
-          
-          <div className="product-specifications">
-            <h2>Specifications</h2>
-            <ul>
-              {Object.entries(product.specifications).map(([key, value]) => (
-                <li key={key}>
-                  <strong>{key}:</strong> {value}
-                </li>
-              ))}
-            </ul>
-            
-            <h3>What's in the Package:</h3>
-            <ul className="package-contents">
-              {product.inPackage.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        
-        <div className="product-reviews">
-          <h2>Customer Reviews</h2>
-          
-          {reviews.length === 0 ? (
-            <div className="no-reviews">
-              <p>This product doesn't have any reviews yet.</p>
-            </div>
-          ) : (
-            <div className="reviews-container">
-              <div className="reviews-summary">
-                <div className="average-rating">
-                  <span className="rating-number">{product.rating.toFixed(1)}</span>
-                  <div className="rating-stars">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <span key={index} className={`star ${index < Math.floor(product.rating) ? 'filled' : ''}`}>
-                        {index < Math.floor(product.rating) ? '★' : '☆'}
-                      </span>
+              <p className="stock-status">
+                {product.inStock ? "in stock" : "out of stock"}
+              </p>
+
+              {product.variations && product.variations.length > 0 && (
+                <div className="product-cont-col2-variations">
+                  <p>variations</p>
+                  <div className="variations">
+                    {product.variations.map((variation) => (
+                      <div
+                        key={variation.id}
+                        className={
+                          selectedVariation === variation.id
+                            ? "variations-card-clicked"
+                            : "variations-card"
+                        }
+                        onClick={() => setSelectedVariation(variation.id)}
+                      >
+                        <img src={variation.image} alt="" />
+                      </div>
                     ))}
                   </div>
-                  <span className="total-ratings">Based on {product.totalRatings} ratings</span>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="product-page-product-details">
+            <p className="product-page-product-details-title">
+              product details
+            </p>
+            <p className="product-page-product-details-body">
+              {product.description}
+            </p>
+          </div>
+          <div className="product-page-product-specifications">
+            <p className="product-page-product-specifications-title">
+              product specifications
+            </p>
+            <div className="product-page-product-specifications-body">
+              <div className="key-features">
+                <p className="key-features-title">specifications</p>
+                <div className="key-features-body">
+                  <ul>
+                    {Object.entries(product.specifications).map(
+                      ([key, value]) => (
+                        <li key={key}>
+                          <strong>{key}:</strong> {value}
+                        </li>
+                      )
+                    )}
+                  </ul>
                 </div>
               </div>
-              
-              <div className="review-list">
-                {reviews.map(review => (
-                  <div key={review.id} className="review-item">
-                    <div className="review-header">
-                      <h3 className="review-title">{review.title}</h3>
-                      <div className="review-rating">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <span key={index} className={`star ${index < review.rating ? 'filled' : ''}`}>
-                            {index < review.rating ? '★' : '☆'}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <p className="review-text">{review.text}</p>
-                    
-                    <div className="review-footer">
-                      <span className="reviewer-name">
-                        {review.isVerified && <span className="verified-badge">✓ Verified Purchase</span>}
-                        {review.userName}
-                      </span>
-                      <span className="review-date">{review.date}</span>
-                    </div>
-                  </div>
-                ))}
+
+              <div className="whats-in-the-box">
+                <p className="whats-in-the-box-title">what's in the package</p>
+                <div className="whats-in-the-box-body">
+                  <ul className="package-contents">
+                    {product.inPackage.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
+            </div>
+          </div>
+
+          <div className="product-page-customer-feedback">
+            <p className="customer-feedback-title">customer feedback</p>
+
+            {reviews.length === 0 ? (
+              <div className="no-reviews">
+                <p>This product doesn't have any reviews yet.</p>
+              </div>
+            ) : (
+              <div className="customer-feedback-body">
+                <div className="customer-feedback-col1">
+                  <p className="customer-feedback-col1-title">
+                    verified ratings ({product.totalRatings})
+                  </p>
+
+                  <div className="ratings-summary">
+                    <p className="ratings-average">{product.rating}</p>
+                    <div>
+                      <Rating
+                        name="read-only"
+                        value={Math.floor(product.rating)}
+                        readOnly
+                      />
+                    </div>
+                    <p className="total-ratings">
+                      {product.totalRatings} verified ratings
+                    </p>
+                  </div>
+                </div>
+
+                <div className="customer-feedback-col2">
+                  <p className="customer-feedback-col2-title">
+                    product reviews ({reviews.length})
+                  </p>
+
+                  <div className="customer-feedback-col2-body">
+                    {reviews.map((review) => (
+                      <div key={review.id} className="product-review-card">
+                        <div className="product-review-card-rating">
+                          <Rating
+                            name="read-only"
+                            value={Math.floor(review.rating)}
+                            readOnly
+                          />
+                        </div>
+
+                        <p className="product-review-card-review-title">
+                          {review.title}
+                        </p>
+
+                        <p className="product-review-card-review-excerpt">
+                          {review.text}
+                        </p>
+
+                        <div className="product-review-card-bottom">
+                          <p className="product-review-card-review-details">
+                            {review.date} by {review.userName}
+                          </p>
+
+                          <p className="verified-purchase">
+                            <IoCheckmarkCircle /> verified purchase
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {relatedProducts.length > 0 && (
+            <div className="product-page-similar-items">
+              <p className="product-page-similar-items-title">
+                Related products
+              </p>
+              <Swiper
+                className="similar-products-swiper"
+                modules={[Navigation]}
+                navigation={true}
+                breakpoints={{
+                  320: {
+                    slidesPerView: 1,
+                  },
+                  480: {
+                    slidesPerView: 2,
+                  },
+                  768: {
+                    slidesPerView: 3,
+                  },
+                  1024: {
+                    slidesPerView: 4,
+                  },
+                  1280: {
+                    slidesPerView: 5,
+                  },
+                }}
+                spaceBetween={10}
+              >
+                {relatedProducts.map((product) => (
+                  <SwiperSlide key={product.id}>
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="products-page-similar-items-card"
+                    >
+                      <div className="products-page-similar-items-card-img-wrapper">
+                        <div className="products-page-similar-items-card-img">
+                          <img src={product.image} alt={product.name} />
+                        </div>
+                      </div>
+                      <p className="product-page-similar-items-card-headline">
+                        {product.name}
+                      </p>
+
+                      <p className="product-page-similar-items-card-price">
+                        Ksh {product.price}
+                      </p>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
           )}
         </div>
-        
-        {relatedProducts.length > 0 && (
-          <div className="related-products">
-            <h2>You May Also Like</h2>
-            <div className="product-grid">
-              {relatedProducts.map(product => (
-                <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  name={product.name}
-                  price={product.price}
-                  originalPrice={product.originalPrice}
-                  discount={product.discount}
-                  image={product.image}
-                  rating={product.rating}
-                  inStock={product.inStock}
-                />
-              ))}
-            </div>
+        <div className="product-page-wrapper-col2">
+          <div className="product-page-wrapper-col2-title">
+            shipping & delivery
           </div>
-        )}
-        
-        <div className="order-summary">
-          <h2>Order Summary</h2>
-          <div className="summary-content">
-            <div className="summary-details">
-              <p><strong>Ship to:</strong> {user ? `${user.shippingAddress.county}, ${user.shippingAddress.town}` : 'Nairobi CBD'}</p>
-              <p><strong>Shipping Fee:</strong> Ksh 120</p>
-              <div className="summary-price">
-                <span className="product-price">Ksh {product.price.toLocaleString()}</span>
-                <span className="quantity">x {quantity}</span>
-                <span className="total-price">Ksh {(product.price * quantity).toLocaleString()}</span>
-              </div>
+          <div className="product-page-wrapper-col2-body">
+            <div className="product-page-wrapper-col2-detail">
+              <IoLocationOutline />
+              <p>
+                <span>ship to:</span>{" "}
+                {user
+                  ? `${user.shippingAddress.county}, ${user.shippingAddress.town}`
+                  : "Nairobi CBD"}
+              </p>
             </div>
-            
-            <div className="summary-actions">
-              <button 
-                className="add-to-cart-button"
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-              >
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+            <div className="product-page-wrapper-col2-detail">
+              <IoIosPricetag />
+              <p>
+                <span>shipping fee: </span>ksh 120
+              </p>
+            </div>
+            <div className="product-page-wrapper-col2-detail">
+              <IoIosCalendar />{" "}
+              <p>
+                <span>delivery date: </span>may 30 - jun 02
+              </p>
+            </div>
+            <div className="product-page-wrapper-col2-detail">
+              <TbTruckReturn />{" "}
+              <p>
+                <span>returns & refunds policy:</span>{" "}
+                <Link to={"#"}>details</Link>
+              </p>
+            </div>
+            <div className="product-page-wrapper-col2-btn">
+              {cartQuantity > 0 ? (
+                <div className="product-page-cart-control">
+                  <button
+                    className="product-page-cart-decrement-btn"
+                    onClick={decrementQuantity}
+                  >
+                    -
+                  </button>
+                  <p className="product-page-cart-quantity">{cartQuantity}</p>
+                  <button
+                    className="product-page-cart-increment-btn"
+                    onClick={incrementQuantity}
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="product-page-wrapper-col2-add-to-cart"
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock}
+                >
+                  {product.inStock ? "Add to Cart" : "Out of Stock"}
+                </button>
+              )}
+            </div>
+
+            <div className="product-page-wrapper-col2-btns">
+              <button>
+                <GoShareAndroid /> share
               </button>
-              
-              <button 
-                className={`wishlist-button ${isInWishlist(product.id) ? 'active' : ''}`}
+              <button
+                className={`wishlist-button ${
+                  isInWishlist(product.id) ? "active" : ""
+                }`}
                 onClick={handleWishlistToggle}
               >
-                {isInWishlist(product.id) ? '❤️ Remove from Wishlist' : '🤍 Add to Wishlist'}
+                <FaRegHeart /> wish
               </button>
             </div>
           </div>
         </div>
-      </main>
+      </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

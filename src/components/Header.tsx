@@ -10,6 +10,7 @@ import { IoCreateOutline } from "react-icons/io5";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import "../styles/Header.css";
+import "../index.css";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
