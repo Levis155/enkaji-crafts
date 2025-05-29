@@ -7,7 +7,6 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AccountPage from './pages/AccountPage';
 import OrdersPage from './pages/OrdersPage';
-import PendingReviewsPage from './pages/PendingReviewsPage';
 import WishlistPage from './pages/WishlistPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -33,7 +32,6 @@ function App() {
               <Route index element={<AccountPage />} />
               <Route path="account" element={<AccountPage />} />
               <Route path="orders" element={<OrdersPage />} />
-              <Route path="pending-reviews" element={<PendingReviewsPage />} />
               <Route path="wishlist" element={<WishlistPage />} />
             </Route>
           </Routes>

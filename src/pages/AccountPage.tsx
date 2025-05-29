@@ -62,7 +62,7 @@ const AccountPage = () => {
 
   return (
     <div className="account-page">
-      <h1>Account Overview</h1>
+      <h1>My Account</h1>
 
       <section className="account-details">
         <div className="account-section-header">
