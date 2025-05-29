@@ -1,5 +1,5 @@
 .checkout-page {
-  padding: 30px 0 50px;
+  padding: 4rem;
 }
 
 .checkout-page h1 {
@@ -13,21 +13,26 @@
   grid-template-columns: 2fr 1fr;
   gap: 30px;
 }
-
-section {
+.checkout-details {
+  display: flex;
+  flex-direction: column;
+}
+.customer-info,
+.delivery-details {
   margin-bottom: 30px;
-  background-color: white;
+  background-color: var(--background-light);
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   padding: 20px;
 }
 
-section h2 {
-  font-size: 1.3rem;
+.checkout-section-title {
   margin-bottom: 20px;
   color: var(--text-color);
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
+  text-align: start;
+  font-size: 1.7rem;
 }
 
 .info-content {
@@ -51,36 +56,37 @@ section h2 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .subsection-header h3 {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   color: var(--text-color);
 }
 
-.edit-button {
+.edit-delivery-details,
+.modify-cart {
   background-color: transparent;
   color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.3s;
 }
 
-.edit-button:hover {
-  background-color: var(--primary-color);
-  color: white;
+.edit-delivery-details:hover {
+  color: var(--primary-dark);
 }
 
-.shipping-address, .shipment {
+.shipping-address,
+.shipment {
+  border: 1px solid var(--border-color);
   margin-bottom: 25px;
 }
 
 .address-display {
   background-color: var(--background-light);
-  padding: 15px;
+  padding: 1rem 0.5rem;
   border-radius: 4px;
 }
 
@@ -88,28 +94,29 @@ section h2 {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding: 1rem 0.5rem;
 }
 
-.form-group {
+.edit-shipping-address-form-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.form-group label {
+.edit-shipping-address-form-group label {
   font-weight: 600;
   color: var(--text-light);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
 }
 
-.form-group input {
+.edit-shipping-address-form-group input {
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 1.4rem;
 }
 
-.form-actions {
+.edit-shipping-address-form-actions {
   display: flex;
   gap: 10px;
   margin-top: 10px;
@@ -147,54 +154,60 @@ section h2 {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding: 1rem 0.8rem;
 }
 
 .shipment-item {
   display: flex;
-  padding: 15px;
-  background-color: var(--background-light);
   border-radius: 4px;
+  height: 8rem;
 }
 
-.item-image {
-  width: 70px;
-  height: 70px;
+.shipment-item-image {
+  width: 90px;
+  height: 100%;
   border-radius: 4px;
   overflow: hidden;
   margin-right: 15px;
 }
 
-.item-image img {
+.shipment-item-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.item-details {
+.shipment-item-details {
   flex: 1;
 }
 
-.item-name {
-  font-size: 1rem;
+.shipment-item-name {
+  font-size: 1.4rem;
   margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  box-orient: vertical;
+  overflow: hidden;
 }
 
-.item-variation {
-  font-size: 0.9rem;
+.shipment-item-variation {
+  font-size: 1.2rem;
   color: var(--text-light);
   margin-bottom: 5px;
 }
 
-.item-meta {
+.shipment-item-meta {
   display: flex;
   justify-content: space-between;
 }
 
-.item-price {
+.shipment-item-price {
   font-weight: 600;
 }
 
-.item-quantity {
+.shipment-item-quantity {
   color: var(--text-light);
 }
 
@@ -204,11 +217,11 @@ section h2 {
   padding: 20px;
   height: fit-content;
   position: sticky;
-  top: 20px;
+  top: 100px;
 }
 
 .order-summary h2 {
-  font-size: 1.3rem;
+  font-size: 1.7rem;
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
@@ -222,7 +235,7 @@ section h2 {
 
 .summary-row.total {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.7rem;
   margin-top: 15px;
   padding-top: 15px;
   border-top: 1px solid var(--border-color);
@@ -286,21 +299,20 @@ section h2 {
   .checkout-container {
     grid-template-columns: 1fr;
   }
-  
+
   .order-summary {
     position: static;
   }
 }
 
 @media (max-width: 768px) {
-  .shipment-item {
-    flex-direction: column;
+  .checkout-page {
+    padding-inline: 2rem;
   }
-  
-  .item-image {
-    width: 100%;
-    height: 150px;
-    margin-right: 0;
-    margin-bottom: 10px;
+}
+
+@media (max-width: 450px) {
+  .shipment-item-meta {
+    flex-direction: column;
   }
 }

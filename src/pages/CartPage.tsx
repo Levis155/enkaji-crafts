@@ -40,9 +40,11 @@ const CartPage = () => {
           <div className="empty-cart">
             <h1>Your Cart</h1>
             <p>Your cart is currently empty.</p>
-            <Link to="/" className="continue-shopping">
-              Continue Shopping
-            </Link>
+            <div className="empty-cart-link-cont">
+              <Link to="/" className="empty-cart-link">
+                <FaAngleDoubleLeft /> Continue Shopping
+              </Link>
+            </div>
           </div>
         </main>
         <Footer />

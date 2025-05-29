@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
-import '../styles/CheckoutPage.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaEdit } from "react-icons/fa";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+import "../styles/CheckoutPage.css";
 
 const CheckoutPage = () => {
   const { user, isAuthenticated } = useAuth();
@@ -14,28 +15,28 @@ const CheckoutPage = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [shippingAddress, setShippingAddress] = useState({
-    county: user?.shippingAddress.county || 'Nairobi',
-    town: user?.shippingAddress.town || 'CBD'
+    county: user?.shippingAddress.county || "Nairobi",
+    town: user?.shippingAddress.town || "CBD",
   });
 
   // Filter out of stock items
-  const inStockItems = items.filter(item => item.inStock);
+  const inStockItems = items.filter((item) => item.inStock);
 
   if (!isAuthenticated) {
-    navigate('/customer/account');
+    navigate("/customer/account");
     return null;
   }
 
   if (inStockItems.length === 0 && !orderPlaced) {
-    navigate('/cart');
+    navigate("/cart");
     return null;
   }
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setShippingAddress(prev => ({
+    setShippingAddress((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -53,10 +54,12 @@ const CheckoutPage = () => {
         <main className="container checkout-page">
           <div className="order-success">
             <h1>Order Placed Successfully!</h1>
-            <p>Thank you for your order. Your order has been placed successfully.</p>
+            <p>
+              Thank you for your order. Your order has been placed successfully.
+            </p>
             <p>We've sent a confirmation email to {user?.email}.</p>
-            <button 
-              onClick={() => navigate('/')}
+            <button
+              onClick={() => navigate("/")}
               className="continue-shopping-btn"
             >
               Continue Shopping
@@ -71,13 +74,13 @@ const CheckoutPage = () => {
   return (
     <div>
       <Header />
-      <main className="container checkout-page">
+      <main className="checkout-page">
         <h1>Checkout</h1>
-        
+
         <div className="checkout-container">
           <div className="checkout-details">
             <section className="customer-info">
-              <h2>Customer Information</h2>
+              <h2 className="checkout-section-title">Customer Information</h2>
               <div className="info-content">
                 <div className="info-item">
                   <span className="info-label">Name:</span>
@@ -93,28 +96,26 @@ const CheckoutPage = () => {
                 </div>
               </div>
             </section>
-            
+
             <section className="delivery-details">
-              <div className="section-header">
-                <h2>Delivery Details</h2>
-              </div>
-              
+              <h2 className="checkout-section-title">Delivery Details</h2>
+
               <div className="shipping-address">
                 <div className="subsection-header">
                   <h3>Shipping Address</h3>
                   {!isEditingAddress && (
-                    <button 
-                      className="edit-button"
+                    <button
+                      className="edit-delivery-details"
                       onClick={() => setIsEditingAddress(true)}
                     >
-                      Change
+                      <FaEdit /> Change
                     </button>
                   )}
                 </div>
-                
+
                 {isEditingAddress ? (
                   <form className="address-form">
-                    <div className="form-group">
+                    <div className="edit-shipping-address-form-group">
                       <label htmlFor="county">County</label>
                       <input
                         type="text"
@@ -125,8 +126,8 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
-                    <div className="form-group">
+
+                    <div className="edit-shipping-address-form-group">
                       <label htmlFor="town">Town/City</label>
                       <input
                         type="text"
@@ -137,23 +138,23 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
-                    <div className="form-actions">
-                      <button 
-                        type="button" 
+
+                    <div className="edit-shipping-address-form-actions">
+                      <button
+                        type="button"
                         className="save-button"
                         onClick={() => setIsEditingAddress(false)}
                       >
                         Save Address
                       </button>
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         className="cancel-button"
                         onClick={() => {
                           setIsEditingAddress(false);
                           setShippingAddress({
-                            county: user?.shippingAddress.county || 'Nairobi',
-                            town: user?.shippingAddress.town || 'CBD'
+                            county: user?.shippingAddress.county || "Nairobi",
+                            town: user?.shippingAddress.town || "CBD",
                           });
                         }}
                       >
@@ -163,36 +164,44 @@ const CheckoutPage = () => {
                   </form>
                 ) : (
                   <div className="address-display">
-                    <p>{shippingAddress.county}, {shippingAddress.town}</p>
+                    <p>
+                      {shippingAddress.county}, {shippingAddress.town}
+                    </p>
                   </div>
                 )}
               </div>
-              
+
               <div className="shipment">
                 <div className="subsection-header">
                   <h3>Shipment</h3>
-                  <button 
-                    className="edit-button"
-                    onClick={() => navigate('/cart')}
+                  <button
+                    className="modify-cart"
+                    onClick={() => navigate("/cart")}
                   >
-                    Modify Cart
+                    <FaEdit />  Modify Cart
                   </button>
                 </div>
-                
+
                 <div className="shipment-items">
-                  {inStockItems.map(item => (
+                  {inStockItems.map((item) => (
                     <div key={item.id} className="shipment-item">
-                      <div className="item-image">
+                      <div className="shipment-item-image">
                         <img src={item.image} alt={item.name} />
                       </div>
-                      <div className="item-details">
-                        <h4 className="item-name">{item.name}</h4>
+                      <div className="shipment-item-details">
+                        <h4 className="shipment-item-name">{item.name}</h4>
                         {item.variation && (
-                          <p className="item-variation">Variation: {item.variation}</p>
+                          <p className="shipment-item-variation">
+                            Variation: {item.variation}
+                          </p>
                         )}
-                        <div className="item-meta">
-                          <span className="item-price">Ksh {item.price.toLocaleString()}</span>
-                          <span className="item-quantity">Qty: {item.quantity}</span>
+                        <div className="shipment-item-meta">
+                          <span className="shipment-item-price">
+                            Ksh {item.price.toLocaleString()}
+                          </span>
+                          <span className="shipment-item-quantity">
+                            Qty: {item.quantity}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -201,26 +210,26 @@ const CheckoutPage = () => {
               </div>
             </section>
           </div>
-          
+
           <div className="order-summary">
             <h2>Order Summary</h2>
-            
+
             <div className="summary-row items-total">
               <span>Item(s) Total</span>
               <span>Ksh {totalPrice.toLocaleString()}</span>
             </div>
-            
+
             <div className="summary-row delivery-fee">
               <span>Delivery Fee</span>
               <span>Ksh {shippingFee.toLocaleString()}</span>
             </div>
-            
+
             <div className="summary-row total">
               <span>Total</span>
               <span>Ksh {(totalPrice + shippingFee).toLocaleString()}</span>
             </div>
-            
-            <button 
+
+            <button
               className="place-order-button"
               onClick={handlePlaceOrder}
               disabled={isEditingAddress}
