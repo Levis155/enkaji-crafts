@@ -1,50 +1,51 @@
+/* .account-page{
+  background-color: lightblue;
+} */
 .account-page h1 {
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   margin-bottom: 25px;
   color: var(--primary-color);
 }
 
-section {
+.account-details, .account-page-shipping-address, .password-change {
   margin-bottom: 30px;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  padding: 20px;
+  border: 1px solid var(--border-color);
 }
 
-.section-header {
+.account-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  margin-bottom: 15px;
+  padding: 0.5rem .8rem;
   border-bottom: 1px solid var(--border-color);
 }
 
-.section-header h2 {
-  font-size: 1.3rem;
+.account-section-header h2 {
+  font-size: 1.4rem;
   color: var(--text-color);
 }
 
 .edit-button {
   background-color: transparent;
   color: var(--primary-color);
-  border: 1px solid var(--primary-color);
   padding: 6px 15px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;
+  text-align: center;
 }
 
 .edit-button:hover {
-  background-color: var(--primary-color);
-  color: white;
+  color: var(--primary-dark);
 }
 
 .details-display {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding: .8rem;
 }
 
 .detail-item {
@@ -62,32 +63,33 @@ section {
   color: var(--text-color);
 }
 
-form {
+.account-details form, .account-page-shipping-address form, .password-change form {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding: .8rem;
 }
 
-.form-group {
+.account-page-form-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.form-group label {
+.account-page-form-group label {
   font-weight: 600;
   color: var(--text-light);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
 }
 
-.form-group input {
+.account-page-form-group input {
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 1.4rem;
 }
 
-.form-actions {
+.account-page-form-actions {
   display: flex;
   gap: 10px;
   margin-top: 10px;

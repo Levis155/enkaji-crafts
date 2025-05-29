@@ -1,52 +1,59 @@
-import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import '../styles/AccountPage.css';
+import { useState } from "react";
+import { FaEdit } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import "../styles/AccountPage.css";
 
 const AccountPage = () => {
   const { user, updateUserDetails } = useAuth();
-  
+
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
-  
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+
   const [formData, setFormData] = useState({
-    fullName: user?.fullName || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    county: user?.shippingAddress?.county || '',
-    town: user?.shippingAddress?.town || ''
+    fullName: user?.fullName || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    county: user?.shippingAddress?.county || "",
+    town: user?.shippingAddress?.town || "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleAccountDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     updateUserDetails({
       fullName: formData.fullName,
       email: formData.email,
-      phone: formData.phone
+      phone: formData.phone,
     });
-    
+
     setIsEditingDetails(false);
   };
 
   const handleAddressSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     updateUserDetails({
       shippingAddress: {
         county: formData.county,
-        town: formData.town
-      }
+        town: formData.town,
+      },
     });
-    
+
     setIsEditingAddress(false);
+  };
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsEditingPassword(false);
   };
 
   if (!user) {
@@ -56,23 +63,23 @@ const AccountPage = () => {
   return (
     <div className="account-page">
       <h1>Account Overview</h1>
-      
+
       <section className="account-details">
-        <div className="section-header">
+        <div className="account-section-header">
           <h2>Account Details</h2>
           {!isEditingDetails && (
-            <button 
+            <button
               className="edit-button"
               onClick={() => setIsEditingDetails(true)}
             >
-              Edit
+              <FaEdit /> Edit
             </button>
           )}
         </div>
-        
+
         {isEditingDetails ? (
           <form onSubmit={handleAccountDetailsSubmit}>
-            <div className="form-group">
+            <div className="account-page-form-group">
               <label htmlFor="fullName">Full Name</label>
               <input
                 type="text"
@@ -83,8 +90,8 @@ const AccountPage = () => {
                 required
               />
             </div>
-            
-            <div className="form-group">
+
+            <div className="account-page-form-group">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -95,8 +102,8 @@ const AccountPage = () => {
                 required
               />
             </div>
-            
-            <div className="form-group">
+
+            <div className="account-page-form-group">
               <label htmlFor="phone">Phone Number</label>
               <input
                 type="tel"
@@ -107,11 +114,13 @@ const AccountPage = () => {
                 required
               />
             </div>
-            
-            <div className="form-actions">
-              <button type="submit" className="save-button">Save Changes</button>
-              <button 
-                type="button" 
+
+            <div className="account-page-form-actions">
+              <button type="submit" className="save-button">
+                Save Changes
+              </button>
+              <button
+                type="button"
                 className="cancel-button"
                 onClick={() => setIsEditingDetails(false)}
               >
@@ -125,12 +134,12 @@ const AccountPage = () => {
               <span className="detail-label">Full Name:</span>
               <span className="detail-value">{user.fullName}</span>
             </div>
-            
+
             <div className="detail-item">
               <span className="detail-label">Email:</span>
               <span className="detail-value">{user.email}</span>
             </div>
-            
+
             <div className="detail-item">
               <span className="detail-label">Phone:</span>
               <span className="detail-value">{user.phone}</span>
@@ -138,23 +147,23 @@ const AccountPage = () => {
           </div>
         )}
       </section>
-      
-      <section className="shipping-address">
-        <div className="section-header">
+
+      <section className="account-page-shipping-address">
+        <div className="account-section-header">
           <h2>Shipping Address</h2>
           {!isEditingAddress && (
-            <button 
+            <button
               className="edit-button"
               onClick={() => setIsEditingAddress(true)}
             >
-              Edit
+              <FaEdit /> Edit
             </button>
           )}
         </div>
-        
+
         {isEditingAddress ? (
           <form onSubmit={handleAddressSubmit}>
-            <div className="form-group">
+            <div className="account-page-form-group">
               <label htmlFor="county">County</label>
               <input
                 type="text"
@@ -165,8 +174,8 @@ const AccountPage = () => {
                 required
               />
             </div>
-            
-            <div className="form-group">
+
+            <div className="account-page-form-group">
               <label htmlFor="town">Town/City</label>
               <input
                 type="text"
@@ -177,11 +186,13 @@ const AccountPage = () => {
                 required
               />
             </div>
-            
-            <div className="form-actions">
-              <button type="submit" className="save-button">Save Changes</button>
-              <button 
-                type="button" 
+
+            <div className="account-page-form-actions">
+              <button type="submit" className="save-button">
+                Save Changes
+              </button>
+              <button
+                type="button"
                 className="cancel-button"
                 onClick={() => setIsEditingAddress(false)}
               >
@@ -193,9 +204,11 @@ const AccountPage = () => {
           <div className="details-display">
             <div className="detail-item">
               <span className="detail-label">County:</span>
-              <span className="detail-value">{user.shippingAddress.county}</span>
+              <span className="detail-value">
+                {user.shippingAddress.county}
+              </span>
             </div>
-            
+
             <div className="detail-item">
               <span className="detail-label">Town/City:</span>
               <span className="detail-value">{user.shippingAddress.town}</span>
@@ -203,14 +216,67 @@ const AccountPage = () => {
           </div>
         )}
       </section>
-      
+
       <section className="password-change">
-        <div className="section-header">
+        <div className="account-section-header">
           <h2>Password</h2>
+          {!isEditingPassword && (
+            <button
+              className="edit-button"
+              onClick={() => setIsEditingPassword(true)}
+            >
+              <FaEdit /> Edit
+            </button>
+          )}
         </div>
-        <div className="password-link">
-          <a href="#">Change Password</a>
-        </div>
+        {isEditingPassword ? (
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="account-page-form-group">
+              <label htmlFor="old-password">Old Password</label>
+              <input
+                type="password"
+                id="old-password"
+                name="oldPassword"
+                required
+              />
+            </div>
+
+            <div className="account-page-form-group">
+              <label htmlFor="new-password">New Password</label>
+              <input
+                type="password"
+                id="new-password"
+                name="newPassword"
+                required
+              />
+            </div>
+
+            <div className="account-page-form-group">
+              <label htmlFor="confirm-new-password">Confirm New Password</label>
+              <input
+                type="password"
+                id="confirm-new-password"
+                name="confirmedNewPassword"
+                required
+              />
+            </div>
+
+            <div className="account-page-form-actions">
+              <button type="submit" className="save-button">
+                Save Changes
+              </button>
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={() => setIsEditingPassword(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="details-display">********</div>
+        )}
       </section>
     </div>
   );

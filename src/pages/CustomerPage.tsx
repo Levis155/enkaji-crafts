@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
@@ -6,6 +6,7 @@ import '../styles/CustomerPage.css';
 
 const CustomerPage = () => {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   if (!isAuthenticated) {
     return (
@@ -14,7 +15,7 @@ const CustomerPage = () => {
         <main className="container customer-login-required">
           <h2>Please log in to access your account</h2>
           <p>You need to be logged in to view this page.</p>
-          <button className="login-button">Sign In</button>
+          <button className="login-button" onClick={() => {navigate("/login")}}>Sign In</button>
         </main>
         <Footer />
       </div>
@@ -24,7 +25,7 @@ const CustomerPage = () => {
   return (
     <div className="customer-page">
       <Header />
-      <main className="container">
+      <main>
         <div className="customer-page-container">
           <aside className="customer-sidebar">
             <h2>My Account</h2>
@@ -33,7 +34,7 @@ const CustomerPage = () => {
                 to="/customer/account" 
                 className={({ isActive }) => isActive ? 'active' : ''}
               >
-                Account Overview
+                Account
               </NavLink>
               <NavLink 
                 to="/customer/orders" 
