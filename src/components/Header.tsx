@@ -120,7 +120,7 @@ const Header = () => {
         <div className="header-icon-wrapper" ref={accountMenuRef}>
           <div className="header-icon" onClick={toggleAccountMenu}>
             <FaRegUser />
-            <span>
+            <span className={isAuthenticated ? "hi-user" : ""}>
               {isAuthenticated
                 ? `Hi ${user?.fullName.split(" ")[0]}`
                 : "Account"}

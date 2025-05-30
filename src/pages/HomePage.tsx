@@ -8,8 +8,8 @@ import { products } from '../data/products';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
-  const [visibleCount, setVisibleCount] = useState(4); // Initially show 4
-  const [visibleProducts, setVisibleProducts] = useState(products.slice(0, 4));
+  const [visibleCount, setVisibleCount] = useState(8); // Initially show 4
+  const [visibleProducts, setVisibleProducts] = useState(products.slice(0, 8));
 
   useEffect(() => {
     setVisibleProducts(products.slice(0, visibleCount));
@@ -27,7 +27,7 @@ const HomePage = () => {
         
         <section id="featured-products" className="featured-products">
           <div className="container">
-            <h2 className="section-title">Featured Products</h2>
+            <h2 className="section-title">Products</h2>
             <div className="product-grid">
               {visibleProducts.map(product => (
                 <ProductCard

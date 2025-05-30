@@ -120,7 +120,7 @@ const OrdersPage = () => {
 
   return (
     <div className="orders-page">
-      <h1>My Orders</h1>
+      <h1>My Orders ({orders.length})</h1>
 
       <div className="orders-list">
         {orders.map((order) => (
