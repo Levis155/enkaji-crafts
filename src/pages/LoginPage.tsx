@@ -14,6 +14,7 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import formControlStyle from "../styles/formControlStyles";
+import Logo from "../components/Logo";
 
 const LoginPage = () => {
   const { login, error, clearError, loading } = useAuth();
@@ -57,7 +58,7 @@ const LoginPage = () => {
   return (
     <div className="login-page-wrapper">
       <form action="" onSubmit={handleSubmit}>
-        <BiLogIn className="login-page-logo" />
+        <Logo />
         <p className="login-form-title">Login to Red Dune</p>
 
         <div className="login-form-body">

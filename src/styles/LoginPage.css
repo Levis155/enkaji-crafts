@@ -24,16 +24,11 @@
     width: 90%;
   }
 }
-.login-page-logo {
-  font-size: 4rem;
-  margin-bottom: 0.5rem;
-  /* color: var(--primary-color); */
-}
 .login-form-title {
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 3rem;
-  /* color: var(--primary-color); */
+  color: var(--primary-color);
 }
 .login-form-body {
   width: 100%;

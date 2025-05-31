@@ -14,6 +14,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import formControlStyle from "../styles/formControlStyles";
 import { useAuth } from "../context/AuthContext";
 import "../styles/RegisterPage.css";
+import Logo from "../components/Logo";
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -77,8 +78,8 @@ const RegisterPage = () => {
   return (
     <div className="registration-page-wrapper">
       <form action="" onSubmit={handleSubmit}>
-        <GiArchiveRegister className="registration-page-logo" />
-        <p className="registration-form-title">Register with shoppers hub</p>
+        <Logo  />
+        <p className="registration-form-title">Register with Red Dune</p>
 
         <div className="registration-form-body">
           {error && <div className="auth-error">{error}</div>}

@@ -10,8 +10,8 @@ import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import Logo from "./Logo";
 import "../styles/Header.css";
-import "../index.css";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -100,7 +100,7 @@ const Header = () => {
   const standardHeader = (
     <div className="header-content">
       <div className="logo">
-        <Link to="/">red dune</Link>
+        <Link to="/"><Logo /> red dune</Link>
       </div>
 
       <div className="search-bar">
@@ -213,7 +213,7 @@ const Header = () => {
   const minimizedHeader = (
     <div className="header-content minimized">
       <div className="logo">
-        <Link to="/">red dune</Link>
+        <Link to="/">red dune <Logo /></Link>
       </div>
 
       <div className="search-bar">

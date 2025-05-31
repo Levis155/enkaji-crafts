@@ -10,7 +10,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 15px 20px;
+  padding: 5px;
 }
 @media screen and (max-width: 37.5em) {
   .header-content {
@@ -34,11 +34,13 @@
     width: 50%;
   }
 }
-
 .logo a {
   font-family: "Merienda", cursive;
   text-transform: capitalize;
-  font-size: 3.2rem;
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 .search-bar {
   width: 45%;
@@ -47,6 +49,9 @@
 @media screen and (max-width: 66.25em) {
   .search-bar {
     width: 45%;
+  }
+  .logo a{
+    font-size: 2rem;
   }
 }
 @media screen and (max-width: 37.5em) {
