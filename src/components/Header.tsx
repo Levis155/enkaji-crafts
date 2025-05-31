@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
 import { FaList, FaRegUser, FaHeart, FaBars } from "react-icons/fa";
+import { BiLogOut, BiLogIn } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { LuPackage } from "react-icons/lu";
 import { BsBoxArrowInLeft } from "react-icons/bs";
@@ -156,13 +157,13 @@ const Header = () => {
                       setShowAccountMenu(false);
                     }}
                   >
-                    <HiOutlineArrowRightOnRectangle /> Sign Out
+                    <BiLogOut /> Sign Out
                   </a>
                 </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setShowAccountMenu(false)}>
-                    <BsBoxArrowInLeft /> Sign In
+                    <BiLogIn /> Sign In
                   </Link>
                   <Link
                     to="/register"

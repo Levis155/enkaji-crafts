@@ -1,175 +1,205 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import '../styles/AuthPages.css';
+import { GiArchiveRegister } from "react-icons/gi";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  TextField,
+  InputLabel,
+  FormControl,
+  IconButton,
+  OutlinedInput,
+  InputAdornment,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import formControlStyle from "../styles/formControlStyles";
+import { useAuth } from "../context/AuthContext";
+import "../styles/RegisterPage.css";
 
 const RegisterPage = () => {
-  const { register, error, clearError, loading } = useAuth();
-  const navigate = useNavigate();
-  
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    county: 'Nairobi',
-    town: 'CBD'
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    county: "Nairobi",
+    town: "CBD",
   });
-
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { register, error, clearError, loading } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear any previous errors when the user starts typing
     if (error) clearError();
-    
+
     // Clear password matching error if user is changing password fields
-    if (name === 'password' || name === 'confirmPassword') {
+    if (name === "password" || name === "confirmPassword") {
       setPasswordError(null);
     }
   };
 
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
-      setPasswordError('Passwords do not match');
+      setPasswordError("Passwords do not match");
       return;
     }
-    
+
     // Register the user (excluding confirmPassword)
     const { confirmPassword, ...registerData } = formData;
     const success = await register(registerData);
-    
+
     if (success) {
-      navigate('/'); // Redirect to home page after successful registration
+      navigate("/"); // Redirect to home page after successful registration
     }
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <div className="auth-header">
-          <h1>Create an Account</h1>
-          <p>Join Red Dune to shop authentic Maasai products</p>
-        </div>
-        
-        <form className="auth-form" onSubmit={handleSubmit}>
+    <div className="registration-page-wrapper">
+      <form action="" onSubmit={handleSubmit}>
+        <GiArchiveRegister className="registration-page-logo" />
+        <p className="registration-form-title">Register with shoppers hub</p>
+
+        <div className="registration-form-body">
           {error && <div className="auth-error">{error}</div>}
           {passwordError && <div className="auth-error">{passwordError}</div>}
-          
-          <div className="form-group">
-            <label htmlFor="fullName">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-              placeholder="Enter your full name"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter your phone number (optional)"
-            />
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="county">County</label>
-              <input
-                type="text"
-                id="county"
-                name="county"
-                value={formData.county}
-                onChange={handleChange}
-                placeholder="County"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="town">Town/City</label>
-              <input
-                type="text"
-                id="town"
-                name="town"
-                value={formData.town}
-                onChange={handleChange}
-                placeholder="Town/City"
-              />
-            </div>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
+          <TextField
+            label="Full Name"
+            variant="outlined"
+            sx={formControlStyle}
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+          />
+
+          <TextField
+            label="Email Address"
+            variant="outlined"
+            sx={formControlStyle}
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+
+          <TextField
+            label="Phone Number"
+            variant="outlined"
+            sx={formControlStyle}
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+
+          <TextField
+            label="County"
+            variant="outlined"
+            sx={formControlStyle}
+            name="county"
+            value={formData.county}
+            onChange={handleChange}
+          />
+
+          <TextField
+            label="Town/City"
+            variant="outlined"
+            sx={formControlStyle}
+            name="town"
+            value={formData.town}
+            onChange={handleChange}
+          />
+
+          <FormControl variant="outlined" sx={formControlStyle}>
+            <InputLabel>Password</InputLabel>
+            <OutlinedInput
+              type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="Enter your password"
-              minLength={6}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword
+                        ? "hide the password"
+                        : "display the password"
+                    }
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
             />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
+          </FormControl>
+
+          <FormControl variant="outlined" sx={formControlStyle}>
+            <InputLabel>Confirm Password</InputLabel>
+            <OutlinedInput
+              type={showPassword ? "text" : "password"}
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              placeholder="Confirm your password"
-              minLength={6}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword
+                        ? "hide the password"
+                        : "display the password"
+                    }
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Confirm Password"
             />
-          </div>
-          
-          <button 
-            type="submit" 
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Creating Account...' : 'Register'}
+          </FormControl>
+
+          <button className="signup-btn" type="submit" disabled={loading}>
+            {loading ? "Creating Account..." : "Register"}
           </button>
-        </form>
-        
-        <div className="auth-footer">
-          <p>Already have an account? <Link to="/login">Login</Link></p>
         </div>
-      </div>
+
+        <p className="login-text">
+          Already have an account? <Link to={"/login"}>Login</Link>
+        </p>
+      </form>
     </div>
   );
 };
