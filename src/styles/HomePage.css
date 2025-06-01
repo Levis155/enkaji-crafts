@@ -7,16 +7,17 @@
 }
 
 .section-title {
+  text-transform: capitalize;
   text-align: center;
   margin-bottom: 30px;
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: var(--text-color);
   position: relative;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .section-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -30,30 +31,60 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 30px;
+  min-height: 600px; /* Ensure consistent height between pages */
 }
-.see-more-container {
-  margin-top: 20px;
+
+/* Pagination styles */
+.pagination-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.pagination-info {
   display: flex;
   justify-content: center;
+  gap: 15px;
+  font-size: 1.4rem;
+  color: var(--text-light);
 }
 
-.see-more-button {
+.pagination-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.pagination-btn {
+  padding: 10px;
   font-size: 1.6rem;
   font-weight: 600;
-  color: var(--primary-color);
-  background-color: transparent;
-  border: none;
+  background-color: white;
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
   cursor: pointer;
-  /* transition: 0.3s ease; */
-  display: flex;
-  align-items: center;
-  gap: .5rem;
+  transition: all 0.3s ease;
+  min-width: 100px;
 }
 
-.see-more-button:hover {
-  color: var(--primary-dark);
+.pagination-btn:hover:not(:disabled) {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--background-light);
+  color: var(--text-light);
+  transform: none;
+  box-shadow: none;
+}
 
 .about-maasai {
   padding: 70px 0;
@@ -88,6 +119,7 @@
 @media (max-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
+    min-height: 600px;
   }
 }
 
@@ -95,16 +127,27 @@
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    min-height: 800px;
   }
-  
+
+  .pagination-container {
+    margin-top: 30px;
+  }
+
+  .pagination-btn {
+    padding: 10px 20px;
+    font-size: 1.4rem;
+    min-width: 80px;
+  }
+
   .about-content {
     grid-template-columns: 1fr;
   }
-  
+
   .about-image {
     order: 1;
   }
-  
+
   .about-text {
     order: 2;
   }
@@ -113,9 +156,29 @@
 @media (max-width: 480px) {
   .product-grid {
     grid-template-columns: 1fr;
+    min-height: 1600px;
+  }
+
+  .section-title {
+    font-size: 2rem;
   }
   
-  .section-title {
-    font-size: 1.5rem;
+  .pagination-info {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.3rem;
+  }
+  
+  .pagination-controls {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .pagination-btn {
+    flex: 1;
+    text-align: center;
+    padding: 12px 15px;
+    font-size: 1.4rem;
   }
 }

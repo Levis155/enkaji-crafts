@@ -272,6 +272,210 @@ export const products: Product[] = [
         image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
       }
     ]
+  },
+    {
+    id: 9,
+    name: 'Maasai Shield (Elongo)',
+    price: 3500,
+    originalPrice: 4200,
+    discount: 17,
+    image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg',
+    inStock: true,
+    rating: 4.9,
+    totalRatings: 23,
+    category: 'decor',
+    description: 'Traditional Maasai shield (Elongo) handcrafted using authentic techniques. Made from buffalo hide with wooden reinforcement and decorated with traditional Maasai designs. A striking decorative piece that represents Maasai warrior culture.',
+    specifications: {
+      'Material': 'Buffalo hide, Wood',
+      'Height': '90cm',
+      'Width': '50cm',
+      'Weight': '1.2kg',
+      'Decoration': 'Traditional patterns',
+      'Origin': 'Kenya'
+    },
+    inPackage: ['1 x Maasai Shield', 'Wall Mounting Kit', 'Certificate of Authenticity'],
+    variations: [
+      {
+        id: 801,
+        name: 'Classic Red',
+        image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg'
+      },
+      {
+        id: 802,
+        name: 'Multi-pattern',
+        image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
+      }
+    ]
+  },
+    {
+    id: 10,
+    name: 'Maasai Shield (Elongo)',
+    price: 3500,
+    originalPrice: 4200,
+    discount: 17,
+    image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg',
+    inStock: true,
+    rating: 4.9,
+    totalRatings: 23,
+    category: 'decor',
+    description: 'Traditional Maasai shield (Elongo) handcrafted using authentic techniques. Made from buffalo hide with wooden reinforcement and decorated with traditional Maasai designs. A striking decorative piece that represents Maasai warrior culture.',
+    specifications: {
+      'Material': 'Buffalo hide, Wood',
+      'Height': '90cm',
+      'Width': '50cm',
+      'Weight': '1.2kg',
+      'Decoration': 'Traditional patterns',
+      'Origin': 'Kenya'
+    },
+    inPackage: ['1 x Maasai Shield', 'Wall Mounting Kit', 'Certificate of Authenticity'],
+    variations: [
+      {
+        id: 801,
+        name: 'Classic Red',
+        image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg'
+      },
+      {
+        id: 802,
+        name: 'Multi-pattern',
+        image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
+      }
+    ]
+  },
+    {
+    id: 11,
+    name: 'Maasai Shield (Elongo)',
+    price: 3500,
+    originalPrice: 4200,
+    discount: 17,
+    image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg',
+    inStock: true,
+    rating: 4.9,
+    totalRatings: 23,
+    category: 'decor',
+    description: 'Traditional Maasai shield (Elongo) handcrafted using authentic techniques. Made from buffalo hide with wooden reinforcement and decorated with traditional Maasai designs. A striking decorative piece that represents Maasai warrior culture.',
+    specifications: {
+      'Material': 'Buffalo hide, Wood',
+      'Height': '90cm',
+      'Width': '50cm',
+      'Weight': '1.2kg',
+      'Decoration': 'Traditional patterns',
+      'Origin': 'Kenya'
+    },
+    inPackage: ['1 x Maasai Shield', 'Wall Mounting Kit', 'Certificate of Authenticity'],
+    variations: [
+      {
+        id: 801,
+        name: 'Classic Red',
+        image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg'
+      },
+      {
+        id: 802,
+        name: 'Multi-pattern',
+        image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
+      }
+    ]
+  },
+    {
+    id: 12,
+    name: 'Maasai Shield (Elongo)',
+    price: 3500,
+    originalPrice: 4200,
+    discount: 17,
+    image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg',
+    inStock: true,
+    rating: 4.9,
+    totalRatings: 23,
+    category: 'decor',
+    description: 'Traditional Maasai shield (Elongo) handcrafted using authentic techniques. Made from buffalo hide with wooden reinforcement and decorated with traditional Maasai designs. A striking decorative piece that represents Maasai warrior culture.',
+    specifications: {
+      'Material': 'Buffalo hide, Wood',
+      'Height': '90cm',
+      'Width': '50cm',
+      'Weight': '1.2kg',
+      'Decoration': 'Traditional patterns',
+      'Origin': 'Kenya'
+    },
+    inPackage: ['1 x Maasai Shield', 'Wall Mounting Kit', 'Certificate of Authenticity'],
+    variations: [
+      {
+        id: 801,
+        name: 'Classic Red',
+        image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg'
+      },
+      {
+        id: 802,
+        name: 'Multi-pattern',
+        image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
+      }
+    ]
+  },
+    {
+    id: 13,
+    name: 'Maasai Shield (Elongo)',
+    price: 3500,
+    originalPrice: 4200,
+    discount: 17,
+    image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg',
+    inStock: true,
+    rating: 4.9,
+    totalRatings: 23,
+    category: 'decor',
+    description: 'Traditional Maasai shield (Elongo) handcrafted using authentic techniques. Made from buffalo hide with wooden reinforcement and decorated with traditional Maasai designs. A striking decorative piece that represents Maasai warrior culture.',
+    specifications: {
+      'Material': 'Buffalo hide, Wood',
+      'Height': '90cm',
+      'Width': '50cm',
+      'Weight': '1.2kg',
+      'Decoration': 'Traditional patterns',
+      'Origin': 'Kenya'
+    },
+    inPackage: ['1 x Maasai Shield', 'Wall Mounting Kit', 'Certificate of Authenticity'],
+    variations: [
+      {
+        id: 801,
+        name: 'Classic Red',
+        image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg'
+      },
+      {
+        id: 802,
+        name: 'Multi-pattern',
+        image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
+      }
+    ]
+  },
+    {
+    id: 15,
+    name: 'Maasai Shield (Elongo)',
+    price: 3500,
+    originalPrice: 4200,
+    discount: 17,
+    image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg',
+    inStock: true,
+    rating: 4.9,
+    totalRatings: 23,
+    category: 'decor',
+    description: 'Traditional Maasai shield (Elongo) handcrafted using authentic techniques. Made from buffalo hide with wooden reinforcement and decorated with traditional Maasai designs. A striking decorative piece that represents Maasai warrior culture.',
+    specifications: {
+      'Material': 'Buffalo hide, Wood',
+      'Height': '90cm',
+      'Width': '50cm',
+      'Weight': '1.2kg',
+      'Decoration': 'Traditional patterns',
+      'Origin': 'Kenya'
+    },
+    inPackage: ['1 x Maasai Shield', 'Wall Mounting Kit', 'Certificate of Authenticity'],
+    variations: [
+      {
+        id: 801,
+        name: 'Classic Red',
+        image: 'https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg'
+      },
+      {
+        id: 802,
+        name: 'Multi-pattern',
+        image: 'https://cdn.pixabay.com/photo/2019/10/02/19/58/maasai-4521843_1280.jpg'
+      }
+    ]
   }
 ];
 
