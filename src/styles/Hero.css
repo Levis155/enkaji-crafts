@@ -1,7 +1,7 @@
 .hero {
   position: relative;
   height: 600px;
-  background-image: url('https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg');
+  background-image: url("https://cdn.pixabay.com/photo/2021/10/31/19/35/tribe-6758620_1280.jpg");
   background-size: cover;
   background-position: center;
   color: white;
@@ -72,7 +72,7 @@
   color: white;
 }
 
-.btn-solid:hover{
+.btn-solid:hover {
   color: white;
 }
 
@@ -85,15 +85,15 @@
   .hero {
     height: 500px;
   }
-  
+
   .hero h1 {
     font-size: 4rem;
   }
-  
+
   .hero h2 {
     font-size: 2.5rem;
   }
-  
+
   .hero p {
     font-size: 1.6rem;
   }
@@ -103,15 +103,18 @@
   .hero {
     height: 450px;
   }
-  
+
   .hero h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
-  
+
   .hero h2 {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
   }
-  
+  .hero p {
+    font-size: 1.3rem;
+  }
+
   .hero-buttons {
     flex-direction: column;
   }
