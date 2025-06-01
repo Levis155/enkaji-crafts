@@ -109,7 +109,7 @@ const Header = () => {
     <div className="header-content">
       <div className="logo">
         <Link to="/">
-          <Logo /> red dune
+          <Logo /> enkaji crafts
         </Link>
       </div>
 
