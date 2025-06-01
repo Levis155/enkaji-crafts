@@ -41,6 +41,11 @@
   display: flex;
   align-items: center;
 }
+@media screen and (max-width: 66.25em) {
+  .logo a {
+    font-size: 2rem;
+  }
+}
 .search-bar {
   width: 45%;
   margin: 0 20px;
@@ -48,9 +53,6 @@
 @media screen and (max-width: 66.25em) {
   .search-bar {
     width: 45%;
-  }
-  .logo a{
-    font-size: 2rem;
   }
 }
 @media screen and (max-width: 37.5em) {
@@ -70,36 +72,35 @@
 }
 
 .search-bar input {
-  padding: 10px 15px;
+  padding-inline: 15px;
   border: 1px solid var(--primary-color);
   border-radius: none;
   font-size: 1.6rem;
   width: 90%;
   outline: none;
 }
-.search-bar input::placeholder {
-  font-size: 1.6rem;
-  font-family: inherit;
-}
 @media screen and (max-width: 66.25em) {
   .search-bar input {
     width: 85%;
   }
+}
+.search-bar input::placeholder {
+  font-size: 1.4rem;
+  font-family: inherit;
+  text-transform: capitalize;
+}
+.search-bar button svg {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.search-bar button:hover {
+  background-color: var(--primary-dark);
 }
 @media screen and (max-width: 66.25em) {
   .search-bar button {
     width: 15%;
   }
 }
-.search-bar button svg {
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-
-.search-bar button:hover {
-  background-color: var(--primary-dark);
-}
-
 .header-icons {
   display: flex;
   align-items: center;
@@ -129,12 +130,17 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: flex-start;
   cursor: pointer;
+  transition: color 0.3s ease;
   padding: 5px;
+  color: black;
 }
-
+.header-icon:hover {
+  color: var(--primary-color);
+}
 .header-icon svg,
-.cart-icon svg {
+.cart-link svg {
   font-size: 2.5rem;
 }
 .header-icon span {
@@ -145,6 +151,13 @@
 .hi-user {
   font-family: "Lobster", sans-serif;
   font-weight: 500;
+}
+.angle-arrow-cont {
+  display: flex;
+  align-items: center;
+}
+.angle-arrow-cont svg {
+  font-size: 1.4rem;
 }
 .cart-icon {
   position: relative;

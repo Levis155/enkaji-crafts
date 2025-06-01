@@ -24,7 +24,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: "Nunito", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--text-color);
@@ -56,6 +56,10 @@ button {
   padding: 10px 20px;
   font-weight: 600;
   transition: background-color 0.3s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 button:disabled {
   background-color: var(--text-light);
@@ -161,7 +165,6 @@ img {
   color: var(--text-white);
 }
 
-/* Responsive styles */
 @media (max-width: 1024px) {
   .grid-cols-4 {
     grid-template-columns: repeat(3, 1fr);

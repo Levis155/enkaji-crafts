@@ -1,13 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CiSearch } from "react-icons/ci";
-import { FaList, FaRegUser, FaHeart, FaBars } from "react-icons/fa";
+import {
+  FaRegUser,
+  FaHeart,
+  FaBars,
+  FaSearch,
+  FaAngleDown,
+  FaAngleUp,
+} from "react-icons/fa";
+import { TbCategory } from "react-icons/tb";
 import { BiLogOut, BiLogIn } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { LuPackage } from "react-icons/lu";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
+import { IoMdClose } from "react-icons/io";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import Logo from "./Logo";
@@ -100,7 +108,9 @@ const Header = () => {
   const standardHeader = (
     <div className="header-content">
       <div className="logo">
-        <Link to="/"><Logo /> red dune</Link>
+        <Link to="/">
+          <Logo /> red dune
+        </Link>
       </div>
 
       <div className="search-bar">
@@ -112,7 +122,7 @@ const Header = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button type="submit" className="search-button">
-            <CiSearch />
+            <FaSearch />
           </button>
         </form>
       </div>
@@ -126,6 +136,9 @@ const Header = () => {
                 ? `Hi ${user?.fullName.split(" ")[0]}`
                 : "Account"}
             </span>
+            <div className="angle-arrow-cont">
+              {showAccountMenu ? <FaAngleUp /> : <FaAngleDown />}
+            </div>
           </div>
 
           {showAccountMenu && (
@@ -179,8 +192,11 @@ const Header = () => {
 
         <div className="header-icon-wrapper" ref={categoriesMenuRef}>
           <div className="header-icon" onClick={toggleCategoriesMenu}>
-            <FaList />
+            <TbCategory />
             <span>Categories</span>
+            <div className="angle-arrow-cont">
+              {showCategoriesMenu ? <FaAngleUp /> : <FaAngleDown />}
+            </div>
           </div>
 
           {showCategoriesMenu && (
@@ -213,7 +229,9 @@ const Header = () => {
   const minimizedHeader = (
     <div className="header-content minimized">
       <div className="logo">
-        <Link to="/">red dune <Logo /></Link>
+        <Link to="/">
+          red dune <Logo />
+        </Link>
       </div>
 
       <div className="search-bar">
@@ -225,7 +243,7 @@ const Header = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button type="submit" className="search-button">
-            <CiSearch />
+            <FaSearch />
           </button>
         </form>
       </div>
@@ -233,7 +251,7 @@ const Header = () => {
       <div className="header-icons minimized">
         <div className="header-icon-wrapper" ref={mobileMenuRef}>
           <div className="header-icon" onClick={toggleMobileMenu}>
-            <FaBars />
+            {showMobileMenu ? <IoMdClose /> : <FaBars />}
           </div>
 
           {showMobileMenu && (
