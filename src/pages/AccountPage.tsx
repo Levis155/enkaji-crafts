@@ -1,5 +1,16 @@
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
+import {
+  TextField,
+  InputLabel,
+  FormControl,
+  IconButton,
+  OutlinedInput,
+  InputAdornment,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import formControlStyle from "../styles/formControlStyles";
 import { useAuth } from "../context/AuthContext";
 import "../styles/AccountPage.css";
 
@@ -9,6 +20,7 @@ const AccountPage = () => {
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
@@ -51,6 +63,16 @@ const AccountPage = () => {
     setIsEditingAddress(false);
   };
 
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsEditingPassword(false);
@@ -79,41 +101,36 @@ const AccountPage = () => {
 
         {isEditingDetails ? (
           <form onSubmit={handleAccountDetailsSubmit}>
-            <div className="account-page-form-group">
-              <label htmlFor="fullName">Full Name</label>
-              <input
-                type="text"
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <TextField
+              label="Full Name"
+              variant="outlined"
+              sx={formControlStyle}
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              required
+            />
 
-            <div className="account-page-form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <TextField
+              label="Email"
+              variant="outlined"
+              sx={formControlStyle}
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
 
-            <div className="account-page-form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <TextField
+              label="Phone Number"
+              variant="outlined"
+              type="tel"
+              sx={formControlStyle}
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+            />
 
             <div className="account-page-form-actions">
               <button type="submit" className="save-button">
@@ -163,29 +180,25 @@ const AccountPage = () => {
 
         {isEditingAddress ? (
           <form onSubmit={handleAddressSubmit}>
-            <div className="account-page-form-group">
-              <label htmlFor="county">County</label>
-              <input
-                type="text"
-                id="county"
-                name="county"
-                value={formData.county}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <TextField
+              label="County"
+              variant="outlined"
+              sx={formControlStyle}
+              name="county"
+              value={formData.county}
+              onChange={handleInputChange}
+              required
+            />
 
-            <div className="account-page-form-group">
-              <label htmlFor="town">Town/City</label>
-              <input
-                type="text"
-                id="town"
-                name="town"
-                value={formData.town}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            <TextField
+              label="Town"
+              variant="outlined"
+              sx={formControlStyle}
+              name="town"
+              value={formData.town}
+              onChange={handleInputChange}
+              required
+            />
 
             <div className="account-page-form-actions">
               <button type="submit" className="save-button">
@@ -231,35 +244,86 @@ const AccountPage = () => {
         </div>
         {isEditingPassword ? (
           <form onSubmit={handlePasswordSubmit}>
-            <div className="account-page-form-group">
-              <label htmlFor="old-password">Old Password</label>
-              <input
-                type="password"
-                id="old-password"
-                name="oldPassword"
+            <FormControl variant="outlined" sx={formControlStyle}>
+              <InputLabel>Old Password</InputLabel>
+              <OutlinedInput
+                type={showPassword ? "text" : "password"}
+                name="OldPassword"
                 required
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      onMouseUp={handleMouseUpPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Old Password"
               />
-            </div>
+            </FormControl>
 
-            <div className="account-page-form-group">
-              <label htmlFor="new-password">New Password</label>
-              <input
-                type="password"
-                id="new-password"
-                name="newPassword"
+            <FormControl variant="outlined" sx={formControlStyle}>
+              <InputLabel>New Password</InputLabel>
+              <OutlinedInput
+                type={showPassword ? "text" : "password"}
+                name="NewPassword"
                 required
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      onMouseUp={handleMouseUpPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="New Password"
               />
-            </div>
+            </FormControl>
 
-            <div className="account-page-form-group">
-              <label htmlFor="confirm-new-password">Confirm New Password</label>
-              <input
-                type="password"
-                id="confirm-new-password"
+            <FormControl variant="outlined" sx={formControlStyle}>
+              <InputLabel>Confirm New Password</InputLabel>
+              <OutlinedInput
+                type={showPassword ? "text" : "password"}
                 name="confirmedNewPassword"
                 required
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      onMouseUp={handleMouseUpPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Confirm New Password"
               />
-            </div>
+            </FormControl>
 
             <div className="account-page-form-actions">
               <button type="submit" className="save-button">

@@ -76,19 +76,6 @@
   gap: 5px;
 }
 
-.account-page-form-group label {
-  font-weight: 600;
-  color: var(--text-light);
-  font-size: 1.1rem;
-}
-
-.account-page-form-group input {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1.4rem;
-}
-
 .account-page-form-actions {
   display: flex;
   gap: 10px;
