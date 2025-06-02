@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Rating from '@mui/material/Rating';
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import '../styles/ProductCard.css';
@@ -90,13 +91,13 @@ const ProductCard = ({ id, name, price, originalPrice, discount, image, rating, 
           <img src={image} alt={name} />
         </Link>
 
-        <button 
-          className={`product-card-wishlist-button ${isInWishlist(id) ? 'active' : ''}`}
+        <div 
+          className='product-card-wishlist-button'
           onClick={handleWishlistToggle}
           aria-label={isInWishlist(id) ? "Remove from wishlist" : "Add to wishlist"}
         >
-          {isInWishlist(id) ? '❤️' : '🤍'}
-        </button>
+          {isInWishlist(id) ? <FaHeart /> : <FaRegHeart />}
+        </div>
 
         {!inStock && (
           <div className="out-of-stock-label">Out of Stock</div>

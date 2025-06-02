@@ -230,7 +230,7 @@ const Header = () => {
     <div className="header-content minimized">
       <div className="logo">
         <Link to="/">
-          red dune <Logo />
+          <Logo /> Enkaji Crafts
         </Link>
       </div>
 

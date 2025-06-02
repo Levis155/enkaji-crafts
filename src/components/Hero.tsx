@@ -15,7 +15,7 @@ const Hero = () => {
           <a href="#featured-products" className="btn btn-solid">
             Shop Now
           </a>
-          <a href="#about-maasai" className="btn btn-outline">
+          <a href="#about-enkaji" className="btn btn-outline">
             Learn More
           </a>
         </div>

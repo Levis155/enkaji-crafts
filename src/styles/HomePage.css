@@ -57,7 +57,7 @@
 }
 
 .pagination-btn {
-  padding: 10px;
+  padding: 12px 30px;
   font-size: 1.6rem;
   font-weight: 600;
   background-color: white;
@@ -86,40 +86,134 @@
   box-shadow: none;
 }
 
-.about-maasai {
-  padding: 70px 0;
+/* About Enkaji Section */
+.about-enkaji {
+  padding: 80px 0;
   background-color: var(--background-light);
+  margin-top: 40px;
+}
+
+.about-hero {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.about-title {
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  font-family: "Merienda", cursive;
+}
+
+.about-subtitle {
+  font-size: 2rem;
+  color: var(--text-color);
+  font-style: italic;
 }
 
 .about-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: 3fr 2fr;
+  gap: 50px;
   align-items: center;
+}
+
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.meaning {
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--primary-dark);
+  line-height: 1.7;
+  border-left: 4px solid var(--primary-color);
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.intro-text p {
+  margin-bottom: 15px;
+  line-height: 1.7;
+  font-size: 1.6rem;
+}
+
+.mission-section h3 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.mission-points {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mission-point {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mission-icon {
+  font-size: 4rem;
+  color: var(--primary-color);
+  line-height: 1;
+}
+
+.mission-text {
+  font-size: 1.6rem;
+  line-height: 1.6;
+}
+
+.mission-text strong {
+  color: var(--primary-color);
+}
+
+.closing-message {
+  font-size: 1.6rem;
+  line-height: 1.7;
+}
+
+.enkaji-tagline {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  color: var(--primary-dark);
+  line-height: 1.5;
 }
 
 .about-image img {
   width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.about-text h2 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: var(--primary-color);
-}
-
-.about-text p {
-  margin-bottom: 15px;
-  line-height: 1.6;
-  color: var(--text-color);
+.about-image:hover img {
+  transform: translateY(-10px);
 }
 
 @media (max-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
     min-height: 600px;
+  }
+  
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .about-image {
+    order: -1;
+    max-width: 600px;
+    margin: 0 auto;
   }
 }
 
@@ -139,17 +233,17 @@
     font-size: 1.4rem;
     min-width: 80px;
   }
-
-  .about-content {
-    grid-template-columns: 1fr;
+  
+  .about-title {
+    font-size: 2.8rem;
   }
-
-  .about-image {
-    order: 1;
+  
+  .about-subtitle {
+    font-size: 1.6rem;
   }
-
-  .about-text {
-    order: 2;
+  
+  .meaning {
+    font-size: 1.6rem;
   }
 }
 
@@ -180,5 +274,23 @@
     text-align: center;
     padding: 12px 15px;
     font-size: 1.4rem;
+  }
+  
+  .about-title {
+    font-size: 2.2rem;
+  }
+  
+  .mission-point {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  
+  .mission-icon {
+    font-size: 3rem;
+  }
+  
+  .enkaji-tagline {
+    font-size: 1.6rem;
   }
 }
