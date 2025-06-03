@@ -35,13 +35,6 @@
   flex-direction: column;
   gap: 1.5rem;
 }
-.auth-error {
-  background-color: #ffe6e6;
-  color: var(--danger-color);
-  padding: 10px 15px;
-  border-radius: 4px;
-  font-size: 1.4rem;
-}
 .signup-btn {
   padding-block: 1.2rem;
   background-color: var(--primary-color);
@@ -49,6 +42,11 @@
   border: none;
   cursor: pointer;
   text-transform: capitalize;
+  font-size: 1.4rem;
+  transition: color 0.3s ease;
+}
+.signup-btn:hover{
+  background-color: var(--primary-dark);
 }
 .login-text {
   font-size: 1.4rem;

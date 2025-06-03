@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section about">
-            <h3>Red Dune</h3>
+            <h3>Enkaji Crafts</h3>
             <p>
               Authentic Maasai products made by indigenous artisans from Kenya.
               Supporting traditional craftsmanship and sustainable livelihoods.
@@ -42,7 +42,7 @@ const Footer = () => {
         </div>
         
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Red Dune | All Rights Reserved</p>
+          <p>&copy; {new Date().getFullYear()} Enkaji Crafts | All Rights Reserved</p>
         </div>
       </div>
     </footer>

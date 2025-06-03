@@ -58,7 +58,7 @@ const LoginPage = () => {
     <div className="login-page-wrapper">
       <form action="" onSubmit={handleSubmit}>
         <Logo />
-        <p className="login-form-title">Login to Red Dune</p>
+        <p className="login-form-title">Login to Enkaji Crafts</p>
 
         <div className="login-form-body">
           {error && <div className="auth-error">{error}</div>}
