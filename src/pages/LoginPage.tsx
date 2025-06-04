@@ -1,6 +1,6 @@
-import "../styles/LoginPage.css";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import {
   TextField,
@@ -9,30 +9,54 @@ import {
   IconButton,
   OutlinedInput,
   InputAdornment,
+  Alert,
+  CircularProgress
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { ToastContainer, toast } from "react-toastify";
+import "../styles/LoginPage.css";
 import formControlStyle from "../styles/formControlStyles";
 import Logo from "../components/Logo";
+import apiUrl from "../Utils/apiUrl";
+import useUserStore from "../stores/userStore";
 
 const LoginPage = () => {
-  const { login, error, clearError, loading } = useAuth();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "",
+    emailAddress: "",
     password: "",
   });
+  const [formError, setFormError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const navigate = useNavigate();
+  const setUserInfo = useUserStore((state) => state.setUserInfo)
 
-    // Clear any previous errors when the user starts typing
-    if (error) clearError();
+  const { isPending, mutate} = useMutation({
+    mutationKey: ["login-user"],
+    mutationFn: async () => {
+      const response = await axios.post(`${apiUrl}/auth/login`, formData);
+      console.log(response.data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setUserInfo(data);
+      toast.success("Logged in successfully!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setTimeout(() => navigate("/"), 2000);
+    },
+  });
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -47,73 +71,87 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const success = await login(formData);
-    if (success) {
-      navigate("/"); // Redirect to home page after successful login
-    }
+    setFormError(null);
+    mutate();
   };
 
   return (
-    <div className="login-page-wrapper">
-      <form action="" onSubmit={handleSubmit}>
-        <Logo />
-        <p className="login-form-title">Login to Enkaji Crafts</p>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <div className="login-page-wrapper">
+        <form action="" onSubmit={handleSubmit}>
+          <Logo />
+          <p className="login-form-title">Login to Enkaji Crafts</p>
 
-        <div className="login-form-body">
-          {error && <div className="auth-error">{error}</div>}
-          <TextField
-            label="Email"
-            variant="outlined"
-            type="email"
-            required
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            sx={formControlStyle}
-          />
-
-          <FormControl variant="outlined" sx={formControlStyle}>
-            <InputLabel>Password</InputLabel>
-            <OutlinedInput
-              type={showPassword ? "text" : "password"}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+          <div className="login-form-body">
+            {formError && (
+              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+                {formError}
+              </Alert>
+            )}
+            <TextField
+              label="Email"
+              variant="outlined"
+              type="email"
               required
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label={
-                      showPassword
-                        ? "hide the password"
-                        : "display the password"
-                    }
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    onMouseUp={handleMouseUpPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              label="Password"
+              name="emailAddress"
+              value={formData.emailAddress}
+              onChange={handleOnChange}
+              sx={formControlStyle}
             />
-          </FormControl>
 
-          <button type="submit" disabled={loading} className="login-btn">
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </div>
+            <FormControl variant="outlined" sx={formControlStyle}>
+              <InputLabel>Password</InputLabel>
+              <OutlinedInput
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleOnChange}
+                required
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      onMouseUp={handleMouseUpPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+            </FormControl>
 
-        <p className="register-text">
-          Don't have an account? <Link to={"/register"}>Register</Link>
-        </p>
-      </form>
-    </div>
+            <button type="submit" disabled={isPending} className="login-btn">
+              {isPending ? <CircularProgress size="1.3rem" sx={{ color: "white" }} /> : "Login"}
+            </button>
+          </div>
+
+          <p className="register-text">
+            Don't have an account? <Link to={"/register"}>Register</Link>
+          </p>
+        </form>
+      </div>
+    </>
   );
-}
-
+};
 
 export default LoginPage;

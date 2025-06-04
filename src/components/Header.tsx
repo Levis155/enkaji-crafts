@@ -16,19 +16,22 @@ import { BsBoxArrowInLeft } from "react-icons/bs";
 import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
-import { useAuth } from "../context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import useUserStore from "../stores/userStore";
 import { useCart } from "../context/CartContext";
 import Logo from "./Logo";
 import "../styles/Header.css";
 
 const Header = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const user = useUserStore((state) => state.user);
+  const removeUserInfo = useUserStore((state) => state.removeUserInfo);
   const { totalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const navigate = useNavigate();
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const categoriesMenuRef = useRef<HTMLDivElement>(null);
@@ -104,6 +107,22 @@ const Header = () => {
     setShowMobileMenu(!showMobileMenu);
   };
 
+  const handleLogOut = () => {
+    toast.success("Logged out successfully.", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      onClose: () => {
+        removeUserInfo();
+      },
+    });
+  };
+
   // Standard Header for normal browser width
   const standardHeader = (
     <div className="header-content">
@@ -131,10 +150,8 @@ const Header = () => {
         <div className="header-icon-wrapper" ref={accountMenuRef}>
           <div className="header-icon" onClick={toggleAccountMenu}>
             <FaRegUser />
-            <span className={isAuthenticated ? "hi-user" : ""}>
-              {isAuthenticated
-                ? `Hi ${user?.fullName.split(" ")[0]}`
-                : "Account"}
+            <span className={user ? "hi-user" : ""}>
+              {user ? `Hi ${user?.fullName.split(" ")[0]}` : "Account"}
             </span>
             <div className="angle-arrow-cont">
               {showAccountMenu ? <FaAngleUp /> : <FaAngleDown />}
@@ -143,7 +160,7 @@ const Header = () => {
 
           {showAccountMenu && (
             <div className="dropdown-menu account-menu">
-              {isAuthenticated ? (
+              {user ? (
                 <>
                   <Link
                     to="/customer/account"
@@ -166,7 +183,7 @@ const Header = () => {
                   <a
                     href="#"
                     onClick={() => {
-                      logout();
+                      handleLogOut();
                       setShowAccountMenu(false);
                     }}
                   >
@@ -258,7 +275,7 @@ const Header = () => {
             <div className="dropdown-menu mobile-menu">
               <div className="menu-section">
                 <h3 className="menu-title">Account</h3>
-                {isAuthenticated ? (
+                {user ? (
                   <>
                     <Link
                       to="/customer/account"
@@ -281,7 +298,7 @@ const Header = () => {
                     <a
                       href="#"
                       onClick={() => {
-                        logout();
+                        handleLogOut();
                         setShowMobileMenu(false);
                       }}
                     >
@@ -330,9 +347,23 @@ const Header = () => {
   );
 
   return (
-    <header className="header">
-      {windowWidth <= 1060 ? minimizedHeader : standardHeader}
-    </header>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <header className="header">
+        {windowWidth <= 1060 ? minimizedHeader : standardHeader}
+      </header>
+    </>
   );
 };
 
