@@ -1,5 +1,5 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   originalPrice: number;
@@ -7,6 +7,7 @@ export interface Product {
   inStock: boolean;
   rating: number;
   totalRatings?: number;
+  discount?: number;
   category?: string;
   description?: string;
   specifications?: {
@@ -14,6 +15,16 @@ export interface Product {
   };
   inPackage?: string[];
   variations?: ProductVariation[];
+}
+
+export interface CartItem {
+  id: string;
+  name: string;
+  image: string;
+  price: number;
+  originalPrice: number;
+  inStock?: boolean;
+  quantity: number;
 }
 
 export interface ProductVariation {
