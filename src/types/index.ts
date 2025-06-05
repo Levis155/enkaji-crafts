@@ -3,17 +3,16 @@ export interface Product {
   name: string;
   price: number;
   originalPrice: number;
-  discount: number;
   image: string;
   inStock: boolean;
   rating: number;
-  totalRatings: number;
-  category: string;
-  description: string;
-  specifications: {
+  totalRatings?: number;
+  category?: string;
+  description?: string;
+  specifications?: {
     [key: string]: string;
   };
-  inPackage: string[];
+  inPackage?: string[];
   variations?: ProductVariation[];
 }
 

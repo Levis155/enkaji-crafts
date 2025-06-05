@@ -26,7 +26,7 @@ const LoginPage = () => {
     emailAddress: "",
     password: "",
   });
-  const [formError, setFormError] = useState(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
@@ -53,6 +53,14 @@ const LoginPage = () => {
       });
       setTimeout(() => navigate("/"), 2000);
     },
+    onError: (err) => {
+      if(axios.isAxiosError(err)) {
+        const serverMessage = err.response?.data.message;
+        setFormError(serverMessage);
+      } else{
+        setFormError("Something went wrong.")
+      }
+    }
   });
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

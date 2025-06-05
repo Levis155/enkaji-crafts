@@ -26,7 +26,17 @@
   height: 3px;
   background-color: var(--primary-color);
 }
-
+.products-loader-container, .products-error-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+.products-error-container{
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  text-transform: capitalize;
+}
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -46,9 +56,10 @@
 .pagination-info {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  font-size: 1.4rem;
+  width: 100%;
+  max-width: 600px;
   color: var(--text-light);
+  font-size: 1.5rem;
 }
 
 .pagination-controls {
@@ -57,33 +68,30 @@
 }
 
 .pagination-btn {
-  padding: 12px 30px;
-  font-size: 1.6rem;
-  font-weight: 600;
-  background-color: white;
+  padding: 12px 25px;
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
   color: var(--text-color);
-  border: 2px solid var(--border-color);
   border-radius: 4px;
+  font-weight: 600;
+  font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 100px;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pagination-btn:hover:not(:disabled) {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--text-white);
   border-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pagination-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background-color: var(--background-light);
-  color: var(--text-light);
-  transform: none;
-  box-shadow: none;
 }
 
 /* About Enkaji Section */
