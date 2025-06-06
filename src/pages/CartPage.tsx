@@ -3,28 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaAngleDoubleLeft } from "react-icons/fa";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+import useCartStore from "../stores/cartStore";
+import useUserStore from "../stores/userStore";
 import "../styles/CartPage.css";
 
 const CartPage = () => {
-  const { items, updateQuantity, removeItem, totalPrice } = useCart();
-  const { isAuthenticated } = useAuth();
+  const user = useUserStore((state) => state.user);
+  const cart = useCartStore((state) => state.cart);
+  const incrementItemQuantity = useCartStore(
+    (state) => state.incrementItemQuantity
+  );
+  const decrementItemQuantity = useCartStore(
+    (state) => state.decrementItemQuantity
+  );
+  const removeCartItem = useCartStore((state) => state.removeItem);
+  const getCartTotal = useCartStore((state) => state.getTotalPrice);
+  const getTotalCartQuantity = useCartStore((state) => state.getTotalQuantity);
   const navigate = useNavigate();
   const [shippingFee] = useState(120); // Default shipping fee
 
-  const inStockItems = items.filter((item) => item.inStock);
-  const outOfStockItems = items.filter((item) => !item.inStock);
-
-  const handleQuantityChange = (id: number, newQuantity: number) => {
-    if (newQuantity > 0) {
-      updateQuantity(id, newQuantity);
-    }
-  };
-
-  const handleRemoveItem = (id: number) => {
-    removeItem(id);
-  };
+  const inStockItems = cart.filter((item) => item.inStock);
+  const outOfStockItems = cart.filter((item) => !item.inStock);
 
   const handleCheckout = () => {
     if (inStockItems.length === 0) return;
@@ -32,7 +31,7 @@ const CartPage = () => {
     navigate("/checkout");
   };
 
-  if (items.length === 0) {
+  if (cart.length === 0) {
     return (
       <div>
         <Header />
@@ -56,7 +55,7 @@ const CartPage = () => {
     <div>
       <Header />
       <main className="cart-page">
-        <h1>Your Cart ({items.length})</h1>
+        <h1>Your Cart ({getTotalCartQuantity()})</h1>
 
         <div className="cart-container">
           <div className="cart-items">
@@ -64,11 +63,9 @@ const CartPage = () => {
               <div className="cart-section">
                 {inStockItems.map((item) => (
                   <div key={item.id} className="cart-item">
-                    <div className="item-image">
-                      <Link to={`/product/${item.id}`}>
-                        <img src={item.image} alt={item.name} />
-                      </Link>
-                    </div>
+                    <Link to={`/product/${item.id}`} className="item-image">
+                      <img src={item.image} alt={item.name} />
+                    </Link>
 
                     <div className="cart-item-details">
                       <Link
@@ -78,21 +75,19 @@ const CartPage = () => {
                         {item.name}
                       </Link>
 
-                      {item.variation && (
-                        <p className="cart-item-variation">
-                          Variation: {item.variation}
-                        </p>
-                      )}
-
                       <div className="cart-item-price-details">
                         <span className="cart-item-price">
-                          Ksh {item.price.toLocaleString()}
+                          Ksh {item.price}
                         </span>
                         <span className="cart-item-original-price">
-                          Ksh {item.originalPrice.toLocaleString()}
+                          Ksh {item.originalPrice}
                         </span>
                         <span className="cart-item-discount">
-                          -{item.discount}%
+                          -
+                          {Math.round(
+                            100 - (item.price / item.originalPrice) * 100
+                          )}
+                          %
                         </span>
                       </div>
                     </div>
@@ -100,35 +95,27 @@ const CartPage = () => {
                     <div className="item-actions">
                       <div className="cart-page-quantity-control">
                         <button
-                          onClick={() =>
-                            handleQuantityChange(item.id, item.quantity - 1)
-                          }
+                          onClick={() => decrementItemQuantity(item.id)}
                           disabled={item.quantity <= 1}
                         >
                           -
                         </button>
                         <span className="quantity">{item.quantity}</span>
-                        <button
-                          onClick={() =>
-                            handleQuantityChange(item.id, item.quantity + 1)
-                          }
-                        >
+                        <button onClick={() => incrementItemQuantity(item.id)}>
                           +
                         </button>
                       </div>
 
                       <button
                         className="remove-item"
-                        onClick={() => handleRemoveItem(item.id)}
+                        onClick={() => removeCartItem(item.id)}
                       >
                         Remove
                       </button>
                     </div>
 
                     <div className="item-subtotal">
-                      <span>
-                        Ksh {(item.price * item.quantity).toLocaleString()}
-                      </span>
+                      <span>Ksh {item.price * item.quantity}</span>
                     </div>
                   </div>
                 ))}
@@ -140,12 +127,10 @@ const CartPage = () => {
                 <h2>Out of Stock Items</h2>
                 {outOfStockItems.map((item) => (
                   <div key={item.id} className="cart-item out-of-stock">
-                    <div className="item-image">
-                      <Link to={`/product/${item.id}`}>
-                        <img src={item.image} alt={item.name} />
-                      </Link>
-                      <div className="out-of-stock-label">Out of Stock</div>
-                    </div>
+                    <Link to={`/product/${item.id}`} className="item-image">
+                      <img src={item.image} alt={item.name} />
+                    </Link>
+                    <div className="out-of-stock-label">Out of Stock</div>
 
                     <div className="item-details">
                       <Link
@@ -155,21 +140,19 @@ const CartPage = () => {
                         {item.name}
                       </Link>
 
-                      {item.variation && (
-                        <p className="cart-item-variation">
-                          Variation: {item.variation}
-                        </p>
-                      )}
-
                       <div className="cart-item-price-details">
                         <span className="cart-item-price">
-                          Ksh {item.price.toLocaleString()}
+                          Ksh {item.price}
                         </span>
                         <span className="cart-item-original-price">
-                          Ksh {item.originalPrice.toLocaleString()}
+                          Ksh {item.originalPrice}
                         </span>
                         <span className="cart-item-discount">
-                          -{item.discount}%
+                          -
+                          {Math.round(
+                            100 - (item.price / item.originalPrice) * 100
+                          )}
+                          %
                         </span>
                       </div>
                     </div>
@@ -177,16 +160,14 @@ const CartPage = () => {
                     <div className="item-actions">
                       <button
                         className="remove-item"
-                        onClick={() => handleRemoveItem(item.id)}
+                        onClick={() => removeCartItem(item.id)}
                       >
                         Remove
                       </button>
                     </div>
 
                     <div className="item-subtotal">
-                      <span>
-                        Ksh {(item.price * item.quantity).toLocaleString()}
-                      </span>
+                      <span>Ksh {item.price * item.quantity}</span>
                     </div>
                   </div>
                 ))}
@@ -199,23 +180,23 @@ const CartPage = () => {
 
             <div className="cart-page-summary-row">
               <span>Subtotal</span>
-              <span>Ksh {totalPrice.toLocaleString()}</span>
+              <span>Ksh {getCartTotal()}</span>
             </div>
 
             <div className="cart-page-summary-row">
               <span>Shipping Fee</span>
-              <span>Ksh {shippingFee.toLocaleString()}</span>
+              <span>Ksh {shippingFee}</span>
             </div>
 
             <div className="cart-page-total">
               <span>Total</span>
-              <span>Ksh {(totalPrice + shippingFee).toLocaleString()}</span>
+              <span>Ksh {getCartTotal() + shippingFee}</span>
             </div>
 
             <button
               className="checkout-button"
               onClick={
-                isAuthenticated
+                user
                   ? handleCheckout
                   : () => {
                       navigate("/login");
@@ -223,7 +204,7 @@ const CartPage = () => {
               }
               disabled={inStockItems.length === 0}
             >
-              {isAuthenticated ? "Proceed to Checkout" : "Sign In to Checkout"}
+              {user ? "Proceed to Checkout" : "Sign In to Checkout"}
             </button>
 
             <Link to="/" className="continue-shopping">

@@ -7,11 +7,15 @@ interface CartState {
   addItem: (newItem: CartItem) => void;
   incrementItemQuantity: (itemId: string) => void;
   decrementItemQuantity: (itemId: string) => void;
+  removeItem: (itemId: string) => void;
+  clearCart: () => void;
+  getTotalPrice: () => number;
+  getTotalQuantity: () => number;
 }
 
 const useCartStore = create<CartState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       cart: [],
       addItem: (newItem) => {
         set((state) => ({
@@ -35,6 +39,25 @@ const useCartStore = create<CartState>()(
             )
             .filter((item) => item.quantity > 0),
         }));
+      },
+      removeItem: (itemId) => {
+        set((state) => ({
+          cart: state.cart.filter((item) => item.id !== itemId),
+        }));
+      },
+      clearCart: () => {
+        set({ cart: [] });
+      },
+      getTotalPrice: () => {
+        const { cart } = get();
+        return cart.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
+      },
+      getTotalQuantity: () => {
+        const { cart } = get();
+        return cart.reduce((total, item) => total + item.quantity, 0);
       },
     }),
     { name: "cart_info" }

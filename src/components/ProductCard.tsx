@@ -37,14 +37,6 @@ const ProductCard = ({
     addItem(newCartItem);
   };
 
-  const handleIncrementQuantity = () => {
-    incrementItemQuantity(id);
-  };
-
-  const handleDecrementQuantity = () => {
-    decrementItemQuantity(id);
-  };
-
   return (
     <div className={`product-card ${!inStock ? "out-of-stock" : ""}`}>
       <Link to={`/product/${id}`} className="product-card-image">
@@ -75,9 +67,9 @@ const ProductCard = ({
         <div className="product-manipulation">
           {cartQuantity > 0 ? (
             <div className="quantity-control">
-              <button onClick={handleDecrementQuantity} className="quantity-btn">-</button>
+              <button onClick={() => decrementItemQuantity(id)} className="quantity-btn">-</button>
               <span className="quantity">{cartQuantity}</span>
-              <button onClick={handleIncrementQuantity} className="quantity-btn">+</button>
+              <button onClick={() => incrementItemQuantity(id)} className="quantity-btn">+</button>
             </div>
           ) : (
             <button

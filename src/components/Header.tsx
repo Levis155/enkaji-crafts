@@ -18,14 +18,16 @@ import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import useUserStore from "../stores/userStore";
-import { useCart } from "../context/CartContext";
+import useCartStore from "../stores/cartStore";
 import Logo from "./Logo";
 import "../styles/Header.css";
 
 const Header = () => {
   const user = useUserStore((state) => state.user);
   const removeUserInfo = useUserStore((state) => state.removeUserInfo);
-  const { totalItems } = useCart();
+  const cart = useCartStore(state => state.cart);
+  const getTotalCartQuantity = useCartStore(state => state.getTotalQuantity);
+  const [cartCount, setCartCount] = useState(getTotalCartQuantity());
   const [searchQuery, setSearchQuery] = useState("");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
@@ -45,6 +47,11 @@ const Header = () => {
     { name: "Accessories", path: "/category/accessories" },
     { name: "Decor", path: "/category/decor" },
   ];
+
+
+  useEffect(() => {
+    setCartCount(getTotalCartQuantity());
+  }, [cart, getTotalCartQuantity]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -235,7 +242,7 @@ const Header = () => {
           <Link className="cart-link" to="/cart">
             <MdOutlineShoppingCart />
             <span>Cart</span>
-            {totalItems > 0 && <p className="cart-count">{totalItems}</p>}
+            {cartCount > 0 && <p className="cart-count">{cartCount}</p>}
           </Link>
         </div>
       </div>
@@ -339,7 +346,7 @@ const Header = () => {
         <div className="header-icon cart-icon">
           <Link className="cart-link" to="/cart">
             <MdOutlineShoppingCart />
-            {totalItems > 0 && <p className="cart-count mini">{totalItems}</p>}
+            {cartCount > 0 && <p className="cart-count mini">{cartCount}</p>}
           </Link>
         </div>
       </div>
