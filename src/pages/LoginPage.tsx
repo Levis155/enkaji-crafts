@@ -10,7 +10,7 @@ import {
   OutlinedInput,
   InputAdornment,
   Alert,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -20,6 +20,7 @@ import formControlStyle from "../styles/formControlStyles";
 import Logo from "../components/Logo";
 import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";
+import useCartStore from "../stores/cartStore";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -30,17 +31,32 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
-  const setUserInfo = useUserStore((state) => state.setUserInfo)
+  const setUserInfo = useUserStore((state) => state.setUserInfo);
+  const mergeCart = useCartStore((state) => state.mergeCart);
 
-  const { isPending, mutate} = useMutation({
+  const fetchAndMergeCart = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/cart/items`, {
+        withCredentials: true,
+      });
+      mergeCart(response.data.cart);
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    }
+  };
+
+  const { isPending, mutate } = useMutation({
     mutationKey: ["login-user"],
     mutationFn: async () => {
-      const response = await axios.post(`${apiUrl}/auth/login`, formData);
-      console.log(response.data);
+      const response = await axios.post(`${apiUrl}/auth/login`, formData, {
+        withCredentials: true,
+      });
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setUserInfo(data);
+      await fetchAndMergeCart();
+
       toast.success("Logged in successfully!", {
         position: "top-right",
         autoClose: 2000,
@@ -51,16 +67,17 @@ const LoginPage = () => {
         progress: undefined,
         theme: "colored",
       });
+
       setTimeout(() => navigate("/"), 2000);
     },
     onError: (err) => {
-      if(axios.isAxiosError(err)) {
+      if (axios.isAxiosError(err)) {
         const serverMessage = err.response?.data.message;
         setFormError(serverMessage);
-      } else{
-        setFormError("Something went wrong.")
+      } else {
+        setFormError("Something went wrong.");
       }
-    }
+    },
   });
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,20 +102,9 @@ const LoginPage = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+      <ToastContainer />
       <div className="login-page-wrapper">
-        <form action="" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <Logo />
           <p className="login-form-title">Login to Enkaji Crafts</p>
 
@@ -108,6 +114,7 @@ const LoginPage = () => {
                 {formError}
               </Alert>
             )}
+
             <TextField
               label="Email"
               variant="outlined"
@@ -130,11 +137,6 @@ const LoginPage = () => {
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label={
-                        showPassword
-                          ? "hide the password"
-                          : "display the password"
-                      }
                       onClick={handleClickShowPassword}
                       onMouseDown={handleMouseDownPassword}
                       onMouseUp={handleMouseUpPassword}
@@ -149,7 +151,11 @@ const LoginPage = () => {
             </FormControl>
 
             <button type="submit" disabled={isPending} className="login-btn">
-              {isPending ? <CircularProgress size="1.3rem" sx={{ color: "white" }} /> : "Login"}
+              {isPending ? (
+                <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+              ) : (
+                "Login"
+              )}
             </button>
           </div>
 

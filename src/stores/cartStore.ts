@@ -11,6 +11,7 @@ interface CartState {
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalQuantity: () => number;
+  mergeCart: (itemsFromBackend: any[]) => void;
 }
 
 const useCartStore = create<CartState>()(
@@ -58,6 +59,26 @@ const useCartStore = create<CartState>()(
       getTotalQuantity: () => {
         const { cart } = get();
         return cart.reduce((total, item) => total + item.quantity, 0);
+      },
+      mergeCart: (itemsFromBackend) => {
+        set((state) => {
+          const existingIds = new Set(state.cart.map((item) => item.id));
+          const newItems: CartItem[] = itemsFromBackend
+            .filter((item) => !existingIds.has(item.productId))
+            .map((item) => ({
+              id: item.productId, 
+              name: item.name,
+              price: item.price,
+              originalPrice: item.originalPrice,
+              image: item.image,
+              inStock: item.inStock,
+              quantity: item.quantity,
+            }));
+
+          return {
+            cart: [...state.cart, ...newItems],
+          };
+        });
       },
     }),
     { name: "cart_info" }

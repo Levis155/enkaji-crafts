@@ -10,6 +10,7 @@ import "../styles/CartPage.css";
 const CartPage = () => {
   const user = useUserStore((state) => state.user);
   const cart = useCartStore((state) => state.cart);
+  console.log(cart);
   const incrementItemQuantity = useCartStore(
     (state) => state.incrementItemQuantity
   );

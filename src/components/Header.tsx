@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaRegUser,
@@ -17,6 +19,7 @@ import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
+import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
 import Logo from "./Logo";
@@ -25,8 +28,9 @@ import "../styles/Header.css";
 const Header = () => {
   const user = useUserStore((state) => state.user);
   const removeUserInfo = useUserStore((state) => state.removeUserInfo);
-  const cart = useCartStore(state => state.cart);
-  const getTotalCartQuantity = useCartStore(state => state.getTotalQuantity);
+  const cart = useCartStore((state) => state.cart);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const getTotalCartQuantity = useCartStore((state) => state.getTotalQuantity);
   const [cartCount, setCartCount] = useState(getTotalCartQuantity());
   const [searchQuery, setSearchQuery] = useState("");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -40,14 +44,20 @@ const Header = () => {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const categories = [
-    { name: "Attire", path: "/category/attire" },
-    { name: "Jewelry", path: "/category/jewelry" },
-    { name: "Footwear", path: "/category/footwear" },
     { name: "Tools", path: "/category/tools" },
     { name: "Accessories", path: "/category/accessories" },
-    { name: "Decor", path: "/category/decor" },
   ];
 
+  const mutation = useMutation({
+    mutationKey: ["send-cart-data"],
+    mutationFn: async () => {
+      await axios.post(
+        `${apiUrl}/cart/items`,
+        { cart },
+        { withCredentials: true }
+      );
+    },
+  });
 
   useEffect(() => {
     setCartCount(getTotalCartQuantity());
@@ -114,20 +124,21 @@ const Header = () => {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleLogOut = () => {
-    toast.success("Logged out successfully.", {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      onClose: () => {
-        removeUserInfo();
-      },
-    });
+  const handleLogOut = async () => {
+    try {
+      await mutation.mutateAsync();
+      clearCart();
+      removeUserInfo();
+
+      toast.success("Logged out successfully.", {
+        position: "top-right",
+        autoClose: 2000,
+        theme: "colored",
+      });
+      setTimeout(() => navigate("/"), 2000);
+    } catch (error) {
+      toast.error("Failed to sync cart with server before logging out.");
+    }
   };
 
   // Standard Header for normal browser width

@@ -22,7 +22,7 @@ const HomePage = () => {
     queryKey: ["fetch-all-products"],
     queryFn: async () => {
       const response = await axios.get(`${apiUrl}/products`);
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     },
   });
