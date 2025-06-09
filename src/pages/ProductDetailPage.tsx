@@ -1,470 +1,367 @@
-// import { useState, useEffect } from "react";
-// import { useParams, Link } from "react-router-dom";
-// import Rating from "@mui/material/Rating";
-// import { IoLocationOutline, IoCheckmarkCircle } from "react-icons/io5";
-// import { IoIosPricetag, IoIosCalendar } from "react-icons/io";
-// import { TbTruckReturn } from "react-icons/tb";
-// import { GoShareAndroid } from "react-icons/go";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Rating from "@mui/material/Rating";
+import { IoLocationOutline, IoCheckmarkCircle } from "react-icons/io5";
+import { IoIosPricetag, IoIosCalendar } from "react-icons/io";
+import { IoChatbubblesOutline } from "react-icons/io5";
+import { PulseLoader } from "react-spinners";
 // import { FaRegHeart } from "react-icons/fa";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import "swiper/css";
-// import "swiper/css/navigation";
-//  // @ts-ignore
-// import { Navigation } from "swiper";
-// import Header from "../components/Header";
-// import Footer from "../components/Footer";
-// import { useAuth } from "../context/AuthContext";
-// import { useCart } from "../context/CartContext";
-// import { useWishlist } from "../context/WishlistContext";
-// import { getProductById, getRelatedProducts } from "../data/products";
-// import { getReviewsByProductId } from "../data/reviews";
-// import { Product, Review } from "../types";
-// import "../styles/ProductDetailPage.css";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import RelatedProducts from "../components/RelatedProducts";
+import useUserStore from "../stores/userStore";
+import useCartStore from "../stores/cartStore";
+import { Product } from "../types";
+import apiUrl from "../Utils/apiUrl";
+import { earliestDeliveryDate, latestDeliveryDate } from "../Utils/deliveryDates";
+import "../styles/ProductDetailPage.css";
 
-// const ProductDetailPage = () => {
-//   const { id } = useParams<{ id: string }>();
-//   const { user } = useAuth();
-//   const { items, updateQuantity, addItem } = useCart();
-//   const {
-//     isInWishlist,
-//     addItem: addToWishlist,
-//     removeItem: removeFromWishlist,
-//   } = useWishlist();
+const ProductDetailPage = () => {
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-//   const [product, setProduct] = useState<Product | undefined>(undefined);
-//   const [selectedVariation, setSelectedVariation] = useState<
-//     number | undefined
-//   >(undefined);
-//   const [cartQuantity, setCartQuantity] = useState(0);
-//   const [reviews, setReviews] = useState<Review[]>([]);
-//   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const { id } = useParams<{ id: string }>();
+  const user = useUserStore((state) => state.user);
+  const cart = useCartStore((state) => state.cart);
+  const handleAddToCart = useCartStore((state) => state.addItem);
+  const incrementQuantity = useCartStore(
+    (state) => state.incrementItemQuantity
+  );
+  const decrementQuantity = useCartStore(
+    (state) => state.decrementItemQuantity
+  );
+  const removeFromCart = useCartStore((state) => state.removeItem);
+  const cartItem = cart.find((item) => item.id === id);
+  const cartQuantity = cartItem?.quantity ?? 0;
 
-//   useEffect(() => {
-//     if (id) {
-//       const productId = parseInt(id);
-//       const foundProduct = getProductById(productId);
+  const {
+    isLoading,
+    data: product,
+    isError,
+    error,
+  } = useQuery<Product>({
+    queryKey: ["fetch-product"],
+    queryFn: async () => {
+      setFetchError(null);
+      const response = await axios.get(`${apiUrl}/products/${id}`);
+      console.log(response.data);
+      return response.data;
+    },
+  });
 
-//       if (foundProduct) {
-//         setProduct(foundProduct);
+  useEffect(() => {
+    if (isError) {
+      if (axios.isAxiosError(error)) {
+        const serverMessage = error.response?.data.message;
+        setFetchError(serverMessage);
+      } else {
+        setFetchError("Something went wrong.");
+      }
+    }
+  }, [error]);
 
-//         // Set default variation if available
-//         if (foundProduct.variations && foundProduct.variations.length > 0) {
-//           setSelectedVariation(foundProduct.variations[0].id);
-//         }
+  const getAverageRating = (): number => {
+    if (!product || !product.reviews || product.reviews.length === 0) {
+      return 0;
+    }
 
-//         // Get product reviews
-//         const productReviews = getReviewsByProductId(productId);
-//         setReviews(productReviews);
+    const sum = product.reviews.reduce(
+      (total, review) => total + review.rating,
+      0
+    );
+    const average = sum / product.reviews.length;
+    return parseFloat(average.toFixed(1)); // Returns the average rounded to 1 decimal place
+  };
 
-//         // Get related products
-//         const related = getRelatedProducts(productId, 4);
-//         setRelatedProducts(related);
+  if (isLoading) {
+    return (
+      <div>
+        <Header />
+        <div className="product-page-loading-container">
+          <PulseLoader size={15} color="#e61919" />{" "}
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-//         //check if product is already in cart and set initial state
-//         const cartItem = items.find((item) => item.id === productId);
-//         if (cartItem) {
-//           setCartQuantity(cartItem.quantity);
-//         } else {
-//           setCartQuantity(0);
-//         }
-//       }
-//     }
-//   }, [items, id]);
+  if (fetchError) {
+    return (
+      <div>
+        <Header />
+        <div className="product-page-error-container">
+          <h3>{fetchError}</h3>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-//   if (!product) {
-//     return (
-//       <div>
-//         <Header />
-//         <div className="container loading-container">
-//           <p>Loading product...</p>
-//         </div>
-//         <Footer />
-//       </div>
-//     );
-//   }
+  return (
+    <>
+      <Header />
+      {product && (
+        <div className="product-page-wrapper">
+          <div className="product-page-wrapper-col1">
+            <div className="product-container">
+              <div className="product-container-col1">
+                <div className="product-container-col1-img">
+                  <img src={product.image} alt={product.name} />
+                  {!product.inStock && (
+                    <div className="out-of-stock-overlay">Out of Stock</div>
+                  )}
+                </div>
+              </div>
+              <div className="product-container-col2">
+                <p className="product-container-col2-headline">
+                  {product.name}
+                </p>
+                <p className="product-container-col2-brand">
+                  category: <span>{product.category}</span> |{" "}
+                  <span>
+                    <a href="">similar products</a>
+                  </span>
+                </p>
+                <div className="product-container-price-discount-container">
+                  <p className="product-container-col2-price">
+                    ksh {product.price}
+                  </p>
 
-//   const handleAddToCart = () => {
-//     const variationName =
-//       selectedVariation && product.variations
-//         ? product.variations.find((v) => v.id === selectedVariation)?.name
-//         : undefined;
+                  <div className="product-container-discount-container">
+                    <p className="product-container-discounted-figure">
+                      ksh {product.originalPrice}
+                    </p>
+                    <p className="product-container-percentage-discount">
+                      -
+                      {Math.round(
+                        100 - (product.price / product.originalPrice) * 100
+                      )}
+                      %
+                    </p>
+                  </div>
+                </div>
 
-//     addItem({
-//       id: product.id,
-//       name: product.name,
-//       price: product.price,
-//       originalPrice: product.originalPrice,
-//       discount: product.discount,
-//       image:
-//         selectedVariation && product.variations
-//           ? product.variations.find((v) => v.id === selectedVariation)?.image ||
-//             product.image
-//           : product.image,
-//       quantity: cartQuantity,
-//       variation: variationName,
-//       inStock: product.inStock,
-//     });
-//   };
+                {user ? (
+                  <p className="product-container-col2-shipping">
+                    + shipping of ksh 120 to {user.county}, {user.town}.
+                  </p>
+                ) : (
+                  <p className="product-container-col2-shipping">
+                    + shipping of ksh 120 to Nairobi CBD.
+                  </p>
+                )}
+                <div className="product-cont-col2-rating">
+                  <Rating name="read-only" value={4} readOnly />
+                </div>
+                <p className="stock-status">
+                  {product.inStock ? "in stock" : "out of stock"}
+                </p>
+                <div className="product-page-wrapper-col2-btn">
+                  {cartQuantity > 0 ? (
+                    <div className="product-page-cart-control">
+                      <button
+                        className="product-page-cart-decrement-btn"
+                        onClick={() => {
+                          if (cartQuantity > 1) {
+                            decrementQuantity(product.id);
+                          } else {
+                            removeFromCart(product.id);
+                          }
+                        }}
+                      >
+                        -
+                      </button>
+                      <p className="product-page-cart-quantity">
+                        {cartQuantity}
+                      </p>
+                      <button
+                        className="product-page-cart-increment-btn"
+                        onClick={() => {
+                          incrementQuantity(product.id);
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="product-page-wrapper-col2-add-to-cart"
+                      onClick={() => {
+                        handleAddToCart({
+                          id: product.id,
+                          name: product.name,
+                          image: product.image,
+                          price: product.price,
+                          originalPrice: product.originalPrice,
+                          inStock: product.inStock,
+                          quantity: 1,
+                        });
+                      }}
+                      disabled={!product.inStock}
+                    >
+                      {product.inStock ? "Add to Cart" : "Out of Stock"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="product-page-product-details">
+              <p className="product-page-product-details-title">
+                product details
+              </p>
+              <p className="product-page-product-details-body">
+                {product.description}
+              </p>
+            </div>
+            <div className="product-page-product-specifications">
+              <p className="product-page-product-specifications-title">
+                product specifications
+              </p>
+              <div className="product-page-product-specifications-body">
+                <div className="key-features">
+                  <p className="key-features-title">specifications</p>
+                  <div className="key-features-body">
+                    <ul>
+                      <li>{product.specifications}</li>
+                    </ul>
+                  </div>
+                </div>
 
-//   const handleQuantityChange = (newQuantity: number) => {
-//     if (newQuantity <= 0) {
-//       updateQuantity(product.id, 0);
-//       setCartQuantity(0);
-//     } else {
-//       updateQuantity(product.id, newQuantity);
-//       setCartQuantity(newQuantity);
-//     }
-//   };
+                <div className="whats-in-the-box">
+                  <p className="whats-in-the-box-title">
+                    what's in the package
+                  </p>
+                  <div className="whats-in-the-box-body">
+                    <ul className="package-contents">
+                      <li>{product.packageContent}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-//   const incrementQuantity = () => {
-//     handleQuantityChange(cartQuantity + 1);
-//   };
+            <div className="product-page-customer-feedback">
+              <p className="customer-feedback-title">customer feedback</p>
 
-//   const decrementQuantity = () => {
-//     handleQuantityChange(cartQuantity - 1);
-//   };
+              {!product.reviews || product.reviews?.length === 0 ? (
+                <div className="no-reviews">
+                  <IoChatbubblesOutline />
+                  <p>This product doesn't have any reviews yet.</p>
+                </div>
+              ) : (
+                <div className="customer-feedback-body">
+                  <div className="customer-feedback-col1">
+                    <p className="customer-feedback-col1-title">
+                      verified ratings ({product.reviews?.length})
+                    </p>
 
-//   const handleWishlistToggle = () => {
-//     if (isInWishlist(product.id)) {
-//       removeFromWishlist(product.id);
-//     } else {
-//       addToWishlist({
-//         id: product.id,
-//         name: product.name,
-//         price: product.price,
-//         originalPrice: product.originalPrice,
-//         discount: product.discount,
-//         image: product.image,
-//         inStock: product.inStock,
-//       });
-//     }
-//   };
+                    <div className="ratings-summary">
+                      <p className="ratings-average">{getAverageRating()}</p>
+                      <div>
+                        <Rating
+                          name="read-only"
+                          value={getAverageRating()} // Note the parentheses to call the function
+                          readOnly
+                          precision={0.5} // This allows half-star ratings
+                        />
+                      </div>
+                      <p className="total-ratings">
+                        {product.reviews?.length} verified ratings
+                      </p>
+                    </div>
+                  </div>
 
-//   const selectedVariationImage =
-//     selectedVariation && product.variations
-//       ? product.variations.find((v) => v.id === selectedVariation)?.image
-//       : product.image;
+                  <div className="customer-feedback-col2">
+                    <p className="customer-feedback-col2-title">
+                      product reviews ({product.reviews?.length})
+                    </p>
 
-//   return (
-//     <>
-//       <Header />
-//       <div className="product-page-wrapper">
-//         <div className="product-page-wrapper-col1">
-//           <div className="product-container">
-//             <div className="product-container-col1">
-//               <div className="product-container-col1-img">
-//                 <img src={selectedVariationImage} alt={product.name} />
-//                 {!product.inStock && (
-//                   <div className="out-of-stock-overlay">Out of Stock</div>
-//                 )}
-//               </div>
-//             </div>
-//             <div className="product-container-col2">
-//               <p className="product-container-col2-headline">{product.name}</p>
-//               <p className="product-container-col2-brand">
-//                 brand: <span>jbl</span> |{" "}
-//                 <span>
-//                   <a href="">similar products from jbl</a>
-//                 </span>
-//               </p>
-//               <div className="product-container-price-discount-container">
-//                 <p className="product-container-col2-price">
-//                   ksh {product.price.toLocaleString()}
-//                 </p>
+                    <div className="customer-feedback-col2-body">
+                      {product.reviews?.map((review) => (
+                        <div key={review.id} className="product-review-card">
+                          <div className="product-review-card-rating">
+                            <Rating
+                              name="read-only"
+                              value={Math.floor(review.rating)}
+                              readOnly
+                            />
+                          </div>
 
-//                 <div className="product-container-discount-container">
-//                   <p className="product-container-discounted-figure">
-//                     ksh {product.originalPrice.toLocaleString()}
-//                   </p>
-//                   <p className="product-container-percentage-discount">
-//                     -{product.discount}%
-//                   </p>
-//                 </div>
-//               </div>
+                          <p className="product-review-card-review-title">
+                            {review.title}
+                          </p>
 
-//               {user ? (
-//                 <p className="product-container-col2-shipping">
-//                   + shipping of ksh 120 to {user.shippingAddress.county},
-//                   {user.shippingAddress.town}.
-//                 </p>
-//               ) : (
-//                 <p className="product-container-col2-shipping">
-//                   + shipping of ksh 120 to Nairobi CBD.
-//                 </p>
-//               )}
-//               <div className="product-cont-col2-rating">
-//                 <Rating name="read-only" value={4} readOnly />
-//               </div>
-//               <p className="stock-status">
-//                 {product.inStock ? "in stock" : "out of stock"}
-//               </p>
+                          <p className="product-review-card-review-excerpt">
+                            {review.text}
+                          </p>
 
-//               {product.variations && product.variations.length > 0 && (
-//                 <div className="product-cont-col2-variations">
-//                   <p>variations</p>
-//                   <div className="variations">
-//                     {product.variations.map((variation) => (
-//                       <div
-//                         key={variation.id}
-//                         className={
-//                           selectedVariation === variation.id
-//                             ? "variations-card-clicked"
-//                             : "variations-card"
-//                         }
-//                         onClick={() => setSelectedVariation(variation.id)}
-//                       >
-//                         <img src={variation.image} alt="" />
-//                       </div>
-//                     ))}
-//                   </div>
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//           <div className="product-page-product-details">
-//             <p className="product-page-product-details-title">
-//               product details
-//             </p>
-//             <p className="product-page-product-details-body">
-//               {product.description}
-//             </p>
-//           </div>
-//           <div className="product-page-product-specifications">
-//             <p className="product-page-product-specifications-title">
-//               product specifications
-//             </p>
-//             <div className="product-page-product-specifications-body">
-//               <div className="key-features">
-//                 <p className="key-features-title">specifications</p>
-//                 <div className="key-features-body">
-//                   <ul>
-//                     {Object.entries(product.specifications).map(
-//                       ([key, value]) => (
-//                         <li key={key}>
-//                           <strong>{key}:</strong> {value}
-//                         </li>
-//                       )
-//                     )}
-//                   </ul>
-//                 </div>
-//               </div>
+                          <div className="product-review-card-bottom">
+                            <p className="product-review-card-review-details">
+                              {review.createdAt} by {review.user.fullName}
+                            </p>
 
-//               <div className="whats-in-the-box">
-//                 <p className="whats-in-the-box-title">what's in the package</p>
-//                 <div className="whats-in-the-box-body">
-//                   <ul className="package-contents">
-//                     {product.inPackage.map((item, index) => (
-//                       <li key={index}>{item}</li>
-//                     ))}
-//                   </ul>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
+                            <p className="verified-purchase">
+                              <IoCheckmarkCircle /> verified purchase
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-//           <div className="product-page-customer-feedback">
-//             <p className="customer-feedback-title">customer feedback</p>
+            {product?.category && (
+              <RelatedProducts category={product.category} />
+            )}
+          </div>
+          <div className="product-page-wrapper-col2">
+            <div className="product-page-wrapper-col2-title">
+              shipping & delivery
+            </div>
+            <div className="product-page-wrapper-col2-body">
+              <div className="product-page-wrapper-col2-detail">
+                <IoLocationOutline />
+                <p>
+                  <span>ship to:</span>{" "}
+                  {user ? `${user.county}, ${user.town}` : "Nairobi CBD"}
+                </p>
+              </div>
+              <div className="product-page-wrapper-col2-detail">
+                <IoIosPricetag />
+                <p>
+                  <span>shipping fee: </span>ksh 120
+                </p>
+              </div>
+              <div className="product-page-wrapper-col2-detail">
+                <IoIosCalendar />{" "}
+                <p>
+                  <span>delivery date: </span>{earliestDeliveryDate} - {latestDeliveryDate}
+                </p>
+              </div>
+              <div className="product-page-wrapper-col2-detail"></div>
+              {/* <div className="product-page-wrapper-col2-btns">
+                <button>
+                  <GoShareAndroid /> share
+                </button>
+                <button
+                  className={`wishlist-button ${
+                    isInWishlist(product.id) ? "active" : ""
+                  }`}
+                  onClick={handleWishlistToggle}
+                >
+                  <FaRegHeart /> wish
+                </button>
+              </div> */}
+            </div>
+          </div>
+        </div>
+      )}
+      <Footer />
+    </>
+  );
+};
 
-//             {reviews.length === 0 ? (
-//               <div className="no-reviews">
-//                 <p>This product doesn't have any reviews yet.</p>
-//               </div>
-//             ) : (
-//               <div className="customer-feedback-body">
-//                 <div className="customer-feedback-col1">
-//                   <p className="customer-feedback-col1-title">
-//                     verified ratings ({product.totalRatings})
-//                   </p>
-
-//                   <div className="ratings-summary">
-//                     <p className="ratings-average">{product.rating}</p>
-//                     <div>
-//                       <Rating
-//                         name="read-only"
-//                         value={Math.floor(product.rating)}
-//                         readOnly
-//                       />
-//                     </div>
-//                     <p className="total-ratings">
-//                       {product.totalRatings} verified ratings
-//                     </p>
-//                   </div>
-//                 </div>
-
-//                 <div className="customer-feedback-col2">
-//                   <p className="customer-feedback-col2-title">
-//                     product reviews ({reviews.length})
-//                   </p>
-
-//                   <div className="customer-feedback-col2-body">
-//                     {reviews.map((review) => (
-//                       <div key={review.id} className="product-review-card">
-//                         <div className="product-review-card-rating">
-//                           <Rating
-//                             name="read-only"
-//                             value={Math.floor(review.rating)}
-//                             readOnly
-//                           />
-//                         </div>
-
-//                         <p className="product-review-card-review-title">
-//                           {review.title}
-//                         </p>
-
-//                         <p className="product-review-card-review-excerpt">
-//                           {review.text}
-//                         </p>
-
-//                         <div className="product-review-card-bottom">
-//                           <p className="product-review-card-review-details">
-//                             {review.date} by {review.userName}
-//                           </p>
-
-//                           <p className="verified-purchase">
-//                             <IoCheckmarkCircle /> verified purchase
-//                           </p>
-//                         </div>
-//                       </div>
-//                     ))}
-//                   </div>
-//                 </div>
-//               </div>
-//             )}
-//           </div>
-
-//           {relatedProducts.length > 0 && (
-//             <div className="product-page-similar-items">
-//               <p className="product-page-similar-items-title">
-//                 Related products
-//               </p>
-//               <Swiper
-//                 className="similar-products-swiper"
-//                 modules={[Navigation]}
-//                 navigation={true}
-//                 breakpoints={{
-//                   320: {
-//                     slidesPerView: 1,
-//                   },
-//                   480: {
-//                     slidesPerView: 2,
-//                   },
-//                   768: {
-//                     slidesPerView: 3,
-//                   },
-//                   1024: {
-//                     slidesPerView: 4,
-//                   },
-//                   1280: {
-//                     slidesPerView: 5,
-//                   },
-//                 }}
-//                 spaceBetween={10}
-//               >
-//                 {relatedProducts.map((product) => (
-//                   <SwiperSlide key={product.id}>
-//                     <Link
-//                       to={`/product/${product.id}`}
-//                       className="products-page-similar-items-card"
-//                     >
-//                       <div className="products-page-similar-items-card-img-wrapper">
-//                         <div className="products-page-similar-items-card-img">
-//                           <img src={product.image} alt={product.name} />
-//                         </div>
-//                       </div>
-//                       <p className="product-page-similar-items-card-headline">
-//                         {product.name}
-//                       </p>
-
-//                       <p className="product-page-similar-items-card-price">
-//                         Ksh {product.price}
-//                       </p>
-//                     </Link>
-//                   </SwiperSlide>
-//                 ))}
-//               </Swiper>
-//             </div>
-//           )}
-//         </div>
-//         <div className="product-page-wrapper-col2">
-//           <div className="product-page-wrapper-col2-title">
-//             shipping & delivery
-//           </div>
-//           <div className="product-page-wrapper-col2-body">
-//             <div className="product-page-wrapper-col2-detail">
-//               <IoLocationOutline />
-//               <p>
-//                 <span>ship to:</span>{" "}
-//                 {user
-//                   ? `${user.shippingAddress.county}, ${user.shippingAddress.town}`
-//                   : "Nairobi CBD"}
-//               </p>
-//             </div>
-//             <div className="product-page-wrapper-col2-detail">
-//               <IoIosPricetag />
-//               <p>
-//                 <span>shipping fee: </span>ksh 120
-//               </p>
-//             </div>
-//             <div className="product-page-wrapper-col2-detail">
-//               <IoIosCalendar />{" "}
-//               <p>
-//                 <span>delivery date: </span>may 30 - jun 02
-//               </p>
-//             </div>
-//             <div className="product-page-wrapper-col2-detail">
-//               <TbTruckReturn />{" "}
-//               <p>
-//                 <span>returns & refunds policy:</span>{" "}
-//                 <Link to={"#"}>details</Link>
-//               </p>
-//             </div>
-//             <div className="product-page-wrapper-col2-btn">
-//               {cartQuantity > 0 ? (
-//                 <div className="product-page-cart-control">
-//                   <button
-//                     className="product-page-cart-decrement-btn"
-//                     onClick={decrementQuantity}
-//                   >
-//                     -
-//                   </button>
-//                   <p className="product-page-cart-quantity">{cartQuantity}</p>
-//                   <button
-//                     className="product-page-cart-increment-btn"
-//                     onClick={incrementQuantity}
-//                   >
-//                     +
-//                   </button>
-//                 </div>
-//               ) : (
-//                 <button
-//                   className="product-page-wrapper-col2-add-to-cart"
-//                   onClick={handleAddToCart}
-//                   disabled={!product.inStock}
-//                 >
-//                   {product.inStock ? "Add to Cart" : "Out of Stock"}
-//                 </button>
-//               )}
-//             </div>
-
-//             <div className="product-page-wrapper-col2-btns">
-//               <button>
-//                 <GoShareAndroid /> share
-//               </button>
-//               <button
-//                 className={`wishlist-button ${
-//                   isInWishlist(product.id) ? "active" : ""
-//                 }`}
-//                 onClick={handleWishlistToggle}
-//               >
-//                 <FaRegHeart /> wish
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//       <Footer />
-//     </>
-//   );
-// };
-
-// export default ProductDetailPage;
+export default ProductDetailPage;

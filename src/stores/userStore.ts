@@ -1,22 +1,19 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { User } from "../types";
 
-interface UserObject {
-    fullName: string;
-    emailAddress: string;
-    phoneNumber: string;
-}
+
 
 interface UserState {
-    user: UserObject | null;
-    setUserInfo: (userObject: UserObject) => void;
+    user: User | null;
+    setUserInfo: (userObject: User) => void;
     removeUserInfo: () => void;
 }
 
 const userStore = (set: (state: Partial<UserState>) => void): UserState => {
     return {
         user: null,
-        setUserInfo: (userObject: UserObject) => {
+        setUserInfo: (userObject: User) => {
             set({ user: userObject });
         },
         removeUserInfo: () => {

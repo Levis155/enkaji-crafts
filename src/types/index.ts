@@ -1,3 +1,11 @@
+export interface User {
+  fullName: string;
+  emailAddress: string;
+  phoneNumber: string;
+  county: string;
+  town: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -10,11 +18,9 @@ export interface Product {
   discount?: number;
   category?: string;
   description?: string;
-  specifications?: {
-    [key: string]: string;
-  };
-  inPackage?: string[];
-  variations?: ProductVariation[];
+  specifications?: string;
+  packageContent?: string;
+  reviews?: Review[];
 }
 
 export interface CartItem {
@@ -36,13 +42,12 @@ export interface ProductVariation {
 export interface Review {
   id: number;
   productId: number;
-  userId: number;
-  userName: string;
+  userId: string;
   title: string;
   text: string;
   rating: number;
-  date: string;
-  isVerified: boolean;
+  createdAt: string;
+  user: User;
 }
 
 export interface Order {
@@ -58,7 +63,7 @@ export interface Order {
   }[];
   total: number;
   shippingFee: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
+  status: "pending" | "processing" | "shipped" | "delivered";
   date: string;
   shippingAddress: {
     county: string;

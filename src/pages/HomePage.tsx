@@ -21,6 +21,7 @@ const HomePage = () => {
   const { isLoading, data, isError, error } = useQuery({
     queryKey: ["fetch-all-products"],
     queryFn: async () => {
+      setFetchError(null);
       const response = await axios.get(`${apiUrl}/products`);
       // console.log(response.data);
       return response.data;

@@ -137,6 +137,7 @@ const Header = () => {
       });
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
+      console.error("Error sending cart before logout:", error);
       toast.error("Failed to sync cart with server before logging out.");
     }
   };
