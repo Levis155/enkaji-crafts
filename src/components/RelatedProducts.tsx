@@ -21,7 +21,6 @@ const RelatedProducts = ({ category }: RelatedProductsProps) => {
   const { isLoading, data:relatedProducts, isError, error } = useQuery<Product[]>({
     queryKey: ["fetch-related-products"],
     queryFn: async () => {
-      setFetchError(null);
       const response = await axios.get(
         `${apiUrl}/products/category/${category}`
       );
@@ -45,7 +44,7 @@ const RelatedProducts = ({ category }: RelatedProductsProps) => {
     <div className="product-page-similar-items">
       <p className="product-page-similar-items-title">Related products</p>
       {isLoading && <div className="related-products-loading-cont"><PulseLoader size={15} color="#e61919" />{" "}</div>}
-      {fetchError && <div className="related-products-error-cont"><p>{fetchError}</p></div>}
+      { !isLoading && fetchError && <div className="related-products-error-cont"><p>{fetchError}</p></div>}
       <Swiper
         className="similar-products-swiper"
         modules={[Navigation]}

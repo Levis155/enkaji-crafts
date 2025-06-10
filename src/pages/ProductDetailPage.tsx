@@ -43,7 +43,6 @@ const ProductDetailPage = () => {
   } = useQuery<Product>({
     queryKey: ["fetch-product"],
     queryFn: async () => {
-      setFetchError(null);
       const response = await axios.get(`${apiUrl}/products/${id}`);
       console.log(response.data);
       return response.data;
@@ -79,14 +78,14 @@ const ProductDetailPage = () => {
       <div>
         <Header />
         <div className="product-page-loading-container">
-          <PulseLoader size={15} color="#e61919" />{" "}
+          <PulseLoader size={15} color="#e61919" />
         </div>
         <Footer />
       </div>
     );
   }
 
-  if (fetchError) {
+  if (!isLoading && fetchError) {
     return (
       <div>
         <Header />

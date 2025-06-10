@@ -13,14 +13,17 @@ const ProductCard = ({
   image,
   rating,
   inStock,
-  discount,
 }: Product) => {
-  const cart = useCartStore(state => state.cart);
-  const addItem = useCartStore(state => state.addItem);
-  const incrementItemQuantity = useCartStore(state => state.incrementItemQuantity);
-  const decrementItemQuantity = useCartStore(state => state.decrementItemQuantity);
+  const cart = useCartStore((state) => state.cart);
+  const addItem = useCartStore((state) => state.addItem);
+  const incrementItemQuantity = useCartStore(
+    (state) => state.incrementItemQuantity
+  );
+  const decrementItemQuantity = useCartStore(
+    (state) => state.decrementItemQuantity
+  );
 
-  const cartItem = cart.find(item => item.id === id);
+  const cartItem = cart.find((item) => item.id === id);
   const cartQuantity = cartItem?.quantity ?? 0;
 
   const handleAddToCart = () => {
@@ -51,8 +54,12 @@ const ProductCard = ({
 
         <div className="product-card-product-price">
           <span className="current-price-of-product">Ksh {price}</span>
-          <span className="product-card-original-price">Ksh {originalPrice}</span>
-          <span className="product-card-discount-percentage">-{discount}%</span>
+          <span className="product-card-original-price">
+            Ksh {originalPrice}
+          </span>
+          <span className="product-card-discount-percentage">
+            -{Math.round(100 - (price / originalPrice) * 100)}%
+          </span>
         </div>
 
         <div className="product-card-rating">
@@ -67,9 +74,19 @@ const ProductCard = ({
         <div className="product-manipulation">
           {cartQuantity > 0 ? (
             <div className="quantity-control">
-              <button onClick={() => decrementItemQuantity(id)} className="quantity-btn">-</button>
+              <button
+                onClick={() => decrementItemQuantity(id)}
+                className="quantity-btn"
+              >
+                -
+              </button>
               <span className="quantity">{cartQuantity}</span>
-              <button onClick={() => incrementItemQuantity(id)} className="quantity-btn">+</button>
+              <button
+                onClick={() => incrementItemQuantity(id)}
+                className="quantity-btn"
+              >
+                +
+              </button>
             </div>
           ) : (
             <button
@@ -85,6 +102,5 @@ const ProductCard = ({
     </div>
   );
 };
-
 
 export default ProductCard;

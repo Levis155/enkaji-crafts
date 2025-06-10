@@ -13,7 +13,7 @@ export interface Product {
   originalPrice: number;
   image: string;
   inStock: boolean;
-  rating: number;
+  rating?: number;
   totalRatings?: number;
   discount?: number;
   category?: string;

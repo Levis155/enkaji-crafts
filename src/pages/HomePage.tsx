@@ -21,7 +21,6 @@ const HomePage = () => {
   const { isLoading, data, isError, error } = useQuery({
     queryKey: ["fetch-all-products"],
     queryFn: async () => {
-      setFetchError(null);
       const response = await axios.get(`${apiUrl}/products`);
       // console.log(response.data);
       return response.data;
@@ -66,12 +65,11 @@ const HomePage = () => {
 
             {isLoading && (
               <div className="products-loader-container">
-                {" "}
                 <PulseLoader size={15} color="#e61919" />{" "}
               </div>
             )}
 
-            {fetchError && (
+            { !isLoading && fetchError && (
               <div className="products-error-container">{fetchError}</div>
             )}
 
@@ -85,9 +83,6 @@ const HomePage = () => {
                       name={product.name}
                       price={product.price}
                       originalPrice={product.originalPrice}
-                      discount={Math.round(
-                        100 - (product.price / product.originalPrice) * 100
-                      )}
                       image={product.image}
                       rating={4}
                       inStock={product.inStock}
