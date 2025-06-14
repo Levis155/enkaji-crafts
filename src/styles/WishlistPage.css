@@ -1,12 +1,11 @@
+.wishlist-page{
+  min-height: 75vh;
+}
 .wishlist-page h1 {
   font-size: 1.7rem;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   color: var(--primary-color);
 }
-.empty-wishlist {
-  text-align: center;
-}
-
 .empty-state {
   background-color: var(--background-light);
   padding: 40px;
@@ -71,6 +70,9 @@
 .item-image-wrapper{
   height: 100%;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 @media screen and (max-width: 62.5em) {
   .item-image {
@@ -84,11 +86,9 @@
     overflow: hidden;
   }
 }
-
 .item-image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 80px;
+  max-width: 100px;
 }
 
 .out-of-stock-overlay {

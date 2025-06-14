@@ -1,24 +1,15 @@
 import { Link } from "react-router-dom";
-import { useWishlist } from "../context/WishlistContext";
-import { useCart } from "../context/CartContext";
+import useWishlistStore from "../stores/wishlistStore";
+import useCartStore from "../stores/cartStore";
 import "../styles/WishlistPage.css";
 
 const WishlistPage = () => {
-  const { items, removeItem } = useWishlist();
-  const { addItem } = useCart();
+  const wishlistItems = useWishlistStore((state) => state.wishlist);
+  const removeFromWishlist = useWishlistStore((state) => state.removeItem);
+  const addToCart = useCartStore((state) => state.addItem);
+  const isItemInCart = useCartStore((state) => state.isItemInCart);
 
-  const handleMoveToCart = (id: number) => {
-    const item = items.find((item) => item.id === id);
-    if (item) {
-      addItem({
-        ...item,
-        quantity: 1,
-      });
-      removeItem(id);
-    }
-  };
-
-  if (items.length === 0) {
+  if (wishlistItems.length === 0) {
     return (
       <div className="wishlist-page empty-wishlist">
         <h1>My Wishlist</h1>
@@ -34,22 +25,25 @@ const WishlistPage = () => {
 
   return (
     <div className="wishlist-page">
-      <h1>My Wishlist ({items.length})</h1>
+      <h1 className="wishlist-page-title">
+        {" "}
+        {wishlistItems.length > 0
+          ? `My Wishlist (${wishlistItems.length})`
+          : `My Wishlist`}
+      </h1>
       <div className="wishlist-items">
-        {items.map((item) => (
+        {wishlistItems.map((item) => (
           <div
             key={item.id}
             className={`wishlist-item ${!item.inStock ? "out-of-stock" : ""}`}
           >
             <div className="item-image">
-              <div className="item-image-wrapper">
-                <Link to={`/product/${item.id}`}>
-                  <img src={item.image} alt={item.name} />
-                </Link>
-                {!item.inStock && (
-                  <div className="out-of-stock-overlay">Out of Stock</div>
-                )}
-              </div>
+              <Link to={`/product/${item.id}`} className="item-image-wrapper">
+                <img src={item.image} alt={item.name} />
+              </Link>
+              {!item.inStock && (
+                <div className="out-of-stock-overlay">Out of Stock</div>
+              )}
             </div>
 
             <div className="item-details">
@@ -58,13 +52,13 @@ const WishlistPage = () => {
               </Link>
 
               <div className="wishlist-item-price">
-                <span className="wishlist-current-price">
-                  Ksh {item.price.toLocaleString()}
-                </span>
+                <span className="wishlist-current-price">Ksh {item.price}</span>
                 <span className="wishlist-original-price">
-                  Ksh {item.originalPrice.toLocaleString()}
+                  Ksh {item.originalPrice}
                 </span>
-                <span className="wishlist-discount-tag">-{item.discount}%</span>
+                <span className="wishlist-discount-tag">
+                  -{Math.round(100 - (item.price / item.originalPrice) * 100)}%
+                </span>
               </div>
 
               <div className="item-stock-status">
@@ -75,16 +69,30 @@ const WishlistPage = () => {
             </div>
 
             <div className="item-actions">
-              <button
-                className="move-to-cart"
-                onClick={() => handleMoveToCart(item.id)}
-                disabled={!item.inStock}
-              >
-                Move to Cart
-              </button>
+              {!isItemInCart(item.id) && (
+                <button
+                  className="move-to-cart"
+                  onClick={() => {
+                    const newCartItem = {
+                      id: item.id,
+                      name: item.name,
+                      image: item.image,
+                      price: item.price,
+                      originalPrice: item.originalPrice,
+                      inStock: item.inStock,
+                      quantity: 1,
+                    };
+
+                    addToCart(newCartItem);
+                  }}
+                  disabled={!item.inStock}
+                >
+                  Add to Cart
+                </button>
+              )}
               <button
                 className="remove-from-wishlist"
-                onClick={() => removeItem(item.id)}
+                onClick={() => removeFromWishlist(item.id)}
               >
                 Remove
               </button>

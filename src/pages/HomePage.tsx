@@ -22,7 +22,7 @@ const HomePage = () => {
     queryKey: ["fetch-all-products"],
     queryFn: async () => {
       const response = await axios.get(`${apiUrl}/products`);
-      // console.log(response.data);
+      console.log(response.data);
       return response.data;
     },
   });
@@ -65,7 +65,7 @@ const HomePage = () => {
 
             {isLoading && (
               <div className="products-loader-container">
-                <PulseLoader size={15} color="#e61919" />{" "}
+                <PulseLoader size={15} color="#e61919" />
               </div>
             )}
 
@@ -84,7 +84,8 @@ const HomePage = () => {
                       price={product.price}
                       originalPrice={product.originalPrice}
                       image={product.image}
-                      rating={4}
+                      averageRating={product.averageRating}
+                      numberOfReviews={product.reviews?.length}
                       inStock={product.inStock}
                     />
                   ))}

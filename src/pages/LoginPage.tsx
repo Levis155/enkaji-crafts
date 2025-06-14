@@ -21,6 +21,7 @@ import Logo from "../components/Logo";
 import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
+import useWishlistStore from "../stores/wishlistStore";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -33,6 +34,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const setUserInfo = useUserStore((state) => state.setUserInfo);
   const mergeCart = useCartStore((state) => state.mergeCart);
+  const setWishlistData = useWishlistStore((state) => state.setWishlistData);
 
   const fetchAndMergeCart = async () => {
     try {
@@ -41,7 +43,20 @@ const LoginPage = () => {
       });
       mergeCart(response.data.cart);
     } catch (error) {
+      toast.error("Failed to fetch wishlist.");
       console.error("Failed to fetch cart:", error);
+    }
+  };
+
+  const fetchAndSetWishlist = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/wishlist/items`, {
+        withCredentials: true,
+      });
+      setWishlistData(response.data.wishlist);
+    } catch (error) {
+      toast.error("Failed to fetch wishlist.");
+      console.error("Failed to fetch wishlist:", error);
     }
   };
 
@@ -56,6 +71,7 @@ const LoginPage = () => {
     onSuccess: async (data) => {
       setUserInfo(data);
       await fetchAndMergeCart();
+      await fetchAndSetWishlist();
 
       toast.success("Logged in successfully!", {
         position: "top-right",

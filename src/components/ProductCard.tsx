@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
-// import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { toast } from "react-toastify";
 import useCartStore from "../stores/cartStore";
-import { Product } from "../types";
+import useWishlistStore from "../stores/wishlistStore";
+import useUserStore from "../stores/userStore";
+import { ProductCardProps } from "../types";
 import "../styles/ProductCard.css";
+
 
 const ProductCard = ({
   id,
@@ -11,20 +15,26 @@ const ProductCard = ({
   price,
   originalPrice,
   image,
-  rating,
+  averageRating,
   inStock,
-}: Product) => {
+  numberOfReviews,
+}: ProductCardProps) => {
   const cart = useCartStore((state) => state.cart);
-  const addItem = useCartStore((state) => state.addItem);
+  const addToCart = useCartStore((state) => state.addItem);
   const incrementItemQuantity = useCartStore(
     (state) => state.incrementItemQuantity
   );
   const decrementItemQuantity = useCartStore(
     (state) => state.decrementItemQuantity
   );
+  const wishlist = useWishlistStore((state) => state.wishlist);
+  const addToWishlist = useWishlistStore((state) => state.addItem);
+  const removeFromWishlist = useWishlistStore((state) => state.removeItem);
+  const user = useUserStore((state) => state.user);
 
   const cartItem = cart.find((item) => item.id === id);
   const cartQuantity = cartItem?.quantity ?? 0;
+  const wishlistItem = wishlist.find((item) => item.id === id);
 
   const handleAddToCart = () => {
     const newCartItem = {
@@ -37,13 +47,47 @@ const ProductCard = ({
       quantity: 1,
     };
 
-    addItem(newCartItem);
+    addToCart(newCartItem);
+  };
+
+  const handleAddToWishlist = () => {
+    const newWishlistItem = {
+      id: id,
+      name: name,
+      image: image,
+      price: price,
+      originalPrice: originalPrice,
+      inStock: inStock,
+    };
+
+    addToWishlist(newWishlistItem);
   };
 
   return (
     <div className={`product-card ${!inStock ? "out-of-stock" : ""}`}>
       <Link to={`/product/${id}`} className="product-card-image">
         <img src={image} alt={name} />
+        <button
+          className="product-card-wishlist-button"
+          onClick={(e) => {
+            e.preventDefault(); // Prevents the <Link> navigation
+            e.stopPropagation(); // Prevents the click from bubbling up
+
+            if (!user) {
+              toast.info("Please Sign in to complete operation.");
+              return;
+            }
+
+            if (wishlistItem) {
+              removeFromWishlist(id);
+            } else {
+              handleAddToWishlist();
+            }
+          }}
+          aria-label={wishlistItem ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          {wishlistItem ? <FaHeart /> : <FaRegHeart />}
+        </button>
         {!inStock && <div className="out-of-stock-label">Out of Stock</div>}
       </Link>
 
@@ -65,10 +109,11 @@ const ProductCard = ({
         <div className="product-card-rating">
           <Rating
             name="read-only"
-            value={rating}
+            value={averageRating}
             sx={{ fontSize: "1.3rem" }}
             readOnly
           />
+          <span className="no-reviews-text">({numberOfReviews})</span>
         </div>
 
         <div className="product-manipulation">

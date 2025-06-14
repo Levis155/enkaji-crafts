@@ -193,21 +193,25 @@
   border-radius: 4px;
   padding: 10px 0;
   z-index: 100;
+  display: flex;
+  flex-direction: column;
 }
-
-.dropdown-menu a {
+.dropdown-menu a, .account-btn{
+  all: unset;
   display: flex;
   align-items: center;
   padding: 10px 15px;
   color: var(--text-color);
   transition: background-color 0.3s;
+  cursor: pointer;
 }
 
-.dropdown-menu a:hover {
+.dropdown-menu a:hover, .account-btn:hover{
   background-color: var(--background-light);
+  color: var(--primary-color);
 }
 
-.dropdown-menu a svg {
+.dropdown-menu a svg, .account-btn svg {
   margin-right: 10px;
   font-size: 1.6rem;
 }

@@ -66,10 +66,10 @@ const CategoryPage = () => {
         sorted.sort((a, b) => b.price - a.price);
         break;
       case "rating-desc":
-        sorted.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        sorted.sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0));
         break;
       case "newest":
-        sorted.reverse(); // placeholder for "newest"
+        sorted.reverse();
         break;
       default:
         break;

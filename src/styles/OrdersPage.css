@@ -10,9 +10,11 @@
 
 .empty-state {
   background-color: var(--background-light);
-  padding: 40px;
-  border-radius: 8px;
-  margin-top: 20px;
+  min-height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .empty-state p {
@@ -35,8 +37,18 @@
   color: white;
   background-color: var(--primary-dark);
 }
-
+.orders-page-loading-cont,
+.orders-page-error-cont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 75vh;
+}
+.orders-page-error-cont p {
+  color: var(--primary-color);
+}
 .orders-list {
+  min-height: 75vh;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -68,7 +80,7 @@
   flex-direction: column;
   gap: 5px;
 }
-.order-number{
+.order-number {
   font-size: 1.6rem;
   font-weight: 700;
   color: black;
@@ -119,7 +131,7 @@
   padding: 15px 0;
 }
 @media screen and (max-width: 630px) {
-  .order-product{
+  .order-product {
     flex-wrap: wrap;
   }
 }
@@ -128,13 +140,15 @@
   height: 80px;
   margin-right: 15px;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
 .order-product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 30px;
+  max-height: 80px;
 }
 
 .order-product-details {
@@ -174,10 +188,10 @@
   align-items: center;
 }
 @media screen and (max-width: 630px) {
-.order-product-actions{
+  .order-product-actions {
     width: 100%;
     margin-left: 0;
-    margin-top: .8rem;
+    margin-top: 0.8rem;
   }
 }
 
@@ -211,7 +225,9 @@
   gap: 5px;
 }
 
-.subtotal, .shipping-fee, .order-total {
+.subtotal,
+.shipping-fee,
+.order-total {
   display: flex;
   justify-content: space-between;
   width: 200px;
@@ -231,23 +247,34 @@
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .product-image {
     margin-bottom: 10px;
   }
-  
+
   .product-actions {
     margin-left: 0;
     margin-top: 10px;
   }
-  
 }
 .rate-and-review-form-title {
   padding: 0.4rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rate-and-review-form-title p {
   font-size: 1.7rem;
   text-transform: capitalize;
   font-weight: 700;
   color: var(--primary-color);
+}
+.rate-and-review-form-title button {
+  all: unset;
+  background-color: transparent;
+  border: none;
+  font-size: 2.2rem;
+  cursor: pointer;
 }
 .rate-and-review-form-body {
   display: flex;
@@ -279,11 +306,14 @@
 .rate-container-card-img {
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .rate-container-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 8rem;
+  max-width: 10rem;
+  max-height: 10rem;
 }
 .rate-container-card-col2 svg {
   font-size: 2.4rem;

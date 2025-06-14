@@ -4,6 +4,7 @@ export interface User {
   phoneNumber: string;
   county: string;
   town: string;
+  shippingCharge: number;
 }
 
 export interface Product {
@@ -13,14 +14,23 @@ export interface Product {
   originalPrice: number;
   image: string;
   inStock: boolean;
-  rating?: number;
-  totalRatings?: number;
-  discount?: number;
+  averageRating?: number;
   category?: string;
   description?: string;
   specifications?: string;
   packageContent?: string;
   reviews?: Review[];
+}
+
+export interface ProductCardProps {
+  id: string;
+  name: string;
+  price: number;
+  originalPrice: number;
+  image: string;
+  inStock: boolean;
+  averageRating?: number;
+  numberOfReviews?: number;
 }
 
 export interface CartItem {
@@ -32,6 +42,14 @@ export interface CartItem {
   inStock?: boolean;
   quantity: number;
 }
+export interface WishlistItem {
+  id: string;
+  name: string;
+  image: string;
+  price: number;
+  originalPrice: number;
+  inStock?: boolean;
+}
 
 export interface ProductVariation {
   id: number;
@@ -40,33 +58,34 @@ export interface ProductVariation {
 }
 
 export interface Review {
-  id: number;
+  id?: string;
   productId: number;
-  userId: string;
-  title: string;
-  text: string;
+  reviewAuthor: string;
+  reviewTitle: string;
+  reviewBody: string;
   rating: number;
-  createdAt: string;
-  user: User;
+  createdAt?: string;
 }
 
 export interface Order {
-  id: number;
-  userId: number;
-  products: {
-    id: number;
+  id?: string;
+  orderNumber?: number;
+  userId?: string;
+  totalPrice: number;
+  town: string;
+  county: string;
+  status?: "pending" | "processing" | "shipped" | "delivered";
+  deliveredAt?: string;
+  isPaid?: boolean;
+  paidAt?: string;
+  createdAt?: string;
+  user?: User;
+  orderItems: {
+    productId: string;
     name: string;
     price: number;
     quantity: number;
-    variation?: string;
     image: string;
+    isReviewed?: boolean;
   }[];
-  total: number;
-  shippingFee: number;
-  status: "pending" | "processing" | "shipped" | "delivered";
-  date: string;
-  shippingAddress: {
-    county: string;
-    town: string;
-  };
 }

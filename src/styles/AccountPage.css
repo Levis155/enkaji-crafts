@@ -1,6 +1,6 @@
-/* .account-page{
-  background-color: lightblue;
-} */
+.account-page{
+  min-height: 75vh;
+}
 .account-page h1 {
   font-size: 1.7rem;
   margin-bottom: 25px;

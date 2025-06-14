@@ -6,16 +6,22 @@ import Rating from "@mui/material/Rating";
 import { IoLocationOutline, IoCheckmarkCircle } from "react-icons/io5";
 import { IoIosPricetag, IoIosCalendar } from "react-icons/io";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { PulseLoader } from "react-spinners";
-// import { FaRegHeart } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RelatedProducts from "../components/RelatedProducts";
 import useUserStore from "../stores/userStore";
+import useWishlistStore from "../stores/wishlistStore";
 import useCartStore from "../stores/cartStore";
 import { Product } from "../types";
 import apiUrl from "../Utils/apiUrl";
-import { earliestDeliveryDate, latestDeliveryDate } from "../Utils/deliveryDates";
+import {
+  earliestDeliveryDate,
+  latestDeliveryDate,
+} from "../Utils/deliveryDates";
 import "../styles/ProductDetailPage.css";
 
 const ProductDetailPage = () => {
@@ -24,6 +30,9 @@ const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const user = useUserStore((state) => state.user);
   const cart = useCartStore((state) => state.cart);
+  const removeFromCart = useCartStore((state) => state.removeItem);
+  const cartItem = cart.find((item) => item.id === id);
+  const cartQuantity = cartItem?.quantity ?? 0;
   const handleAddToCart = useCartStore((state) => state.addItem);
   const incrementQuantity = useCartStore(
     (state) => state.incrementItemQuantity
@@ -31,9 +40,10 @@ const ProductDetailPage = () => {
   const decrementQuantity = useCartStore(
     (state) => state.decrementItemQuantity
   );
-  const removeFromCart = useCartStore((state) => state.removeItem);
-  const cartItem = cart.find((item) => item.id === id);
-  const cartQuantity = cartItem?.quantity ?? 0;
+  const wishlist = useWishlistStore((state) => state.wishlist);
+  const addToWishlist = useWishlistStore((state) => state.addItem);
+  const removeFromWishlist = useWishlistStore((state) => state.removeItem);
+  const wishlistItem = wishlist.find((item) => item.id === id);
 
   const {
     isLoading,
@@ -59,19 +69,6 @@ const ProductDetailPage = () => {
       }
     }
   }, [error]);
-
-  const getAverageRating = (): number => {
-    if (!product || !product.reviews || product.reviews.length === 0) {
-      return 0;
-    }
-
-    const sum = product.reviews.reduce(
-      (total, review) => total + review.rating,
-      0
-    );
-    const average = sum / product.reviews.length;
-    return parseFloat(average.toFixed(1)); // Returns the average rounded to 1 decimal place
-  };
 
   if (isLoading) {
     return (
@@ -204,6 +201,36 @@ const ProductDetailPage = () => {
                   )}
                 </div>
               </div>
+              <button
+                className="product-detail-wishlist-button"
+                onClick={(e) => {
+                  e.preventDefault(); // Prevents the <Link> navigation
+                  e.stopPropagation(); // Prevents the click from bubbling up
+
+                  if (!user) {
+                    toast.info("Please Sign in to complete operation.");
+                    return;
+                  }
+
+                  if (wishlistItem) {
+                    removeFromWishlist(product.id);
+                  } else {
+                    addToWishlist({
+                      id: product?.id,
+                      name: product?.name,
+                      image: product?.image,
+                      price: product?.price,
+                      originalPrice: product?.originalPrice,
+                      inStock: product?.inStock,
+                    });
+                  }
+                }}
+                aria-label={
+                  wishlistItem ? "Remove from wishlist" : "Add to wishlist"
+                }
+              >
+                {wishlistItem ? <FaHeart /> : <FaRegHeart />}
+              </button>
             </div>
             <div className="product-page-product-details">
               <p className="product-page-product-details-title">
@@ -256,13 +283,13 @@ const ProductDetailPage = () => {
                     </p>
 
                     <div className="ratings-summary">
-                      <p className="ratings-average">{getAverageRating()}</p>
+                      <p className="ratings-average">{product.averageRating}</p>
                       <div>
                         <Rating
                           name="read-only"
-                          value={getAverageRating()} // Note the parentheses to call the function
+                          value={product.averageRating} 
                           readOnly
-                          precision={0.5} // This allows half-star ratings
+                          precision={0.5}
                         />
                       </div>
                       <p className="total-ratings">
@@ -288,16 +315,16 @@ const ProductDetailPage = () => {
                           </div>
 
                           <p className="product-review-card-review-title">
-                            {review.title}
+                            {review.reviewTitle}
                           </p>
 
                           <p className="product-review-card-review-excerpt">
-                            {review.text}
+                            {review.reviewBody}
                           </p>
 
                           <div className="product-review-card-bottom">
                             <p className="product-review-card-review-details">
-                              {review.createdAt} by {review.user.fullName}
+                              {format(new Date(review.createdAt || Date.now()), "dd MMM yyyy")} by {review.reviewAuthor}
                             </p>
 
                             <p className="verified-purchase">
@@ -337,7 +364,8 @@ const ProductDetailPage = () => {
               <div className="product-page-wrapper-col2-detail">
                 <IoIosCalendar />{" "}
                 <p>
-                  <span>delivery date: </span>{earliestDeliveryDate} - {latestDeliveryDate}
+                  <span>delivery date: </span>
+                  {earliestDeliveryDate} - {latestDeliveryDate}
                 </p>
               </div>
               <div className="product-page-wrapper-col2-detail"></div>

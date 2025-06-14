@@ -1,244 +1,440 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { PulseLoader } from "react-spinners";
+import {
+  TextField,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
+import formControlStyle from "../styles/formControlStyles";
+import apiUrl from "../Utils/apiUrl";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useAuth } from "../context/AuthContext";
-import { useCart } from "../context/CartContext";
+import useUserStore from "../stores/userStore";
+import useCartStore from "../stores/cartStore";
+import { Order } from "../types";
 import "../styles/CheckoutPage.css";
 
 const CheckoutPage = () => {
-  const { user, isAuthenticated } = useAuth();
-  const { items, totalPrice, clearCart } = useCart();
+  const user = useUserStore((state) => state.user);
+  const setUserInfo = useUserStore((state) => state.setUserInfo);
+  const cart = useCartStore((state) => state.cart);
+  const getTotalPrice = useCartStore((state) => state.getTotalPrice);
+  const clearCart = useCartStore((state) => state.clearCart);
   const navigate = useNavigate();
   const [shippingFee] = useState(120); // Default shipping fee
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
-  const [shippingAddress, setShippingAddress] = useState({
-    county: user?.shippingAddress.county || "Nairobi",
-    town: user?.shippingAddress.town || "CBD",
+  const [formError, setFormError] = useState<string | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
+
+  const inStockItems = cart.filter((item) => item.inStock);
+
+  const [formData, setFormData] = useState({
+    fullName: user?.fullName,
+    emailAddress: user?.emailAddress,
+    phoneNumber: user?.phoneNumber,
+    county: user?.county,
+    town: user?.town,
   });
 
-  // Filter out of stock items
-  const inStockItems = items.filter((item) => item.inStock);
-
-  if (!isAuthenticated) {
-    navigate("/customer/account");
-    return null;
-  }
-
-  if (inStockItems.length === 0 && !orderPlaced) {
-    navigate("/cart");
-    return null;
-  }
-
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setShippingAddress((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handlePlaceOrder = () => {
-    // In a real app, this would call an API to place the order
+const {
+  isPending: isPlacingOrder,
+  mutate: placeOrder,
+} = useMutation<Order, Error, Order>({
+  mutationKey: ["make-order"],
+  mutationFn: async (order) => {
+    const response = await axios.post(`${apiUrl}/orders`, order, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+  onSuccess: () => {
     setOrderPlaced(true);
-    // Clear the cart
     clearCart();
+    console.log("Order placed successfully.");
+  },
+  onError: (err) => {
+    if (axios.isAxiosError(err)) {
+      const serverMessage = err.response?.data.message;
+      setOrderError(serverMessage);
+    } else {
+      setOrderError("Something went wrong.");
+    }
+    toast.error(orderError || "Error placing order");
+  },
+});
+
+// Mutation for updating user info
+const {
+  isPending: isUpdatingUser,
+  mutate: updateUser,
+} = useMutation({
+  mutationKey: ["update-user-info"],
+  mutationFn: async () => {
+    const response = await axios.patch(
+      `${apiUrl}/users`,
+      {
+        fullName: formData.fullName,
+        emailAddress: formData.emailAddress,
+        phoneNumber: formData.phoneNumber,
+        county: formData.county,
+        town: formData.town,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  },
+  onSuccess: (data) => {
+    setUserInfo(data);
+    setIsEditingDetails(false);
+    setIsEditingAddress(false);
+    toast.success("Updated user successfully!");
+  },
+  onError: (err) => {
+    if (axios.isAxiosError(err)) {
+      const serverMessage = err.response?.data.message;
+      setFormError(serverMessage);
+    } else {
+      setFormError("Something went wrong.");
+    }
+  },
+});
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/customer/account");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (inStockItems.length === 0 && !orderPlaced && user) {
+      navigate("/cart");
+    }
+  }, [inStockItems, orderPlaced, user, navigate]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  if (orderPlaced) {
-    return (
-      <div>
-        <Header />
-        <main className="container checkout-page">
-          <div className="order-success">
-            <h1>Order Placed Successfully!</h1>
-            <p>
-              Thank you for your order. Your order has been placed successfully.
-            </p>
-            <p>We've sent a confirmation email to {user?.email}.</p>
-            <button
-              onClick={() => navigate("/")}
-              className="continue-shopping-btn"
-            >
-              Continue Shopping
-            </button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const handleUpdateDetails = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    updateUser();
+  };
+  const handleUpdateAddress = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    updateUser();
+  };
+
+  const handlePlaceOrder = (order: Order) => {
+    setOrderError(null);
+    placeOrder(order);
+  };
+
+  if (!user) return null;
 
   return (
     <div>
       <Header />
-      <main className="checkout-page">
-        <h1>Checkout</h1>
+      {isPlacingOrder && !orderError && !orderPlaced && (
+        <div className="checkout-page-loader-cont">
+          <PulseLoader size={15} color="#e61919" />
+        </div>
+      )}
 
-        <div className="checkout-container">
-          <div className="checkout-details">
-            <section className="customer-info">
-              <h2 className="checkout-section-title">Customer Information</h2>
-              <div className="info-content">
-                <div className="info-item">
-                  <span className="info-label">Name:</span>
-                  <span className="info-value">{user?.fullName}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Email:</span>
-                  <span className="info-value">{user?.email}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Phone:</span>
-                  <span className="info-value">{user?.phone}</span>
-                </div>
-              </div>
-            </section>
+      {!isPlacingOrder && !orderError && orderPlaced && (
+        <div className="order-success">
+          <h1>Order Placed Successfully!</h1>
+          <p>
+            Thank you for your order. Your order has been placed successfully.
+          </p>
+          <p>We've sent a confirmation email to {user?.emailAddress}.</p>
+          <button
+            onClick={() => navigate("/")}
+            className="continue-shopping-btn"
+          >
+            Continue Shopping
+          </button>
+        </div>
+      )}
 
-            <section className="delivery-details">
-              <h2 className="checkout-section-title">Delivery Details</h2>
+      {!isPlacingOrder && !orderError && !orderPlaced && (
+        <main className="checkout-page">
+          <h1>Checkout</h1>
 
-              <div className="shipping-address">
-                <div className="subsection-header">
-                  <h3>Shipping Address</h3>
-                  {!isEditingAddress && (
+          <div className="checkout-container">
+            <div className="checkout-details">
+              <section className="customer-info">
+                <div className="checkout-section-title">
+                  <h2>Customer Information</h2>
+                  {!isEditingDetails && (
                     <button
-                      className="edit-delivery-details"
-                      onClick={() => setIsEditingAddress(true)}
+                      className="edit-customer-info"
+                      onClick={() => {
+                        setFormError(null);
+                        setIsEditingDetails(true);
+                        setIsEditingAddress(false);
+                      }}
                     >
-                      <FaEdit /> Change
+                      <FaEdit /> Edit
                     </button>
                   )}
                 </div>
 
-                {isEditingAddress ? (
-                  <form className="address-form">
-                    <div className="edit-shipping-address-form-group">
-                      <label htmlFor="county">County</label>
-                      <input
-                        type="text"
-                        id="county"
-                        name="county"
-                        value={shippingAddress.county}
-                        onChange={handleAddressChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="edit-shipping-address-form-group">
-                      <label htmlFor="town">Town/City</label>
-                      <input
-                        type="text"
-                        id="town"
-                        name="town"
-                        value={shippingAddress.town}
-                        onChange={handleAddressChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="edit-shipping-address-form-actions">
-                      <button
-                        type="button"
-                        className="save-button"
-                        onClick={() => setIsEditingAddress(false)}
+                {isEditingDetails ? (
+                  <form onSubmit={handleUpdateDetails}>
+                    {formError && (
+                      <Alert
+                        severity="error"
+                        sx={{ mb: "1rem", fontSize: "1.4rem" }}
                       >
-                        Save Address
+                        {formError}
+                      </Alert>
+                    )}
+                    <TextField
+                      label="Full Name"
+                      variant="outlined"
+                      sx={formControlStyle}
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      required
+                    />
+
+                    <TextField
+                      label="Email"
+                      variant="outlined"
+                      sx={formControlStyle}
+                      name="emailAddress"
+                      value={formData.emailAddress}
+                      onChange={handleInputChange}
+                      required
+                    />
+
+                    <TextField
+                      label="Phone Number"
+                      variant="outlined"
+                      type="tel"
+                      sx={formControlStyle}
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      required
+                    />
+
+                    <div className="account-page-form-actions">
+                      <button
+                        type="submit"
+                        className="save-button"
+                        disabled={isUpdatingUser}
+                      >
+                        {isUpdatingUser ? (
+                          <CircularProgress
+                            size="1.3rem"
+                            sx={{ color: "white" }}
+                          />
+                        ) : (
+                          "Save Changes"
+                        )}
                       </button>
                       <button
                         type="button"
                         className="cancel-button"
-                        onClick={() => {
-                          setIsEditingAddress(false);
-                          setShippingAddress({
-                            county: user?.shippingAddress.county || "Nairobi",
-                            town: user?.shippingAddress.town || "CBD",
-                          });
-                        }}
+                        onClick={() => setIsEditingDetails(false)}
                       >
                         Cancel
                       </button>
                     </div>
                   </form>
                 ) : (
-                  <div className="address-display">
-                    <p>
-                      {shippingAddress.county}, {shippingAddress.town}
-                    </p>
+                  <div className="info-content">
+                    <div className="info-item">
+                      <span className="info-label">Name:</span>
+                      <span className="info-value">{user?.fullName}</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Email:</span>
+                      <span className="info-value">{user?.emailAddress}</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Phone:</span>
+                      <span className="info-value">{user?.phoneNumber}</span>
+                    </div>
                   </div>
                 )}
-              </div>
+              </section>
 
-              <div className="shipment">
-                <div className="subsection-header">
-                  <h3>Shipment</h3>
-                  <button
-                    className="modify-cart"
-                    onClick={() => navigate("/cart")}
-                  >
-                    <FaEdit />  Modify Cart
-                  </button>
+              <section className="delivery-details">
+                <div className="checkout-section-title">
+                  <h2>Delivery Details</h2>
                 </div>
 
-                <div className="shipment-items">
-                  {inStockItems.map((item) => (
-                    <div key={item.id} className="shipment-item">
-                      <div className="shipment-item-image">
-                        <img src={item.image} alt={item.name} />
-                      </div>
-                      <div className="shipment-item-details">
-                        <h4 className="shipment-item-name">{item.name}</h4>
-                        {item.variation && (
-                          <p className="shipment-item-variation">
-                            Variation: {item.variation}
-                          </p>
+                <div className="shipping-address">
+                  <div className="subsection-header">
+                    <h3>Shipping Address</h3>
+                    {!isEditingAddress && (
+                      <button
+                        className="edit-shipping-address"
+                        onClick={() => {
+                          setFormError(null);
+                          setIsEditingDetails(false);
+                          setIsEditingAddress(true);
+                        }}
+                      >
+                        <FaEdit /> Edit
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="address-display">
+                    {isEditingAddress ? (
+                      <form onSubmit={handleUpdateAddress}>
+                        {formError && (
+                          <Alert
+                            severity="error"
+                            sx={{ mb: "1rem", fontSize: "1.4rem" }}
+                          >
+                            {formError}
+                          </Alert>
                         )}
-                        <div className="shipment-item-meta">
-                          <span className="shipment-item-price">
-                            Ksh {item.price.toLocaleString()}
-                          </span>
-                          <span className="shipment-item-quantity">
-                            Qty: {item.quantity}
-                          </span>
+                        <TextField
+                          label="County"
+                          variant="outlined"
+                          sx={formControlStyle}
+                          name="county"
+                          value={formData.county}
+                          onChange={handleInputChange}
+                          required
+                        />
+
+                        <TextField
+                          label="Town"
+                          variant="outlined"
+                          sx={formControlStyle}
+                          name="town"
+                          value={formData.town}
+                          onChange={handleInputChange}
+                          required
+                        />
+
+                        <div className="account-page-form-actions">
+                          <button
+                            type="submit"
+                            className="save-button"
+                            disabled={isUpdatingUser}
+                          >
+                            {isUpdatingUser ? (
+                              <CircularProgress
+                                size="1.3rem"
+                                sx={{ color: "white" }}
+                              />
+                            ) : (
+                              "Save Changes"
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={() => setIsEditingAddress(false)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <p>
+                        {user.county}, {user.town}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="shipment">
+                  <div className="subsection-header">
+                    <h3>Shipment</h3>
+                    <button
+                      className="modify-cart"
+                      onClick={() => navigate("/cart")}
+                    >
+                      <FaEdit /> Modify Cart
+                    </button>
+                  </div>
+
+                  <div className="shipment-items">
+                    {inStockItems.map((item) => (
+                      <div key={item.id} className="shipment-item">
+                        <div className="shipment-item-image">
+                          <img src={item.image} alt={item.name} />
+                        </div>
+                        <div className="shipment-item-details">
+                          <div className="shipment-item-meta">
+                            <span className="shipment-item-price">
+                              Ksh {item.price}
+                            </span>
+                            <span className="shipment-item-quantity">
+                              Qty: {item.quantity}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+              </section>
+            </div>
+
+            <div className="order-summary">
+              <h2>Order Summary</h2>
+
+              <div className="summary-row items-total">
+                <span>Item(s) Total</span>
+                <span>Ksh {getTotalPrice()}</span>
               </div>
-            </section>
+
+              <div className="summary-row delivery-fee">
+                <span>Delivery Fee</span>
+                <span>Ksh {shippingFee}</span>
+              </div>
+
+              <div className="summary-row total">
+                <span>Total</span>
+                <span>Ksh {getTotalPrice() + shippingFee}</span>
+              </div>
+
+              <button
+                className="place-order-button"
+                onClick={() => {
+                  handlePlaceOrder({
+                    totalPrice: getTotalPrice() + shippingFee,
+                    county: user.county,
+                    town: user.town,
+                    orderItems: inStockItems.map((item) => ({
+                      productId: item.id,
+                      name: item.name,
+                      price: item.price,
+                      quantity: item.quantity,
+                      image: item.image,
+                    })),
+                  });
+                }}
+                disabled={isEditingAddress}
+              >
+                Place Order
+              </button>
+            </div>
           </div>
+        </main>
+      )}
 
-          <div className="order-summary">
-            <h2>Order Summary</h2>
-
-            <div className="summary-row items-total">
-              <span>Item(s) Total</span>
-              <span>Ksh {totalPrice.toLocaleString()}</span>
-            </div>
-
-            <div className="summary-row delivery-fee">
-              <span>Delivery Fee</span>
-              <span>Ksh {shippingFee.toLocaleString()}</span>
-            </div>
-
-            <div className="summary-row total">
-              <span>Total</span>
-              <span>Ksh {(totalPrice + shippingFee).toLocaleString()}</span>
-            </div>
-
-            <button
-              className="place-order-button"
-              onClick={handlePlaceOrder}
-              disabled={isEditingAddress}
-            >
-              Place Order
-            </button>
-          </div>
-        </div>
-      </main>
       <Footer />
     </div>
   );

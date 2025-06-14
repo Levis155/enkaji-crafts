@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { FaEdit } from "react-icons/fa";
 import {
   TextField,
@@ -7,60 +9,74 @@ import {
   IconButton,
   OutlinedInput,
   InputAdornment,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { toast } from "react-toastify";
+import apiUrl from "../Utils/apiUrl";
 import formControlStyle from "../styles/formControlStyles";
-import { useAuth } from "../context/AuthContext";
+import useUserStore from "../stores/userStore";
 import "../styles/AccountPage.css";
 
 const AccountPage = () => {
-  const { user, updateUserDetails } = useAuth();
+  const user = useUserStore((state) => state.user);
+  const setUserInfo = useUserStore((state) => state.setUserInfo);
 
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    fullName: user?.fullName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    county: user?.shippingAddress?.county || "",
-    town: user?.shippingAddress?.town || "",
+    fullName: user?.fullName,
+    emailAddress: user?.emailAddress,
+    phoneNumber: user?.phoneNumber,
+    county: user?.county,
+    town: user?.town,
+    oldPassword: "",
+    newPassword: "",
+    confirmedNewPassword: "",
+  });
+
+  const { isPending, mutate } = useMutation({
+    mutationKey: ["update-user-info"],
+    mutationFn: async () => {
+      const response = await axios.patch(`${apiUrl}/users`, {
+        fullName: formData.fullName,
+        emailAddress: formData.emailAddress,
+        phoneNumber: formData.phoneNumber,
+        county: formData.county,
+        town: formData.town,
+        password: formData.newPassword,
+        oldPassword: formData.oldPassword
+      }, {
+        withCredentials: true,
+      });
+      return response.data;
+    },
+
+    onSuccess: (data) => {
+      setUserInfo(data);
+      setIsEditingDetails(false);
+      setIsEditingAddress(false);
+      setIsEditingPassword(false);
+      toast.success("Updated user successfully!");
+    },
+    onError: (err) => {
+      if (axios.isAxiosError(err)) {
+        const serverMessage = err.response?.data.message;
+        setFormError(serverMessage);
+      } else {
+        setFormError("Something went wrong.");
+      }
+    },
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAccountDetailsSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    updateUserDetails({
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone,
-    });
-
-    setIsEditingDetails(false);
-  };
-
-  const handleAddressSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    updateUserDetails({
-      shippingAddress: {
-        county: formData.county,
-        town: formData.town,
-      },
-    });
-
-    setIsEditingAddress(false);
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -73,14 +89,25 @@ const AccountPage = () => {
     event.preventDefault();
   };
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handleUpdateDetails = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsEditingPassword(false);
+    setFormError(null);
+    mutate();
   };
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
+  const handleUpdateAddress = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    mutate();
+  };
+  const handleUpdatePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    if (formData.newPassword !== formData.confirmedNewPassword) {
+      setFormError("New Password and confirmed password should match.");
+      return;
+    }
+    mutate();
+  };
 
   return (
     <div className="account-page">
@@ -92,7 +119,12 @@ const AccountPage = () => {
           {!isEditingDetails && (
             <button
               className="edit-button"
-              onClick={() => setIsEditingDetails(true)}
+              onClick={() => {
+                setFormError(null);
+                setIsEditingDetails(true);
+                setIsEditingAddress(false);
+                setIsEditingPassword(false);
+              }}
             >
               <FaEdit /> Edit
             </button>
@@ -100,7 +132,12 @@ const AccountPage = () => {
         </div>
 
         {isEditingDetails ? (
-          <form onSubmit={handleAccountDetailsSubmit}>
+          <form onSubmit={handleUpdateDetails}>
+            {formError && (
+              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+                {formError}
+              </Alert>
+            )}
             <TextField
               label="Full Name"
               variant="outlined"
@@ -115,8 +152,8 @@ const AccountPage = () => {
               label="Email"
               variant="outlined"
               sx={formControlStyle}
-              name="email"
-              value={formData.email}
+              name="emailAddress"
+              value={formData.emailAddress}
               onChange={handleInputChange}
               required
             />
@@ -126,15 +163,23 @@ const AccountPage = () => {
               variant="outlined"
               type="tel"
               sx={formControlStyle}
-              name="phone"
-              value={formData.phone}
+              name="phoneNumber"
+              value={formData.phoneNumber}
               onChange={handleInputChange}
               required
             />
 
             <div className="account-page-form-actions">
-              <button type="submit" className="save-button">
-                Save Changes
+              <button
+                type="submit"
+                className="save-button"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+                ) : (
+                  "Save Changes"
+                )}
               </button>
               <button
                 type="button"
@@ -149,17 +194,17 @@ const AccountPage = () => {
           <div className="details-display">
             <div className="detail-item">
               <span className="detail-label">Full Name:</span>
-              <span className="detail-value">{user.fullName}</span>
+              <span className="detail-value">{user?.fullName}</span>
             </div>
 
             <div className="detail-item">
               <span className="detail-label">Email:</span>
-              <span className="detail-value">{user.email}</span>
+              <span className="detail-value">{user?.emailAddress}</span>
             </div>
 
             <div className="detail-item">
               <span className="detail-label">Phone:</span>
-              <span className="detail-value">{user.phone}</span>
+              <span className="detail-value">{user?.phoneNumber}</span>
             </div>
           </div>
         )}
@@ -171,7 +216,12 @@ const AccountPage = () => {
           {!isEditingAddress && (
             <button
               className="edit-button"
-              onClick={() => setIsEditingAddress(true)}
+              onClick={() => {
+                setFormError(null);
+                setIsEditingDetails(false);
+                setIsEditingAddress(true);
+                setIsEditingPassword(false);
+              }}
             >
               <FaEdit /> Edit
             </button>
@@ -179,7 +229,12 @@ const AccountPage = () => {
         </div>
 
         {isEditingAddress ? (
-          <form onSubmit={handleAddressSubmit}>
+          <form onSubmit={handleUpdateAddress}>
+            {formError && (
+              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+                {formError}
+              </Alert>
+            )}
             <TextField
               label="County"
               variant="outlined"
@@ -201,8 +256,16 @@ const AccountPage = () => {
             />
 
             <div className="account-page-form-actions">
-              <button type="submit" className="save-button">
-                Save Changes
+              <button
+                type="submit"
+                className="save-button"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+                ) : (
+                  "Save Changes"
+                )}
               </button>
               <button
                 type="button"
@@ -217,14 +280,12 @@ const AccountPage = () => {
           <div className="details-display">
             <div className="detail-item">
               <span className="detail-label">County:</span>
-              <span className="detail-value">
-                {user.shippingAddress.county}
-              </span>
+              <span className="detail-value">{user?.county}</span>
             </div>
 
             <div className="detail-item">
               <span className="detail-label">Town/City:</span>
-              <span className="detail-value">{user.shippingAddress.town}</span>
+              <span className="detail-value">{user?.town}</span>
             </div>
           </div>
         )}
@@ -236,19 +297,31 @@ const AccountPage = () => {
           {!isEditingPassword && (
             <button
               className="edit-button"
-              onClick={() => setIsEditingPassword(true)}
+              onClick={() => {
+                setFormError(null);
+                setIsEditingDetails(false);
+                setIsEditingAddress(false);
+                setIsEditingPassword(true);
+              }}
             >
               <FaEdit /> Edit
             </button>
           )}
         </div>
         {isEditingPassword ? (
-          <form onSubmit={handlePasswordSubmit}>
+          <form onSubmit={handleUpdatePassword}>
+            {formError && (
+              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+                {formError}
+              </Alert>
+            )}
             <FormControl variant="outlined" sx={formControlStyle}>
               <InputLabel>Old Password</InputLabel>
               <OutlinedInput
                 type={showPassword ? "text" : "password"}
-                name="OldPassword"
+                name="oldPassword"
+                value={formData.oldPassword}
+                onChange={handleInputChange}
                 required
                 endAdornment={
                   <InputAdornment position="end">
@@ -275,7 +348,9 @@ const AccountPage = () => {
               <InputLabel>New Password</InputLabel>
               <OutlinedInput
                 type={showPassword ? "text" : "password"}
-                name="NewPassword"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleInputChange}
                 required
                 endAdornment={
                   <InputAdornment position="end">
@@ -303,6 +378,8 @@ const AccountPage = () => {
               <OutlinedInput
                 type={showPassword ? "text" : "password"}
                 name="confirmedNewPassword"
+                value={formData.confirmedNewPassword}
+                onChange={handleInputChange}
                 required
                 endAdornment={
                   <InputAdornment position="end">
@@ -326,8 +403,16 @@ const AccountPage = () => {
             </FormControl>
 
             <div className="account-page-form-actions">
-              <button type="submit" className="save-button">
-                Save Changes
+              <button
+                type="submit"
+                className="save-button"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+                ) : (
+                  "Save Changes"
+                )}
               </button>
               <button
                 type="button"

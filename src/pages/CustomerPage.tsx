@@ -1,27 +1,9 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useAuth } from '../context/AuthContext';
 import '../styles/CustomerPage.css';
 
 const CustomerPage = () => {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  if (!isAuthenticated) {
-    return (
-      <div>
-        <Header />
-        <main className="container customer-login-required">
-          <h2>Please log in to access your account</h2>
-          <p>You need to be logged in to view this page.</p>
-          <button className="login-button" onClick={() => {navigate("/login")}}>Sign In</button>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
     <div className="customer-page">
       <Header />

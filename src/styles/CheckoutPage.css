@@ -26,14 +26,22 @@
   padding: 20px;
 }
 .checkout-section-title {
-  margin-bottom: 20px;
-  color: var(--text-color);
-  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
   border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.checkout-section-title h2 {
+  color: var(--text-color);
   text-align: start;
   font-size: 1.7rem;
 }
-
+.customer-info form, .address-display form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 .info-content {
   display: flex;
   flex-direction: column;
@@ -64,7 +72,8 @@
   color: var(--text-color);
 }
 
-.edit-delivery-details,
+.edit-shipping-address,
+.edit-customer-info,
 .modify-cart {
   background-color: transparent;
   color: var(--primary-color);
@@ -88,33 +97,6 @@
   padding: 1rem 0.5rem;
   border-radius: 4px;
 }
-
-.address-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding: 1rem 0.5rem;
-}
-
-.edit-shipping-address-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.edit-shipping-address-form-group label {
-  font-weight: 600;
-  color: var(--text-light);
-  font-size: 1.1rem;
-}
-
-.edit-shipping-address-form-group input {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1.4rem;
-}
-
 .edit-shipping-address-form-actions {
   display: flex;
   gap: 10px;
@@ -168,11 +150,13 @@
   border-radius: 4px;
   overflow: hidden;
   margin-right: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .shipment-item-image img {
-  width: 100%;
-  height: 100%;
+  width: 30px;
   object-fit: cover;
 }
 
@@ -261,9 +245,13 @@
   cursor: not-allowed;
 }
 
+.checkout-page-loader-cont,
 .order-success {
-  text-align: center;
-  padding: 50px 0;
+  height: 85vh;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .order-success h1 {

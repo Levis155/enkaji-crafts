@@ -18,19 +18,24 @@ import { BsBoxArrowInLeft } from "react-icons/bs";
 import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
+import useWishlistStore from "../stores/wishlistStore";
 import Logo from "./Logo";
 import "../styles/Header.css";
 
 const Header = () => {
+  const [logOutError, setLogOutError] = useState<string | null>(null);
+
   const user = useUserStore((state) => state.user);
   const removeUserInfo = useUserStore((state) => state.removeUserInfo);
   const cart = useCartStore((state) => state.cart);
   const clearCart = useCartStore((state) => state.clearCart);
   const getTotalCartQuantity = useCartStore((state) => state.getTotalQuantity);
+  const wishlist = useWishlistStore((state) => state.wishlist);
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
   const [cartCount, setCartCount] = useState(getTotalCartQuantity());
   const [searchQuery, setSearchQuery] = useState("");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -48,7 +53,7 @@ const Header = () => {
     { name: "Accessories", path: "/category/accessories" },
   ];
 
-  const mutation = useMutation({
+  const { mutate: sendCartData } = useMutation({
     mutationKey: ["send-cart-data"],
     mutationFn: async () => {
       await axios.post(
@@ -56,6 +61,35 @@ const Header = () => {
         { cart },
         { withCredentials: true }
       );
+    },
+    onError: (err) => {
+      if (axios.isAxiosError(err)) {
+        const serverMessage = err.response?.data.message;
+        setLogOutError(serverMessage);
+      } else {
+        setLogOutError("Something went wrong.");
+      }
+      toast.error(logOutError);
+    },
+  });
+
+  const { mutate: sendWishlistData } = useMutation({
+    mutationKey: ["send-wishlist-data"],
+    mutationFn: async () => {
+      await axios.post(
+        `${apiUrl}/wishlist/items`,
+        { wishlist },
+        { withCredentials: true }
+      );
+    },
+    onError: (err) => {
+      if (axios.isAxiosError(err)) {
+        const serverMessage = err.response?.data.message;
+        setLogOutError(serverMessage);
+      } else {
+        setLogOutError("Something went wrong.");
+      }
+      toast.error(logOutError);
     },
   });
 
@@ -126,19 +160,16 @@ const Header = () => {
 
   const handleLogOut = async () => {
     try {
-      await mutation.mutateAsync();
-      clearCart();
-      removeUserInfo();
-
-      toast.success("Logged out successfully.", {
-        position: "top-right",
-        autoClose: 2000,
-        theme: "colored",
-      });
-      setTimeout(() => navigate("/"), 2000);
+      await Promise.all([sendCartData(), sendWishlistData()]);
+      toast.success("Logged out successfully.")
     } catch (error) {
-      console.error("Error sending cart before logout:", error);
-      toast.error("Failed to sync cart with server before logging out.");
+      console.error("Error syncing data before logout", error);
+      toast.error("Error syncing data before logout.")
+    } finally {
+      clearCart();
+      clearWishlist();
+      removeUserInfo();
+      navigate("/");
     }
   };
 
@@ -199,15 +230,15 @@ const Header = () => {
                   >
                     <FaHeart /> Wishlist
                   </Link>
-                  <a
-                    href="#"
+                  <button
+                    className="account-btn"
                     onClick={() => {
                       handleLogOut();
                       setShowAccountMenu(false);
                     }}
                   >
                     <BiLogOut /> Sign Out
-                  </a>
+                  </button>
                 </>
               ) : (
                 <>
@@ -314,15 +345,15 @@ const Header = () => {
                     >
                       <FaHeart /> Wishlist
                     </Link>
-                    <a
-                      href="#"
+                    <button
+                      className="account-btn"
                       onClick={() => {
                         handleLogOut();
                         setShowMobileMenu(false);
                       }}
                     >
                       <HiOutlineArrowRightOnRectangle /> Sign Out
-                    </a>
+                    </button>
                   </>
                 ) : (
                   <>
@@ -367,18 +398,6 @@ const Header = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
       <header className="header">
         {windowWidth <= 1060 ? minimizedHeader : standardHeader}
       </header>
