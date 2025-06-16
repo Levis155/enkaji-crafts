@@ -249,7 +249,9 @@ const ProductDetailPage = () => {
                 <div className="key-features">
                   <p className="key-features-title">specifications</p>
                   <div className="key-features-body">
-                    <ReactMarkdown>{product.specifications}</ReactMarkdown>
+                    <ul className="product-specs-list">
+                      <ReactMarkdown>{product.specifications}</ReactMarkdown>
+                    </ul>
                   </div>
                 </div>
 
@@ -258,7 +260,9 @@ const ProductDetailPage = () => {
                     what's in the package
                   </p>
                   <div className="whats-in-the-box-body">
-                    <ReactMarkdown>{product.packageContent}</ReactMarkdown>
+                    <ul className="package-content-list">
+                      <ReactMarkdown>{product.packageContent}</ReactMarkdown>
+                    </ul>
                   </div>
                 </div>
               </div>

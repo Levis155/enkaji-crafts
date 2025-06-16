@@ -217,6 +217,9 @@
   padding: 0.8rem;
   font-size: 1.5rem;
 }
+.product-specs-list, .package-content-list{
+  all: unset;
+}
 .customer-feedback-body {
   padding: 1rem;
   display: flex;
