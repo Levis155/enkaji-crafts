@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Rating from "@mui/material/Rating";
+import ReactMarkdown from "react-markdown";
 import { IoLocationOutline, IoCheckmarkCircle } from "react-icons/io5";
 import { IoIosPricetag, IoIosCalendar } from "react-icons/io";
 import { IoChatbubblesOutline } from "react-icons/io5";
@@ -248,9 +249,7 @@ const ProductDetailPage = () => {
                 <div className="key-features">
                   <p className="key-features-title">specifications</p>
                   <div className="key-features-body">
-                    <ul>
-                      <li>{product.specifications}</li>
-                    </ul>
+                    <ReactMarkdown>{product.specifications}</ReactMarkdown>
                   </div>
                 </div>
 
@@ -259,9 +258,7 @@ const ProductDetailPage = () => {
                     what's in the package
                   </p>
                   <div className="whats-in-the-box-body">
-                    <ul className="package-contents">
-                      <li>{product.packageContent}</li>
-                    </ul>
+                    <ReactMarkdown>{product.packageContent}</ReactMarkdown>
                   </div>
                 </div>
               </div>
@@ -287,7 +284,7 @@ const ProductDetailPage = () => {
                       <div>
                         <Rating
                           name="read-only"
-                          value={product.averageRating} 
+                          value={product.averageRating}
                           readOnly
                           precision={0.5}
                         />
@@ -324,7 +321,11 @@ const ProductDetailPage = () => {
 
                           <div className="product-review-card-bottom">
                             <p className="product-review-card-review-details">
-                              {format(new Date(review.createdAt || Date.now()), "dd MMM yyyy")} by {review.reviewAuthor}
+                              {format(
+                                new Date(review.createdAt || Date.now()),
+                                "dd MMM yyyy"
+                              )}{" "}
+                              by {review.reviewAuthor}
                             </p>
 
                             <p className="verified-purchase">
