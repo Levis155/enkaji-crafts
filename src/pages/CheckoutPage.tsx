@@ -102,11 +102,11 @@ const CheckoutPage = () => {
   });
 
   useEffect(() => {
-    if (inStockItems.length === 0) {
+    if (inStockItems.length === 0 && orderStatus === null) {
       toast.error("Your cart is empty or items are out of stock");
       navigate("/cart");
     }
-  }, [inStockItems, navigate]);
+  }, [inStockItems, orderStatus, navigate]);
 
   useEffect(() => {
     if (!checkoutRequestId) return;
