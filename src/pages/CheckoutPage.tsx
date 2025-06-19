@@ -124,7 +124,7 @@ const CheckoutPage = () => {
         setOrderResult(resultDesc);
       }
 
-      if (++attempts >= 10) {
+      if (++attempts >= 20) {
         clearInterval(interval);
         setOrderStatus("failed");
         setOrderResult("Payment timed out. Please try again.");
