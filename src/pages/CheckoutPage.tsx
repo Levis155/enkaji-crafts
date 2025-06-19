@@ -4,13 +4,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { PulseLoader } from "react-spinners";
-import {
-  TextField,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
+import { PropagateLoader } from "react-spinners";
+import { TextField, Alert, CircularProgress } from "@mui/material";
 import formControlStyle from "../styles/formControlStyles";
+import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import apiUrl from "../Utils/apiUrl";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -25,16 +23,19 @@ const CheckoutPage = () => {
   const cart = useCartStore((state) => state.cart);
   const getTotalPrice = useCartStore((state) => state.getTotalPrice);
   const clearCart = useCartStore((state) => state.clearCart);
+  const inStockItems = cart.filter((item) => item.inStock);
   const navigate = useNavigate();
-  const [shippingFee] = useState(120); // Default shipping fee
-  const [orderPlaced, setOrderPlaced] = useState(false);
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [orderError, setOrderError] = useState<string | null>(null);
-
-  const inStockItems = cart.filter((item) => item.inStock);
-
+  const [checkoutRequestId, setCheckoutRequestId] = useState<string | null>(
+    null
+  );
+  const [orderStatus, setOrderStatus] = useState<string | null>(null);
+  const [orderResult, setOrderResult] = useState<string | null>(null);
+  const [_paymentInitiationError, setPaymentInitiationError] = useState<
+    string | null
+  >(null);
   const [formData, setFormData] = useState({
     fullName: user?.fullName,
     emailAddress: user?.emailAddress,
@@ -43,82 +44,101 @@ const CheckoutPage = () => {
     town: user?.town,
   });
 
-const {
-  isPending: isPlacingOrder,
-  mutate: placeOrder,
-} = useMutation<Order, Error, Order>({
-  mutationKey: ["make-order"],
-  mutationFn: async (order) => {
-    const response = await axios.post(`${apiUrl}/orders`, order, {
-      withCredentials: true,
-    });
-    return response.data;
-  },
-  onSuccess: () => {
-    setOrderPlaced(true);
-    clearCart();
-    console.log("Order placed successfully.");
-  },
-  onError: (err) => {
-    if (axios.isAxiosError(err)) {
-      const serverMessage = err.response?.data.message;
-      setOrderError(serverMessage);
-    } else {
-      setOrderError("Something went wrong.");
-    }
-    toast.error(orderError || "Error placing order");
-  },
-});
-
-// Mutation for updating user info
-const {
-  isPending: isUpdatingUser,
-  mutate: updateUser,
-} = useMutation({
-  mutationKey: ["update-user-info"],
-  mutationFn: async () => {
-    const response = await axios.patch(
-      `${apiUrl}/users`,
-      {
-        fullName: formData.fullName,
-        emailAddress: formData.emailAddress,
-        phoneNumber: formData.phoneNumber,
-        county: formData.county,
-        town: formData.town,
+  const { isPending: isInitiatingPayment, mutate: payAndPlaceOrder } =
+    useMutation<Order, Error, Order>({
+      mutationKey: ["pay-and-place-order"],
+      mutationFn: async (order) => {
+        const response = await axios.post(`${apiUrl}/orders`, order, {
+          withCredentials: true,
+        });
+        return response.data;
       },
-      {
-        withCredentials: true,
+      onSuccess: (data) => {
+        setCheckoutRequestId(data.checkoutRequestId || null);
+        setOrderStatus("pending");
+      },
+      onError: (err) => {
+        let message = "Something went wrong.";
+        if (axios.isAxiosError(err)) {
+          message = err.response?.data.message || message;
+        }
+        setPaymentInitiationError(message);
+        toast.error(message);
+      },
+    });
+
+  const { isPending: isUpdatingUser, mutate: updateUser } = useMutation({
+    mutationKey: ["update-user-info"],
+    mutationFn: async () => {
+      const response = await axios.patch(
+        `${apiUrl}/users`,
+        {
+          fullName: formData.fullName,
+          emailAddress: formData.emailAddress,
+          phoneNumber: formData.phoneNumber,
+          county: formData.county,
+          town: formData.town,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setUserInfo(data);
+      setIsEditingDetails(false);
+      setIsEditingAddress(false);
+      toast.success("Updated user successfully!");
+    },
+    onError: (err) => {
+      if (axios.isAxiosError(err)) {
+        const serverMessage = err.response?.data.message;
+        setFormError(serverMessage);
+      } else {
+        setFormError("Something went wrong.");
       }
-    );
-    return response.data;
-  },
-  onSuccess: (data) => {
-    setUserInfo(data);
-    setIsEditingDetails(false);
-    setIsEditingAddress(false);
-    toast.success("Updated user successfully!");
-  },
-  onError: (err) => {
-    if (axios.isAxiosError(err)) {
-      const serverMessage = err.response?.data.message;
-      setFormError(serverMessage);
-    } else {
-      setFormError("Something went wrong.");
-    }
-  },
-});
+    },
+  });
 
   useEffect(() => {
-    if (!user) {
-      navigate("/customer/account");
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
-    if (inStockItems.length === 0 && !orderPlaced && user) {
+    if (inStockItems.length === 0) {
+      toast.error("Your cart is empty or items are out of stock");
       navigate("/cart");
     }
-  }, [inStockItems, orderPlaced, user, navigate]);
+  }, [inStockItems, navigate]);
+
+  useEffect(() => {
+    if (!checkoutRequestId) return;
+
+    let attempts = 0;
+    const interval = setInterval(async () => {
+      const res = await axios.get(
+        `${apiUrl}/orders/payment-status/${checkoutRequestId}`
+      );
+      const { status, resultDesc } = res.data;
+
+      if (status !== "pending") {
+        clearInterval(interval);
+        setOrderStatus(status);
+        setOrderResult(resultDesc);
+      }
+
+      if (++attempts >= 10) {
+        clearInterval(interval);
+        setOrderStatus("failed");
+        setOrderResult("Payment timed out. Please try again.");
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [checkoutRequestId]);
+
+  useEffect(() => {
+    if (orderStatus === "processed") {
+      clearCart();
+    }
+  }, [orderStatus]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -135,39 +155,72 @@ const {
     updateUser();
   };
 
-  const handlePlaceOrder = (order: Order) => {
-    setOrderError(null);
-    placeOrder(order);
+  const handlePayAndPlaceOrder = () => {
+    setPaymentInitiationError(null);
+    const order = {
+      totalPrice: getTotalPrice() + user!.shippingCharge,
+      phoneNumber: user!.phoneNumber,
+      county: user!.county,
+      town: user!.town,
+      orderItems: inStockItems.map((item) => ({
+        productId: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+      })),
+    };
+    payAndPlaceOrder(order);
   };
-
-  if (!user) return null;
 
   return (
     <div>
       <Header />
-      {isPlacingOrder && !orderError && !orderPlaced && (
-        <div className="checkout-page-loader-cont">
-          <PulseLoader size={15} color="#e61919" />
+
+      {orderStatus === "pending" && (
+        <div className="order-status-cont">
+          <PropagateLoader size={15} color="#e61919" />
+          <p>Please check your phone to complete payment...</p>
         </div>
       )}
 
-      {!isPlacingOrder && !orderError && orderPlaced && (
-        <div className="order-success">
-          <h1>Order Placed Successfully!</h1>
+      {orderStatus === "processed" && (
+        <div className="order-status-cont">
+          <DotLottieReact
+            src="https://lottie.host/65fb76dc-6876-43ae-9718-23afa1b7490e/V8j8o34irq.lottie"
+            className="lottie-animation"
+            loop={false}
+            autoplay
+          />
+          <h2 className="order-success">
+            Payment received! Your order was placed.
+          </h2>
           <p>
-            Thank you for your order. Your order has been placed successfully.
+            We've sent a confirmation email to{" "}
+            <strong>{user?.emailAddress}</strong>.
           </p>
-          <p>We've sent a confirmation email to {user?.emailAddress}.</p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/customer/orders")}
             className="continue-shopping-btn"
           >
-            Continue Shopping
+            <MdOutlineKeyboardDoubleArrowLeft /> View Orders
           </button>
         </div>
       )}
 
-      {!isPlacingOrder && !orderError && !orderPlaced && (
+      {orderStatus === "failed" && (
+        <div className="order-status-cont">
+          <p className="payment-failed">Payment failed: {orderResult}</p>
+          <button
+            onClick={() => navigate("/")}
+            className="continue-shopping-btn"
+          >
+            <MdOutlineKeyboardDoubleArrowLeft /> Back To Shop
+          </button>
+        </div>
+      )}
+
+      {!orderStatus && (
         <main className="checkout-page">
           <h1>Checkout</h1>
 
@@ -352,7 +405,7 @@ const {
                       </form>
                     ) : (
                       <p>
-                        {user.county}, {user.town}
+                        {user?.county}, {user?.town}
                       </p>
                     )}
                   </div>
@@ -402,33 +455,24 @@ const {
 
               <div className="summary-row delivery-fee">
                 <span>Delivery Fee</span>
-                <span>Ksh {shippingFee}</span>
+                <span>Ksh {user?.shippingCharge}</span>
               </div>
 
               <div className="summary-row total">
                 <span>Total</span>
-                <span>Ksh {getTotalPrice() + shippingFee}</span>
+                <span>Ksh {getTotalPrice() + user!.shippingCharge}</span>
               </div>
 
               <button
                 className="place-order-button"
-                onClick={() => {
-                  handlePlaceOrder({
-                    totalPrice: getTotalPrice() + shippingFee,
-                    county: user.county,
-                    town: user.town,
-                    orderItems: inStockItems.map((item) => ({
-                      productId: item.id,
-                      name: item.name,
-                      price: item.price,
-                      quantity: item.quantity,
-                      image: item.image,
-                    })),
-                  });
-                }}
-                disabled={isEditingAddress}
+                onClick={handlePayAndPlaceOrder}
+                disabled={isInitiatingPayment || isEditingAddress}
               >
-                Place Order
+                {isInitiatingPayment ? (
+                  <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+                ) : (
+                  "Pay & Place Order"
+                )}
               </button>
             </div>
           </div>

@@ -21,7 +21,7 @@ const CartPage = () => {
   const getCartTotal = useCartStore((state) => state.getTotalPrice);
   const getTotalCartQuantity = useCartStore((state) => state.getTotalQuantity);
   const navigate = useNavigate();
-  const [shippingFee] = useState(120); // Default shipping fee
+  const shippingFee = user ? user.shippingCharge : 120;
 
   const inStockItems = cart.filter((item) => item.inStock);
   const outOfStockItems = cart.filter((item) => !item.inStock);

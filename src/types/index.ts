@@ -74,10 +74,14 @@ export interface Order {
   totalPrice: number;
   town: string;
   county: string;
-  status?: "pending" | "processing" | "shipped" | "delivered";
+  phoneNumber: string;
+  status?: "pending" | "failed" | "processed" | "shipped" | "delivered";
   deliveredAt?: string;
   isPaid?: boolean;
   paidAt?: string;
+  checkoutRequestId?: string;
+  merchantRequestId?: string;
+  resultDesc?: string;
   createdAt?: string;
   user?: User;
   orderItems: {

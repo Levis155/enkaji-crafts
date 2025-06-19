@@ -103,17 +103,20 @@
 }
 
 .order-status.shipped {
-  background-color: var(--info-color);
+  background-color: var(--shipped-color);
   color: white;
 }
 
-.order-status.processing {
-  background-color: var(--warning-color);
+.order-status.processed {
+  background-color: var(--info-color);
+  color: white;
+}
+.order-status.failed {
+  background-color: var(--failed-color);
   color: var(--text-color);
 }
-
 .order-status.pending {
-  background-color: var(--text-light);
+  background-color: var(--warning-color);
   color: white;
 }
 

@@ -245,34 +245,41 @@
   cursor: not-allowed;
 }
 
-.checkout-page-loader-cont,
-.order-success {
+.order-status-cont {
   height: 85vh;
   flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 2.2rem;
+}
+.payment-failed{
+  color: var(--primary-color);
 }
 
-.order-success h1 {
+.order-status-cont h2 {
   color: var(--success-color);
 }
 
-.order-success p {
-  margin-bottom: 20px;
+.order-status-cont p {
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
+.lottie-animation{
+  width: 15rem;
+  height: 15rem;
+}
 
 .continue-shopping-btn {
-  display: inline-block;
+  display: flex;
+  gap: .5rem;
+  align-items: center;
   background-color: var(--primary-color);
   color: white;
   padding: 10px 20px;
   border-radius: 4px;
   font-weight: 600;
-  margin-top: 20px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;

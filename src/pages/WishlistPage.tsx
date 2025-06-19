@@ -7,7 +7,7 @@ const WishlistPage = () => {
   const wishlistItems = useWishlistStore((state) => state.wishlist);
   const removeFromWishlist = useWishlistStore((state) => state.removeItem);
   const addToCart = useCartStore((state) => state.addItem);
-  const isItemInCart = useCartStore((state) => state.isItemInCart);
+  const cartItems = useCartStore((state) => state.cart);
 
   if (wishlistItems.length === 0) {
     return (
@@ -69,7 +69,7 @@ const WishlistPage = () => {
             </div>
 
             <div className="item-actions">
-              {!isItemInCart(item.id) && (
+              {!cartItems.some((cartItem) => cartItem.id === item.id) && (
                 <button
                   className="move-to-cart"
                   onClick={() => {
