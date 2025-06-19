@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaAngleDoubleLeft } from "react-icons/fa";
 import Header from "../components/Header";
