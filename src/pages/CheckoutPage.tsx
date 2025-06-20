@@ -5,8 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { PropagateLoader } from "react-spinners";
-import { TextField, Alert, CircularProgress } from "@mui/material";
-import formControlStyle from "../styles/formControlStyles";
+import {
+  TextField,
+  Alert,
+  CircularProgress,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  FormControl,
+  InputLabel,
+  Radio,
+  RadioGroup,
+  Box,
+  FormControlLabel,
+} from "@mui/material";
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import apiUrl from "../Utils/apiUrl";
@@ -15,6 +27,10 @@ import Footer from "../components/Footer";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
 import { Order } from "../types";
+import countyTownFeeMap from "../data/regionTownFeeMap";
+import { getShippingFee, getTownsForCounty } from "../Utils/shippingUtils";
+import formControlStyle from "../styles/formControlStyles";
+import mpesaLogo from "../../src/assets/MicrosoftTeams-image_41.png";
 import "../styles/CheckoutPage.css";
 
 const CheckoutPage = () => {
@@ -25,6 +41,7 @@ const CheckoutPage = () => {
   const clearCart = useCartStore((state) => state.clearCart);
   const inStockItems = cart.filter((item) => item.inStock);
   const navigate = useNavigate();
+
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -36,12 +53,25 @@ const CheckoutPage = () => {
   const [_paymentInitiationError, setPaymentInitiationError] = useState<
     string | null
   >(null);
+  const [availableTowns, setAvailableTowns] = useState<string[]>(
+    getTownsForCounty(user?.county || "")
+  );
+  const [initialUserData, setInitialUserData] = useState({
+    fullName: user?.fullName || "",
+    emailAddress: user?.emailAddress || "",
+    phoneNumber: user?.phoneNumber || "",
+    county: user?.county || "",
+    town: user?.town || "",
+    shippingCharge: user?.shippingCharge || 0,
+  });
+
   const [formData, setFormData] = useState({
-    fullName: user?.fullName,
-    emailAddress: user?.emailAddress,
-    phoneNumber: user?.phoneNumber,
-    county: user?.county,
-    town: user?.town,
+    fullName: user?.fullName || "",
+    emailAddress: user?.emailAddress || "",
+    phoneNumber: user?.phoneNumber || "",
+    county: user?.county || "",
+    town: user?.town || "",
+    shippingCharge: user?.shippingCharge || 0,
   });
 
   const { isPending: isInitiatingPayment, mutate: payAndPlaceOrder } =
@@ -78,6 +108,7 @@ const CheckoutPage = () => {
           phoneNumber: formData.phoneNumber,
           county: formData.county,
           town: formData.town,
+          shippingCharge: formData.shippingCharge,
         },
         {
           withCredentials: true,
@@ -140,8 +171,78 @@ const CheckoutPage = () => {
     }
   }, [orderStatus]);
 
+  useEffect(() => {
+    if (user) {
+      setInitialUserData({
+        fullName: user.fullName,
+        emailAddress: user.emailAddress,
+        phoneNumber: user.phoneNumber,
+        county: user.county,
+        town: user.town,
+        shippingCharge: user.shippingCharge,
+      });
+
+      setFormData({
+        fullName: user.fullName,
+        emailAddress: user.emailAddress,
+        phoneNumber: user.phoneNumber,
+        county: user.county,
+        town: user.town,
+        shippingCharge: user.shippingCharge,
+      });
+
+      setAvailableTowns(getTownsForCounty(user.county));
+    }
+  }, [user]);
+
+  const handleCountyChange = (e: SelectChangeEvent<string>) => {
+    const county = e.target.value;
+    const towns = getTownsForCounty(county);
+
+    setFormData((prev) => ({
+      ...prev,
+      county,
+      town: towns.includes(prev.town) ? prev.town : "",
+      shippingCharge: 0,
+    }));
+
+    setAvailableTowns(towns);
+  };
+
+  const handleTownChange = (e: SelectChangeEvent<string>) => {
+    const town = e.target.value;
+    const fee = getShippingFee(formData.county, town);
+
+    setFormData((prev) => ({
+      ...prev,
+      town,
+      shippingCharge: fee !== undefined ? fee : 0,
+    }));
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleCancelDetails = () => {
+    setIsEditingDetails(false);
+    setFormData((prev) => ({
+      ...prev,
+      fullName: initialUserData.fullName,
+      emailAddress: initialUserData.emailAddress,
+      phoneNumber: initialUserData.phoneNumber,
+    }));
+  };
+
+  const handleCancelAddress = () => {
+    setIsEditingAddress(false);
+    setFormData((prev) => ({
+      ...prev,
+      county: initialUserData.county,
+      town: initialUserData.town,
+      shippingCharge: initialUserData.shippingCharge,
+    }));
+    setAvailableTowns(getTownsForCounty(initialUserData.county));
   };
 
   const handleUpdateDetails = (e: React.FormEvent) => {
@@ -149,6 +250,7 @@ const CheckoutPage = () => {
     setFormError(null);
     updateUser();
   };
+
   const handleUpdateAddress = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
@@ -158,10 +260,10 @@ const CheckoutPage = () => {
   const handlePayAndPlaceOrder = () => {
     setPaymentInitiationError(null);
     const order = {
-      totalPrice: getTotalPrice() + user!.shippingCharge,
-      phoneNumber: user!.phoneNumber,
-      county: user!.county,
-      town: user!.town,
+      totalPrice: getTotalPrice() + formData.shippingCharge,
+      phoneNumber: formData.phoneNumber,
+      county: formData.county,
+      town: formData.town,
       orderItems: inStockItems.map((item) => ({
         productId: item.id,
         name: item.name,
@@ -302,7 +404,7 @@ const CheckoutPage = () => {
                       <button
                         type="button"
                         className="cancel-button"
-                        onClick={() => setIsEditingDetails(false)}
+                        onClick={handleCancelDetails}
                       >
                         Cancel
                       </button>
@@ -359,25 +461,57 @@ const CheckoutPage = () => {
                             {formError}
                           </Alert>
                         )}
-                        <TextField
-                          label="County"
-                          variant="outlined"
-                          sx={formControlStyle}
-                          name="county"
-                          value={formData.county}
-                          onChange={handleInputChange}
-                          required
-                        />
 
-                        <TextField
-                          label="Town"
-                          variant="outlined"
+                        <FormControl fullWidth sx={formControlStyle}>
+                          <InputLabel>County</InputLabel>
+                          <Select
+                            value={formData.county}
+                            label="County"
+                            onChange={handleCountyChange}
+                            name="county"
+                            required
+                          >
+                            {Object.keys(countyTownFeeMap)
+                              .sort((a, b) => a.localeCompare(b))
+                              .map((county) => (
+                                <MenuItem key={county} value={county}>
+                                  {county.replace(" County", "")}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+
+                        <FormControl
+                          fullWidth
                           sx={formControlStyle}
-                          name="town"
-                          value={formData.town}
-                          onChange={handleInputChange}
-                          required
-                        />
+                          disabled={!formData.county}
+                        >
+                          <InputLabel>Town</InputLabel>
+                          <Select
+                            value={formData.town}
+                            label="Town"
+                            onChange={handleTownChange}
+                            name="town"
+                            required
+                          >
+                            {availableTowns
+                              .sort((a, b) => a.localeCompare(b))
+                              .map((town) => (
+                                <MenuItem key={town} value={town}>
+                                  {town}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+
+                        {formData.shippingCharge > 0 && (
+                          <Alert
+                            severity="info"
+                            sx={{ mt: 2, fontSize: "1.4rem" }}
+                          >
+                            Shipping Fee: Ksh {formData.shippingCharge}
+                          </Alert>
+                        )}
 
                         <div className="account-page-form-actions">
                           <button
@@ -397,7 +531,7 @@ const CheckoutPage = () => {
                           <button
                             type="button"
                             className="cancel-button"
-                            onClick={() => setIsEditingAddress(false)}
+                            onClick={handleCancelAddress}
                           >
                             Cancel
                           </button>
@@ -406,6 +540,10 @@ const CheckoutPage = () => {
                     ) : (
                       <p>
                         {user?.county}, {user?.town}
+                        <br />
+                        <span className="shipping-fee-display">
+                          Shipping Fee: Ksh {user?.shippingCharge}
+                        </span>
                       </p>
                     )}
                   </div>
@@ -443,6 +581,59 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               </section>
+
+              <section className="payment-method">
+                <div className="checkout-section-title">
+                  <h2>Payment Method</h2>
+                </div>
+
+                <div className="payment-method-body">
+                  <FormControl component="fieldset">
+                    <RadioGroup
+                      aria-label="payment method"
+                      name="payment-method"
+                      value="mpesa"
+                    >
+                      <FormControlLabel
+                        value="mpesa"
+                        control={
+                          <Radio
+                            color="primary"
+                            sx={{
+                              "&.Mui-checked": {
+                                color: "#e61919",
+                              },
+                              "& .MuiSvgIcon-root": {
+                                fontSize: 12,
+                                transform: "scale(1.5)",
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "100%",
+                              backgroundColor: "#f8f8f8",
+                            }}
+                          >
+                            <img
+                              src={mpesaLogo}
+                              alt="M-Pesa"
+                              style={{
+                                height: "80px",
+                              }}
+                            />
+                          </Box>
+                        }
+                        disabled
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </div>
+              </section>
             </div>
 
             <div className="order-summary">
@@ -454,19 +645,21 @@ const CheckoutPage = () => {
               </div>
 
               <div className="summary-row delivery-fee">
-                <span>Delivery Fee</span>
-                <span>Ksh {user?.shippingCharge}</span>
+                <span>Shipping Fee</span>
+                <span>Ksh {formData.shippingCharge}</span>
               </div>
 
               <div className="summary-row total">
                 <span>Total</span>
-                <span>Ksh {getTotalPrice() + user!.shippingCharge}</span>
+                <span>Ksh {getTotalPrice() + formData.shippingCharge}</span>
               </div>
 
               <button
                 className="place-order-button"
                 onClick={handlePayAndPlaceOrder}
-                disabled={isInitiatingPayment || isEditingAddress}
+                disabled={
+                  isInitiatingPayment || isEditingAddress || isEditingDetails
+                }
               >
                 {isInitiatingPayment ? (
                   <CircularProgress size="1.3rem" sx={{ color: "white" }} />
