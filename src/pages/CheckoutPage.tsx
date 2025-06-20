@@ -155,7 +155,7 @@ const CheckoutPage = () => {
         setOrderResult(resultDesc);
       }
 
-      if (++attempts >= 20) {
+      if (++attempts >= 12) {
         clearInterval(interval);
         setOrderStatus("failed");
         setOrderResult("Payment timed out. Please try again.");
@@ -507,7 +507,7 @@ const CheckoutPage = () => {
                         {formData.shippingCharge > 0 && (
                           <Alert
                             severity="info"
-                            sx={{ mt: 2, fontSize: "1.4rem" }}
+                            sx={{ mt: 2, fontSize: "1.2rem" }}
                           >
                             Shipping Fee: Ksh {formData.shippingCharge}
                           </Alert>
