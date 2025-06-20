@@ -93,3 +93,8 @@ export interface Order {
     isReviewed?: boolean;
   }[];
 }
+
+export type TownFeeMap = Record<string, number>;  // { [townName]: fee }
+
+export type CountyTownFeeMap = Record<string, TownFeeMap>;  // { [countyName]: TownFeeMap }
+

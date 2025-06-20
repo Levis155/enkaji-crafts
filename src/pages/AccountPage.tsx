@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { FaEdit } from "react-icons/fa";
@@ -11,6 +11,9 @@ import {
   InputAdornment,
   Alert,
   CircularProgress,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -18,6 +21,8 @@ import { toast } from "react-toastify";
 import apiUrl from "../Utils/apiUrl";
 import formControlStyle from "../styles/formControlStyles";
 import useUserStore from "../stores/userStore";
+import countyTownFeeMap from "../data/regionTownFeeMap"; // Import your shipping fee map
+import { getShippingFee, getTownsForCounty } from "../Utils/shippingUtils";
 import "../styles/AccountPage.css";
 
 const AccountPage = () => {
@@ -29,13 +34,24 @@ const AccountPage = () => {
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-
+  const [availableTowns, setAvailableTowns] = useState<string[]>(
+    getTownsForCounty(user?.county || "")
+  );
+  const [initialUserData, setInitialUserData] = useState({
+    fullName: user?.fullName || "",
+    emailAddress: user?.emailAddress || "",
+    phoneNumber: user?.phoneNumber || "",
+    county: user?.county || "",
+    town: user?.town || "",
+    shippingCharge: user?.shippingCharge || 0,
+  });
   const [formData, setFormData] = useState({
     fullName: user?.fullName,
     emailAddress: user?.emailAddress,
     phoneNumber: user?.phoneNumber,
-    county: user?.county,
-    town: user?.town,
+    county: user?.county || "",
+    town: user?.town || "",
+    shippingCharge: user?.shippingCharge || 0,
     oldPassword: "",
     newPassword: "",
     confirmedNewPassword: "",
@@ -44,17 +60,22 @@ const AccountPage = () => {
   const { isPending, mutate } = useMutation({
     mutationKey: ["update-user-info"],
     mutationFn: async () => {
-      const response = await axios.patch(`${apiUrl}/users`, {
-        fullName: formData.fullName,
-        emailAddress: formData.emailAddress,
-        phoneNumber: formData.phoneNumber,
-        county: formData.county,
-        town: formData.town,
-        password: formData.newPassword,
-        oldPassword: formData.oldPassword
-      }, {
-        withCredentials: true,
-      });
+      const response = await axios.patch(
+        `${apiUrl}/users`,
+        {
+          fullName: formData.fullName,
+          emailAddress: formData.emailAddress,
+          phoneNumber: formData.phoneNumber,
+          county: formData.county,
+          town: formData.town,
+          shippingCharge: formData.shippingCharge,
+          password: formData.newPassword,
+          oldPassword: formData.oldPassword,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       return response.data;
     },
 
@@ -75,6 +96,71 @@ const AccountPage = () => {
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      setInitialUserData({
+        fullName: user.fullName,
+        emailAddress: user.emailAddress,
+        phoneNumber: user.phoneNumber,
+        county: user.county,
+        town: user.town,
+        shippingCharge: user.shippingCharge,
+      });
+
+      setFormData({
+        fullName: user.fullName,
+        emailAddress: user.emailAddress,
+        phoneNumber: user.phoneNumber,
+        county: user.county,
+        town: user.town,
+        shippingCharge: user.shippingCharge,
+        oldPassword: "",
+        newPassword: "",
+        confirmedNewPassword: "",
+      });
+
+      setAvailableTowns(getTownsForCounty(user.county));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.county && user?.town) {
+      const fee = getShippingFee(user.county, user.town);
+      setFormData((prev) => ({
+        ...prev,
+        county: user.county,
+        town: user.town,
+        shippingCharge: fee !== undefined ? fee : 0,
+      }));
+      setAvailableTowns(getTownsForCounty(user.county));
+    }
+  }, [user]);
+
+  const handleCountyChange = (e: SelectChangeEvent<string>) => {
+    const county = e.target.value;
+    const towns = getTownsForCounty(county);
+
+    setFormData((prev) => ({
+      ...prev,
+      county,
+      town: towns.includes(prev.town) ? prev.town : "",
+      shippingCharge: 0,
+    }));
+
+    setAvailableTowns(towns);
+  };
+
+  const handleTownChange = (e: SelectChangeEvent<string>) => {
+    const town = e.target.value;
+    const fee = getShippingFee(formData.county, town);
+
+    setFormData((prev) => ({
+      ...prev,
+      town,
+      shippingCharge: fee !== undefined ? fee : 0,
+    }));
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -87,6 +173,37 @@ const AccountPage = () => {
 
   const handleMouseUpPassword = (event: React.FormEvent) => {
     event.preventDefault();
+  };
+
+  const handleCancelDetails = () => {
+    setIsEditingDetails(false);
+    setFormData((prev) => ({
+      ...prev,
+      fullName: initialUserData.fullName,
+      emailAddress: initialUserData.emailAddress,
+      phoneNumber: initialUserData.phoneNumber,
+    }));
+  };
+
+  const handleCancelAddress = () => {
+    setIsEditingAddress(false);
+    setFormData((prev) => ({
+      ...prev,
+      county: initialUserData.county,
+      town: initialUserData.town,
+      shippingCharge: initialUserData.shippingCharge,
+    }));
+    setAvailableTowns(getTownsForCounty(initialUserData.county));
+  };
+
+  const handleCancelPassword = () => {
+    setIsEditingPassword(false);
+    setFormData((prev) => ({
+      ...prev,
+      oldPassword: "",
+      newPassword: "",
+      confirmedNewPassword: "",
+    }));
   };
 
   const handleUpdateDetails = (e: React.FormEvent) => {
@@ -184,7 +301,7 @@ const AccountPage = () => {
               <button
                 type="button"
                 className="cancel-button"
-                onClick={() => setIsEditingDetails(false)}
+                onClick={handleCancelDetails}
               >
                 Cancel
               </button>
@@ -235,25 +352,58 @@ const AccountPage = () => {
                 {formError}
               </Alert>
             )}
-            <TextField
-              label="County"
-              variant="outlined"
-              sx={formControlStyle}
-              name="county"
-              value={formData.county}
-              onChange={handleInputChange}
-              required
-            />
 
-            <TextField
-              label="Town"
-              variant="outlined"
+            <FormControl fullWidth sx={formControlStyle}>
+              <InputLabel id="county-select-label">County</InputLabel>
+              <Select
+                labelId="county-select-label"
+                id="county-select"
+                value={formData.county}
+                label="County"
+                onChange={handleCountyChange}
+                name="county"
+                required
+              >
+                {Object.keys(countyTownFeeMap)
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((county) => (
+                    <MenuItem key={county} value={county}>
+                      {county.replace(" County", "")}{" "}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+
+            <FormControl
+              fullWidth
               sx={formControlStyle}
-              name="town"
-              value={formData.town}
-              onChange={handleInputChange}
-              required
-            />
+              disabled={!formData.county}
+            >
+              <InputLabel id="town-select-label">Town</InputLabel>
+              <Select
+                labelId="town-select-label"
+                id="town-select"
+                value={formData.town}
+                label="Town"
+                onChange={handleTownChange}
+                name="town"
+                required
+              >
+                {availableTowns
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((town) => (
+                    <MenuItem key={town} value={town}>
+                      {town}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+
+            {formData.shippingCharge > 0 && (
+              <Alert severity="info" sx={{ fontSize: "1.4rem" }}>
+                Shipping Fee: Ksh {formData.shippingCharge}
+              </Alert>
+            )}
 
             <div className="account-page-form-actions">
               <button
@@ -270,7 +420,7 @@ const AccountPage = () => {
               <button
                 type="button"
                 className="cancel-button"
-                onClick={() => setIsEditingAddress(false)}
+                onClick={handleCancelAddress}
               >
                 Cancel
               </button>
@@ -286,6 +436,11 @@ const AccountPage = () => {
             <div className="detail-item">
               <span className="detail-label">Town/City:</span>
               <span className="detail-value">{user?.town}</span>
+            </div>
+
+            <div className="detail-item">
+              <span className="detail-label">Shipping Fee:</span>
+              <span className="detail-value">Ksh {user?.shippingCharge}</span>
             </div>
           </div>
         )}
@@ -417,7 +572,7 @@ const AccountPage = () => {
               <button
                 type="button"
                 className="cancel-button"
-                onClick={() => setIsEditingPassword(false)}
+                onClick={handleCancelPassword}
               >
                 Cancel
               </button>
