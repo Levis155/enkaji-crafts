@@ -94,7 +94,7 @@ export interface Order {
   }[];
 }
 
-export type TownFeeMap = Record<string, number>;  // { [townName]: fee }
+export type TownFeeMap = Record<string, number>;
 
-export type CountyTownFeeMap = Record<string, TownFeeMap>;  // { [countyName]: TownFeeMap }
+export type CountyTownFeeMap = Record<string, TownFeeMap>;  
 

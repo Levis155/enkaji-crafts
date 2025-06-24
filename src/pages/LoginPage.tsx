@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import {
   TextField,
   InputLabel,
@@ -116,6 +117,35 @@ const LoginPage = () => {
     mutate();
   };
 
+  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
+    try {
+      const res = await axios.post(
+        `${apiUrl}/auth/google`,
+        {
+          token: credentialResponse.credential,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setUserInfo(res.data);
+      await fetchAndMergeCart();
+      await fetchAndSetWishlist();
+
+      toast.success("Logged in with Google!", {
+        position: "top-right",
+        autoClose: 2000,
+        theme: "colored",
+      });
+
+      setTimeout(() => navigate("/"), 2000);
+    } catch (error) {
+      toast.error("Google login failed.");
+      console.error("Google login error:", error);
+    }
+  };
+
   return (
     <>
       <ToastContainer />
@@ -173,6 +203,14 @@ const LoginPage = () => {
                 "Login"
               )}
             </button>
+            <p>OR</p>
+            <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={() => toast.error("Google login failed")}
+                width="100%"
+              />
+            </div>
           </div>
 
           <p className="register-text">

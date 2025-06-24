@@ -15,6 +15,7 @@
     "@lottiefiles/dotlottie-react": "^0.14.1",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
+    "@react-oauth/google": "^0.12.2",
     "@tanstack/react-query": "^5.79.2",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
