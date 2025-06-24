@@ -51,6 +51,25 @@
   cursor: pointer;
   text-transform: capitalize;
 }
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+}
+
+.divider-text {
+  padding: 0 1rem;
+  font-size: 1.4rem;
+  color: #888;
+}
 .register-text {
   font-size: 1.4rem;
   margin-top: 0.5rem;

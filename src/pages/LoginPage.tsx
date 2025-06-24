@@ -74,7 +74,7 @@ const LoginPage = () => {
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
 
-      toast.success("Logged in successfully!", {
+      toast.success("Login successful!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -133,7 +133,7 @@ const LoginPage = () => {
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
 
-      toast.success("Logged in with Google!", {
+      toast.success("Google login successful!", {
         position: "top-right",
         autoClose: 2000,
         theme: "colored",
@@ -203,8 +203,10 @@ const LoginPage = () => {
                 "Login"
               )}
             </button>
-            <p>OR</p>
-            <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+            <div className="divider">
+              <span className="divider-text">or</span>
+            </div>
+            <div style={{ marginBottom: "1.5rem", textAlign: "center" }}>
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={() => toast.error("Google login failed")}
