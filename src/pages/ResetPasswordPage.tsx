@@ -21,7 +21,7 @@ import apiUrl from "../Utils/apiUrl";
 
 
 const ResetPasswordPage = () => {
-  const [newPassword, setNewPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +34,7 @@ const ResetPasswordPage = () => {
     mutationKey: ["reset-password"],
     mutationFn: async () => {
       const response = await axios.post(`${apiUrl}/auth/reset-password/${resetToken}`, {
-        newPassword,
+        password,
       },);
       return response.data;
     },
@@ -65,7 +65,7 @@ const ResetPasswordPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
-    if (newPassword !== confirmedPassword) {
+    if (password !== confirmedPassword) {
       setFormError("Password and confirmed password must match.");
       return;
     }
@@ -91,8 +91,8 @@ const ResetPasswordPage = () => {
               <OutlinedInput
                 type={showPassword ? "text" : "password"}
                 name="newPassword"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 endAdornment={
                   <InputAdornment position="end">

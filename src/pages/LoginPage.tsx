@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import axiosInstance from "../Utils/axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import {
@@ -39,7 +40,7 @@ const LoginPage = () => {
 
   const fetchAndMergeCart = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/cart/items`, {
+      const response = await axiosInstance.get(`${apiUrl}/cart/items`, {
         withCredentials: true,
       });
       mergeCart(response.data.cart);
@@ -51,7 +52,7 @@ const LoginPage = () => {
 
   const fetchAndSetWishlist = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/wishlist/items`, {
+      const response = await axiosInstance.get(`${apiUrl}/wishlist/items`, {
         withCredentials: true,
       });
       setWishlistData(response.data.wishlist);

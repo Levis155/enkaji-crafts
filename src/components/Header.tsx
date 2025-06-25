@@ -158,20 +158,26 @@ const Header = () => {
     setShowMobileMenu(!showMobileMenu);
   };
 
-  const handleLogOut = async () => {
-    try {
-      await Promise.all([sendCartData(), sendWishlistData()]);
-      toast.success("Logged out successfully.")
-    } catch (error) {
-      console.error("Error syncing data before logout", error);
-      toast.error("Error syncing data before logout.")
-    } finally {
-      clearCart();
-      clearWishlist();
-      removeUserInfo();
-      navigate("/");
-    }
-  };
+const handleLogOut = async () => {
+  try {
+    await Promise.all([
+      sendCartData(),
+      sendWishlistData(),
+      axios.post(`${apiUrl}/auth/logout`, {}, { withCredentials: true }), 
+    ]);
+
+    toast.success("Logged out successfully.");
+  } catch (error) {
+    console.error("Error during logout", error);
+    toast.error("Logout failed.");
+  } finally {
+    clearCart();
+    clearWishlist();
+    removeUserInfo();
+    navigate("/");
+  }
+};
+
 
   // Standard Header for normal browser width
   const standardHeader = (
