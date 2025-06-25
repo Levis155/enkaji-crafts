@@ -39,39 +39,45 @@ const ForgotPasswordPage = () => {
     mutate();
   };
   return (
-    <div className="forgot-password-page-wrapper">
-      <form onSubmit={handleSubmit}>
-        <Logo />
-        <p className="forgot-password-form-title">Forgot Password</p>
+    <>
+      <div className="forgot-password-page-wrapper">
+        <form onSubmit={handleSubmit}>
+          <Logo />
+          <p className="forgot-password-form-title">Forgot Password</p>
 
-        <div className="forgot-password-form-body">
-          {formError && (
-            <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
-              {formError}
-            </Alert>
-          )}
-
-          <TextField
-            label="Email"
-            variant="outlined"
-            type="email"
-            required
-            name="emailAddress"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={formControlStyle}
-          />
-
-          <button type="submit" disabled={isPending} className="send-link-btn">
-            {isPending ? (
-              <CircularProgress size="1.3rem" sx={{ color: "white" }} />
-            ) : (
-              "Send Reset Link"
+          <div className="forgot-password-form-body">
+            {formError && (
+              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+                {formError}
+              </Alert>
             )}
-          </button>
-        </div>
-      </form>
-    </div>
+
+            <TextField
+              label="Email"
+              variant="outlined"
+              type="email"
+              required
+              name="emailAddress"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={formControlStyle}
+            />
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="send-link-btn"
+            >
+              {isPending ? (
+                <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+              ) : (
+                "Send Reset Link"
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

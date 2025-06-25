@@ -26,14 +26,14 @@ const ResetPasswordPage = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { token } = useParams();
+  const { resetToken } = useParams();
 
 
 
   const { isPending, mutate } = useMutation({
     mutationKey: ["reset-password"],
     mutationFn: async () => {
-      const response = await axios.post(`${apiUrl}/auth/reset-password/${token}`, {
+      const response = await axios.post(`${apiUrl}/auth/reset-password/${resetToken}`, {
         newPassword,
       },);
       return response.data;
