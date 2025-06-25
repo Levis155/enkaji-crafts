@@ -203,6 +203,7 @@ const LoginPage = () => {
                 "Login"
               )}
             </button>
+            <Link to="/forgot-password" className="forgot-password">Forgot Password?</Link>
             <div className="divider">
               <span className="divider-text">or</span>
             </div>
