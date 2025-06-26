@@ -208,11 +208,10 @@ const LoginPage = () => {
             <div className="divider">
               <span className="divider-text">or</span>
             </div>
-            <div style={{ marginBottom: "1.5rem", textAlign: "center" }}>
+            <div style={{ marginBottom: "1.5rem", width: "100%", textAlign: "center", display: "flex", justifyContent: "center" }}>
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={() => toast.error("Google login failed")}
-                width="100%"
               />
             </div>
           </div>
