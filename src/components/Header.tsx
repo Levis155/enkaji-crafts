@@ -403,11 +403,9 @@ const handleLogOut = async () => {
   );
 
   return (
-    <>
       <header className="header">
         {windowWidth <= 1060 ? minimizedHeader : standardHeader}
       </header>
-    </>
   );
 };
 

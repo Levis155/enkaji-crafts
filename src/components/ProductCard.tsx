@@ -70,11 +70,11 @@ const ProductCard = ({
         <button
           className="product-card-wishlist-button"
           onClick={(e) => {
-            e.preventDefault(); // Prevents the <Link> navigation
-            e.stopPropagation(); // Prevents the click from bubbling up
+            e.preventDefault(); 
+            e.stopPropagation(); 
 
             if (!user) {
-              toast.info("Please Sign in to complete operation.");
+              toast.info("You need to be signed in for this action.");
               return;
             }
 

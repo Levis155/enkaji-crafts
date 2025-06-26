@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "../styles/LoginPage.css";
 import formControlStyle from "../styles/formControlStyles";
 import Logo from "../components/Logo";
@@ -74,19 +74,8 @@ const LoginPage = () => {
       setUserInfo(data);
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
-
-      toast.success("Login successful!", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-
-      setTimeout(() => navigate("/"), 2000);
+      toast.success("Login successful.")
+      navigate("/");
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
@@ -134,13 +123,8 @@ const LoginPage = () => {
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
 
-      toast.success("Google login successful!", {
-        position: "top-right",
-        autoClose: 2000,
-        theme: "colored",
-      });
-
-      setTimeout(() => navigate("/"), 2000);
+      toast.success("Google login successful!");
+      navigate("/");
     } catch (error) {
       toast.error("Google login failed.");
       console.error("Google login error:", error);
@@ -148,80 +132,87 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <ToastContainer />
-      <div className="login-page-wrapper">
-        <form onSubmit={handleSubmit}>
-          <Logo />
-          <p className="login-form-title">Login to Enkaji Crafts</p>
+    <div className="login-page-wrapper">
+      <form onSubmit={handleSubmit}>
+        <Logo />
+        <p className="login-form-title">Login to Enkaji Crafts</p>
 
-          <div className="login-form-body">
-            {formError && (
-              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
-                {formError}
-              </Alert>
-            )}
+        <div className="login-form-body">
+          {formError && (
+            <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+              {formError}
+            </Alert>
+          )}
 
-            <TextField
-              label="Email"
-              variant="outlined"
-              type="email"
-              required
-              name="emailAddress"
-              value={formData.emailAddress}
+          <TextField
+            label="Email"
+            variant="outlined"
+            type="email"
+            required
+            name="emailAddress"
+            value={formData.emailAddress}
+            onChange={handleOnChange}
+            sx={formControlStyle}
+          />
+
+          <FormControl variant="outlined" sx={formControlStyle}>
+            <InputLabel>Password</InputLabel>
+            <OutlinedInput
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
               onChange={handleOnChange}
-              sx={formControlStyle}
+              required
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
             />
+          </FormControl>
 
-            <FormControl variant="outlined" sx={formControlStyle}>
-              <InputLabel>Password</InputLabel>
-              <OutlinedInput
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleOnChange}
-                required
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      onMouseUp={handleMouseUpPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
-
-            <button type="submit" disabled={isPending} className="login-btn">
-              {isPending ? (
-                <CircularProgress size="1.3rem" sx={{ color: "white" }} />
-              ) : (
-                "Login"
-              )}
-            </button>
-            <Link to="/forgot-password" className="forgot-password">Forgot Password?</Link>
-            <div className="divider">
-              <span className="divider-text">or</span>
-            </div>
-            <div style={{ marginBottom: "1.5rem", width: "100%", textAlign: "center", display: "flex", justifyContent: "center" }}>
-              <GoogleLogin
-                onSuccess={handleGoogleLoginSuccess}
-                onError={() => toast.error("Google login failed")}
-              />
-            </div>
+          <button type="submit" disabled={isPending} className="login-btn">
+            {isPending ? (
+              <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+            ) : (
+              "Login"
+            )}
+          </button>
+          <Link to="/forgot-password" className="forgot-password">
+            Forgot Password?
+          </Link>
+          <div className="divider">
+            <span className="divider-text">or</span>
           </div>
+          <div
+            style={{
+              marginBottom: "1.5rem",
+              width: "100%",
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={() => toast.error("Google login failed")}
+            />
+          </div>
+        </div>
 
-          <p className="register-text">
-            Don't have an account? <Link to={"/register"}>Register</Link>
-          </p>
-        </form>
-      </div>
-    </>
+        <p className="register-text">
+          Don't have an account? <Link to={"/register"}>Register</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

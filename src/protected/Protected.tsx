@@ -12,7 +12,7 @@ const Protected = ({ children }: ProtectedProps) => {
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate("/");
     }
   }, [user]);
 

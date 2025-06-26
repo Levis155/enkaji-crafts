@@ -26,17 +26,15 @@ const Footer = () => {
             <h3>Quick Links</h3>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/category/attire">Attire</Link></li>
-              <li><Link to="/category/jewelry">Jewelry</Link></li>
+              <li><Link to="/category/accessories">Accessories</Link></li>
               <li><Link to="/category/tools">Tools</Link></li>
-              <li><Link to="/category/footwear">Footwear</Link></li>
             </ul>
           </div>
 
           <div className="footer-section contact">
             <h3>Contact Us</h3>
-            <p><FaPhoneAlt /> +254 712 345 678</p>
-            <p><MdEmail /> info@reddune.co.ke</p>
+            <p><FaPhoneAlt /> +254 000 000 000</p>
+            <p><MdEmail /> enkajicrafts@gmail.com</p>
             <p><FaLocationDot /> Nairobi, Kenya</p>
           </div>
         </div>

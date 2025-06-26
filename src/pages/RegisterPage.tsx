@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import formControlStyle from "../styles/formControlStyles";
 import "../styles/RegisterPage.css";
 import Logo from "../components/Logo";
@@ -39,16 +39,7 @@ const RegisterPage = () => {
       return response.data;
     },
     onSuccess: () => {
-      toast.success("Account created successfully.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toast.success("Account created successfully.");
       setTimeout(() => navigate("/login"), 2000);
     },
 
@@ -89,135 +80,120 @@ const RegisterPage = () => {
   };
 
   return (
-    <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+    <div className="registration-page-wrapper">
+      <form action="" onSubmit={handleSubmit}>
+        <Logo />
+        <p className="registration-form-title">Register with Enkaji Crafts</p>
 
-      <div className="registration-page-wrapper">
-        <form action="" onSubmit={handleSubmit}>
-          <Logo />
-          <p className="registration-form-title">Register with Enkaji Crafts</p>
+        <div className="registration-form-body">
+          {formError && (
+            <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+              {formError}
+            </Alert>
+          )}
+          <TextField
+            label="Full Name"
+            variant="outlined"
+            sx={formControlStyle}
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleOnChange}
+            required
+          />
 
-          <div className="registration-form-body">
-            {formError && (
-              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
-                {formError}
-              </Alert>
+          <TextField
+            label="Email Address"
+            variant="outlined"
+            sx={formControlStyle}
+            type="email"
+            name="emailAddress"
+            value={formData.emailAddress}
+            onChange={handleOnChange}
+            required
+          />
+
+          <TextField
+            label="Phone Number"
+            variant="outlined"
+            sx={formControlStyle}
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleOnChange}
+            required
+          />
+          <FormControl variant="outlined" sx={formControlStyle}>
+            <InputLabel>Password</InputLabel>
+            <OutlinedInput
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleOnChange}
+              required
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword
+                        ? "hide the password"
+                        : "display the password"
+                    }
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+            />
+          </FormControl>
+
+          <FormControl variant="outlined" sx={formControlStyle}>
+            <InputLabel>Confirm Password</InputLabel>
+            <OutlinedInput
+              type={showPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleOnChange}
+              required
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword
+                        ? "hide the password"
+                        : "display the password"
+                    }
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Confirm Password"
+            />
+          </FormControl>
+
+          <button className="signup-btn" type="submit" disabled={isPending}>
+            {isPending ? (
+              <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+            ) : (
+              "Register"
             )}
-            <TextField
-              label="Full Name"
-              variant="outlined"
-              sx={formControlStyle}
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleOnChange}
-              required
-            />
+          </button>
+        </div>
 
-            <TextField
-              label="Email Address"
-              variant="outlined"
-              sx={formControlStyle}
-              type="email"
-              name="emailAddress"
-              value={formData.emailAddress}
-              onChange={handleOnChange}
-              required
-            />
-
-            <TextField
-              label="Phone Number"
-              variant="outlined"
-              sx={formControlStyle}
-              type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleOnChange}
-              required
-            />
-            <FormControl variant="outlined" sx={formControlStyle}>
-              <InputLabel>Password</InputLabel>
-              <OutlinedInput
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleOnChange}
-                required
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={
-                        showPassword
-                          ? "hide the password"
-                          : "display the password"
-                      }
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      onMouseUp={handleMouseUpPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
-
-            <FormControl variant="outlined" sx={formControlStyle}>
-              <InputLabel>Confirm Password</InputLabel>
-              <OutlinedInput
-                type={showPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleOnChange}
-                required
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={
-                        showPassword
-                          ? "hide the password"
-                          : "display the password"
-                      }
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      onMouseUp={handleMouseUpPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Confirm Password"
-              />
-            </FormControl>
-
-            <button className="signup-btn" type="submit" disabled={isPending}>
-              {isPending ? (
-                <CircularProgress size="1.3rem" sx={{ color: "white" }} />
-              ) : (
-                "Register"
-              )}
-            </button>
-          </div>
-
-          <p className="login-text">
-            Already have an account? <Link to={"/login"}>Login</Link>
-          </p>
-        </form>
-      </div>
-    </>
+        <p className="login-text">
+          Already have an account? <Link to={"/login"}>Login</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

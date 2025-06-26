@@ -39,7 +39,6 @@ const ForgotPasswordPage = () => {
     mutate();
   };
   return (
-    <>
       <div className="forgot-password-page-wrapper">
         <form onSubmit={handleSubmit}>
           <Logo />
@@ -77,7 +76,6 @@ const ForgotPasswordPage = () => {
           </div>
         </form>
       </div>
-    </>
   );
 };
 
