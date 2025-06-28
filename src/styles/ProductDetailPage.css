@@ -203,6 +203,12 @@
 .key-features,
 .whats-in-the-box {
   border: 1px solid var(--border-color);
+  width: 50%;
+}
+.key-features ul,
+.whats-in-the-box ul {
+  list-style: unset;
+  padding-left: 2rem;
 }
 .key-features-title,
 .whats-in-the-box-title {
