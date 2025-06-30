@@ -18,7 +18,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { toast } from "react-toastify";
 import "../styles/LoginPage.css";
-import formControlStyle from "../styles/formControlStyles";
+import formControlStyle from "../Utils/formControlStyles";
 import Logo from "../components/Logo";
 import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";

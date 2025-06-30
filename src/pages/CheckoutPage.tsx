@@ -29,7 +29,7 @@ import useCartStore from "../stores/cartStore";
 import { Order } from "../types";
 import countyTownFeeMap from "../data/regionTownFeeMap";
 import { getShippingFee, getTownsForCounty } from "../Utils/shippingUtils";
-import formControlStyle from "../styles/formControlStyles";
+import formControlStyle from "../Utils/formControlStyles";
 import mpesaLogo from "../../src/assets/MicrosoftTeams-image_41.png";
 import "../styles/CheckoutPage.css";
 

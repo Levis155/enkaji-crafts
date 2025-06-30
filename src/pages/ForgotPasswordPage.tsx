@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { TextField, Alert, CircularProgress } from "@mui/material";
 import "../styles/ForgotPasswordPage.css";
-import formControlStyle from "../styles/formControlStyles";
+import formControlStyle from "../Utils/formControlStyles";
 import apiUrl from "../Utils/apiUrl";
 import Logo from "../components/Logo";
 

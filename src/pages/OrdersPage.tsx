@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import apiUrl from "../Utils/apiUrl";
 import { Order, Review } from "../types";
 import "../styles/OrdersPage.css";
-import formControlStyle from "../styles/formControlStyles";
+import formControlStyle from "../Utils/formControlStyles";
 import { toast } from "react-toastify";
 
 const OrdersPage = () => {
