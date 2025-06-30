@@ -15,6 +15,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import Protected from "./protected/Protected";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
         pauseOnHover
         theme="colored"
       />
+
+      <ScrollToTop />
 
       <Routes>
         <Route path="/" element={<HomePage />} />

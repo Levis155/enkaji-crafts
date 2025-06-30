@@ -10,6 +10,7 @@ import axios from "axios";
 import "../styles/RelatedProducts.css";
 import apiUrl from "../Utils/apiUrl";
 import { Product } from "../types";
+import { Link } from "react-router-dom";
 
 interface RelatedProductsProps {
   category: string;
@@ -70,8 +71,8 @@ const RelatedProducts = ({ category }: RelatedProductsProps) => {
       >
         {relatedProducts?.map((product) => (
           <SwiperSlide key={product.id}>
-            <a
-              href={`/product/${product.id}`}
+            <Link
+              to={`/product/${product.id}`}
               className="products-page-similar-items-card"
             >
               <div className="products-page-similar-items-card-img-wrapper">
@@ -85,7 +86,7 @@ const RelatedProducts = ({ category }: RelatedProductsProps) => {
               <p className="product-page-similar-items-card-price">
                 Ksh {product.price}
               </p>
-            </a>
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>

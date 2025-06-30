@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Rating from "@mui/material/Rating";
@@ -52,7 +52,7 @@ const ProductDetailPage = () => {
     isError,
     error,
   } = useQuery<Product>({
-    queryKey: ["fetch-product"],
+    queryKey: ["fetch-product", id],
     queryFn: async () => {
       const response = await axios.get(`${apiUrl}/products/${id}`);
       console.log(response.data);
@@ -117,7 +117,7 @@ const ProductDetailPage = () => {
                 <p className="product-container-col2-brand">
                   category: <span>{product.category}</span> |{" "}
                   <span>
-                    <a href="">similar products</a>
+                    <Link to="#">similar products</Link>
                   </span>
                 </p>
                 <div className="product-container-price-discount-container">
