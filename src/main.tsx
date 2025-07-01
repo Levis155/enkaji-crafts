@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google"; 
 import App from "./App";
-import "../src/styles/index.css";
+import "../src/index.css";
 
 const queryClient = new QueryClient();
 
