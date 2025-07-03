@@ -149,7 +149,7 @@ const ProductDetailPage = () => {
                   </p>
                 )}
                 <div className="product-cont-col2-rating">
-                  <Rating name="read-only" value={4} readOnly />
+                  <Rating name="read-only" value={product.averageRating} readOnly />
                 </div>
                 <p className="stock-status">
                   {product.inStock ? "in stock" : "out of stock"}
