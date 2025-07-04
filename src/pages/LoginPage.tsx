@@ -71,10 +71,11 @@ const LoginPage = () => {
       return response.data;
     },
     onSuccess: async (data) => {
-      setUserInfo(data);
+      const { refreshTokenExpiry, ...userData } = data;
+      setUserInfo(userData, refreshTokenExpiry);
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
-      toast.success("Login successful.")
+      toast.success("Login successful.");
       navigate("/");
     },
     onError: (err) => {
@@ -119,7 +120,9 @@ const LoginPage = () => {
         }
       );
 
-      setUserInfo(res.data);
+      const { refreshTokenExpiry, ...userData } = res.data;
+      setUserInfo(userData, refreshTokenExpiry);
+
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
 

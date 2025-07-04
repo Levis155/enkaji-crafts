@@ -1,24 +1,42 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User } from "../types";
+import logoutUser from "../Utils/logoutUser";
 
 interface UserState {
   user: User | null;
-  setUserInfo: (userObject: User) => void;
+  refreshExpiry: number | null;
+  setUserInfo: (userObject: User, refreshExpiryMs: number) => void;
   removeUserInfo: () => void;
 }
 
-const userStore = (set: (state: Partial<UserState>) => void): UserState => {
-  return {
-    user: null,
-    setUserInfo: (userObject: User) => {
-      set({ user: userObject });
-    },
-    removeUserInfo: () => {
-      set({ user: null });
-    },
-  };
-};
+let logoutTimeout: ReturnType<typeof setTimeout>;
+
+const userStore = (
+  set: (
+    partial: Partial<UserState> | ((state: UserState) => Partial<UserState>)
+  ) => void
+): UserState => ({
+  user: null,
+  refreshExpiry: null,
+
+  setUserInfo: (userObject: User, refreshExpiryMs: number) => {
+    const expiryTimestamp = Date.now() + refreshExpiryMs;
+
+    if (logoutTimeout) clearTimeout(logoutTimeout);
+
+    logoutTimeout = setTimeout(() => {
+      logoutUser();
+    }, refreshExpiryMs);
+
+    set({ user: userObject, refreshExpiry: expiryTimestamp });
+  },
+
+  removeUserInfo: () => {
+    if (logoutTimeout) clearTimeout(logoutTimeout);
+    set({ user: null, refreshExpiry: null });
+  },
+});
 
 const useUserStore = create(
   persist<UserState>(userStore, { name: "user_info" })

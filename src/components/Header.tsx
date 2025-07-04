@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaRegUser,
@@ -18,24 +16,16 @@ import { BsBoxArrowInLeft } from "react-icons/bs";
 import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
-import { toast } from "react-toastify";
-import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
-import useWishlistStore from "../stores/wishlistStore";
+import logoutUser from "../Utils/logoutUser";
 import Logo from "./Logo";
 import "../styles/Header.css";
 
 const Header = () => {
-  const [logOutError, setLogOutError] = useState<string | null>(null);
-
   const user = useUserStore((state) => state.user);
-  const removeUserInfo = useUserStore((state) => state.removeUserInfo);
   const cart = useCartStore((state) => state.cart);
-  const clearCart = useCartStore((state) => state.clearCart);
   const getTotalCartQuantity = useCartStore((state) => state.getTotalQuantity);
-  const wishlist = useWishlistStore((state) => state.wishlist);
-  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
   const [cartCount, setCartCount] = useState(getTotalCartQuantity());
   const [searchQuery, setSearchQuery] = useState("");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
@@ -52,46 +42,6 @@ const Header = () => {
     { name: "Tools", path: "/category/tools" },
     { name: "Accessories", path: "/category/accessories" },
   ];
-
-  const { mutate: sendCartData } = useMutation({
-    mutationKey: ["send-cart-data"],
-    mutationFn: async () => {
-      await axios.post(
-        `${apiUrl}/cart/items`,
-        { cart },
-        { withCredentials: true }
-      );
-    },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) {
-        const serverMessage = err.response?.data.message;
-        setLogOutError(serverMessage);
-      } else {
-        setLogOutError("Something went wrong.");
-      }
-      toast.error(logOutError);
-    },
-  });
-
-  const { mutate: sendWishlistData } = useMutation({
-    mutationKey: ["send-wishlist-data"],
-    mutationFn: async () => {
-      await axios.post(
-        `${apiUrl}/wishlist/items`,
-        { wishlist },
-        { withCredentials: true }
-      );
-    },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) {
-        const serverMessage = err.response?.data.message;
-        setLogOutError(serverMessage);
-      } else {
-        setLogOutError("Something went wrong.");
-      }
-      toast.error(logOutError);
-    },
-  });
 
   useEffect(() => {
     setCartCount(getTotalCartQuantity());
@@ -158,26 +108,9 @@ const Header = () => {
     setShowMobileMenu(!showMobileMenu);
   };
 
-const handleLogOut = async () => {
-  try {
-    await Promise.all([
-      sendCartData(),
-      sendWishlistData(),
-      axios.post(`${apiUrl}/auth/logout`, {}, { withCredentials: true }), 
-    ]);
-
-    toast.success("Logged out successfully.");
-  } catch (error) {
-    console.error("Error during logout", error);
-    toast.error("Logout failed.");
-  } finally {
-    clearCart();
-    clearWishlist();
-    removeUserInfo();
-    navigate("/");
-  }
-};
-
+  const handleLogOut = async () => {
+    logoutUser();
+  };
 
   // Standard Header for normal browser width
   const standardHeader = (
@@ -403,9 +336,9 @@ const handleLogOut = async () => {
   );
 
   return (
-      <header className="header">
-        {windowWidth <= 1060 ? minimizedHeader : standardHeader}
-      </header>
+    <header className="header">
+      {windowWidth <= 1060 ? minimizedHeader : standardHeader}
+    </header>
   );
 };
 
