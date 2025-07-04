@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import axiosInstance from "../Utils/axiosInstance";
 import { FaEdit } from "react-icons/fa";
 import {
   TextField,
@@ -18,7 +19,6 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { toast } from "react-toastify";
-import apiUrl from "../Utils/apiUrl";
 import formControlStyle from "../Utils/formControlStyles";
 import useUserStore from "../stores/userStore";
 import countyTownFeeMap from "../data/regionTownFeeMap"; // Import your shipping fee map
@@ -60,8 +60,8 @@ const AccountPage = () => {
   const { isPending, mutate } = useMutation({
     mutationKey: ["update-user-info"],
     mutationFn: async () => {
-      const response = await axios.patch(
-        `${apiUrl}/users`,
+      const response = await axiosInstance.patch(
+        `/users`,
         {
           fullName: formData.fullName,
           emailAddress: formData.emailAddress,
@@ -71,9 +71,6 @@ const AccountPage = () => {
           shippingCharge: formData.shippingCharge,
           password: formData.newPassword,
           oldPassword: formData.oldPassword,
-        },
-        {
-          withCredentials: true,
         }
       );
       return response.data;

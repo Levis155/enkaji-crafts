@@ -21,7 +21,7 @@ const fetchProducts = async (
     const { data } = await axios.get(`${apiUrl}/products/category/${category}`);
     return data;
   } else {
-    const { data } = await axios.get(`${apiUrl}/products`); // fallback if needed
+    const { data } = await axios.get(`${apiUrl}/products`); 
     return data;
   }
 };
@@ -42,7 +42,7 @@ const CategoryPage = () => {
   } = useQuery({
     queryKey: ["products", { category, query }],
     queryFn: () => fetchProducts(category, query),
-    staleTime: 1000 * 60 * 5, // cache for 5 minutes
+    staleTime: 1000 * 60 * 5, 
   });
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import axiosInstance from "../Utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -21,7 +22,6 @@ import {
 } from "@mui/material";
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import apiUrl from "../Utils/apiUrl";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useUserStore from "../stores/userStore";
@@ -78,9 +78,7 @@ const CheckoutPage = () => {
     useMutation<Order, Error, Order>({
       mutationKey: ["pay-and-place-order"],
       mutationFn: async (order) => {
-        const response = await axios.post(`${apiUrl}/orders`, order, {
-          withCredentials: true,
-        });
+        const response = await axiosInstance.post(`/orders`, order);
         return response.data;
       },
       onSuccess: (data) => {
@@ -100,20 +98,14 @@ const CheckoutPage = () => {
   const { isPending: isUpdatingUser, mutate: updateUser } = useMutation({
     mutationKey: ["update-user-info"],
     mutationFn: async () => {
-      const response = await axios.patch(
-        `${apiUrl}/users`,
-        {
-          fullName: formData.fullName,
-          emailAddress: formData.emailAddress,
-          phoneNumber: formData.phoneNumber,
-          county: formData.county,
-          town: formData.town,
-          shippingCharge: formData.shippingCharge,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axiosInstance.patch(`/users`, {
+        fullName: formData.fullName,
+        emailAddress: formData.emailAddress,
+        phoneNumber: formData.phoneNumber,
+        county: formData.county,
+        town: formData.town,
+        shippingCharge: formData.shippingCharge,
+      });
       return response.data;
     },
     onSuccess: (data) => {
@@ -144,8 +136,8 @@ const CheckoutPage = () => {
 
     let attempts = 0;
     const interval = setInterval(async () => {
-      const res = await axios.get(
-        `${apiUrl}/orders/payment-status/${checkoutRequestId}`
+      const res = await axiosInstance.get(
+        `/orders/payment-status/${checkoutRequestId}`
       );
       const { status, resultDesc } = res.data;
 

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import axiosInstance from "../Utils/axiosInstance";
 import { Link } from "react-router-dom";
 import { MdOutlineRateReview } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { TextField, Rating, CircularProgress } from "@mui/material";
 import { PulseLoader } from "react-spinners";
 import { format } from "date-fns";
-import apiUrl from "../Utils/apiUrl";
 import { Order, Review } from "../types";
 import "../styles/OrdersPage.css";
 import formControlStyle from "../Utils/formControlStyles";
@@ -34,9 +34,7 @@ const OrdersPage = () => {
   } = useQuery<Order[]>({
     queryKey: ["get-orders-by-user"],
     queryFn: async () => {
-      const response = await axios.get(`${apiUrl}/orders/user`, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(`/orders/user`);
       console.log(response.data)
       return response.data;
     },
@@ -52,10 +50,8 @@ const OrdersPage = () => {
       orderItemId: string;
     }) => {
       await Promise.all([
-        axios.post(`${apiUrl}/reviews`, review, { withCredentials: true }),
-        axios.patch(`${apiUrl}/order-items/${orderItemId}`, undefined, {
-          withCredentials: true,
-        }),
+        axiosInstance.post(`/reviews`, review),
+        axiosInstance.patch(`/order-items/${orderItemId}`, undefined),
       ]);
     },
     onSuccess: () => {
