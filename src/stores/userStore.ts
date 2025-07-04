@@ -6,7 +6,7 @@ import logoutUser from "../Utils/logoutUser";
 interface UserState {
   user: User | null;
   refreshExpiry: number | null;
-  setUserInfo: (userObject: User, refreshExpiryMs: number) => void;
+  setUserInfo: (userObject: User, refreshExpiryMs?: number) => void;
   removeUserInfo: () => void;
 }
 
@@ -20,16 +20,20 @@ const userStore = (
   user: null,
   refreshExpiry: null,
 
-  setUserInfo: (userObject: User, refreshExpiryMs: number) => {
-    const expiryTimestamp = Date.now() + refreshExpiryMs;
+  setUserInfo: (userObject: User, refreshExpiryMs?: number) => {
+    if (refreshExpiryMs) {
+      const expiryTimestamp = Date.now() + refreshExpiryMs;
 
-    if (logoutTimeout) clearTimeout(logoutTimeout);
+      if (logoutTimeout) clearTimeout(logoutTimeout);
 
-    logoutTimeout = setTimeout(() => {
-      logoutUser();
-    }, refreshExpiryMs);
+      logoutTimeout = setTimeout(() => {
+        logoutUser();
+      }, refreshExpiryMs);
 
-    set({ user: userObject, refreshExpiry: expiryTimestamp });
+      set({ user: userObject, refreshExpiry: expiryTimestamp });
+    } else {
+      set((state) => ({ ...state, user: userObject }));
+    }
   },
 
   removeUserInfo: () => {
