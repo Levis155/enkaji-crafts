@@ -1,11 +1,13 @@
-.wishlist-page{
+.wishlist-page {
   min-height: 75vh;
 }
+
 .wishlist-page h1 {
   font-size: 1.7rem;
   margin-bottom: 25px;
   color: var(--primary-color);
 }
+
 .empty-state {
   background-color: var(--background-light);
   padding: 40px;
@@ -39,9 +41,6 @@
   flex-direction: column;
   gap: 20px;
 }
-.wishlist-item:last-child {
-  border-bottom: none;
-}
 
 .wishlist-item {
   padding: 20px;
@@ -49,11 +48,6 @@
   align-items: center;
   gap: 20px;
   border-bottom: 1px solid var(--border-color);
-}
-@media screen and (max-width: 62.5em) {
-  .wishlist-item {
-    flex-wrap: wrap;
-  }
 }
 
 .wishlist-item.out-of-stock {
@@ -67,25 +61,15 @@
   border-radius: 8px;
   overflow: hidden;
 }
-.item-image-wrapper{
+
+.item-image-wrapper {
   height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-@media screen and (max-width: 62.5em) {
-  .item-image {
-    width: 100%;
-  }
-  .item-image-wrapper {
-    width: 100px;
-    height: 100px;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-}
+
 .item-image-wrapper img {
   height: 80px;
   max-width: 100px;
@@ -165,11 +149,6 @@
   gap: 10px;
   min-width: 150px;
 }
-@media screen and (max-width: 56.25em) {
-  .item-actions {
-    width: 100%;
-  }
-}
 
 .move-to-cart,
 .remove-from-wishlist {
@@ -179,12 +158,6 @@
   cursor: pointer;
   transition: all 0.3s;
   text-align: center;
-}
-@media screen and (max-width: 56.25em) {
-  .move-to-cart,
-  .remove-from-wishlist {
-    width: 100%;
-  }
 }
 
 .move-to-cart {
@@ -210,4 +183,33 @@
 
 .remove-from-wishlist:hover {
   background-color: var(--background-light);
+}
+
+@media screen and (max-width: 62.5em) {
+  .wishlist-item {
+    flex-wrap: wrap;
+  }
+  
+  .item-image {
+    width: 100%;
+  }
+  
+  .item-image-wrapper {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}
+
+@media screen and (max-width: 56.25em) {
+  .item-actions {
+    width: 100%;
+  }
+  
+  .move-to-cart,
+  .remove-from-wishlist {
+    width: 100%;
+  }
 }
