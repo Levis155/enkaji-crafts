@@ -13,11 +13,13 @@
   grid-template-columns: 2fr 1fr;
   gap: 30px;
 }
+
 .checkout-details {
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
+
 .customer-info,
 .delivery-details,
 .payment-method {
@@ -26,6 +28,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   padding: 20px;
 }
+
 .checkout-section-title {
   display: flex;
   justify-content: space-between;
@@ -33,17 +36,21 @@
   padding-bottom: 10px;
   margin-bottom: 20px;
 }
+
 .checkout-section-title h2 {
   color: var(--text-color);
   text-align: start;
   font-size: 1.7rem;
 }
-.customer-info form, .address-display form {
+
+.customer-info form,
+.address-display form {
   display: flex;
   flex-direction: column;
   gap: 15px;
   padding-inline: 1rem;
 }
+
 .info-content {
   display: flex;
   flex-direction: column;
@@ -60,9 +67,11 @@
   color: var(--text-light);
   font-size: 1.4rem;
 }
-.info-value{
+
+.info-value {
   font-size: 1.4rem;
 }
+
 .subsection-header {
   display: flex;
   justify-content: space-between;
@@ -87,10 +96,6 @@
   transition: all 0.3s;
 }
 
-.edit-delivery-details:hover {
-  color: var(--primary-dark);
-}
-
 .shipping-address,
 .shipment {
   border: 1px solid var(--border-color);
@@ -102,13 +107,9 @@
   padding: 1rem 0.5rem;
   border-radius: 4px;
 }
-.address-display p{
+
+.address-display p {
   font-size: 1.4rem;
-}
-.edit-shipping-address-form-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
 }
 
 .save-button {
@@ -170,23 +171,6 @@
 
 .shipment-item-details {
   flex: 1;
-}
-
-.shipment-item-name {
-  font-size: 1.4rem;
-  margin-bottom: 5px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  line-clamp: 2;
-  box-orient: vertical;
-  overflow: hidden;
-}
-
-.shipment-item-variation {
-  font-size: 1.2rem;
-  color: var(--text-light);
-  margin-bottom: 5px;
 }
 
 .shipment-item-meta {
@@ -263,7 +247,8 @@
   align-items: center;
   gap: 2.2rem;
 }
-.payment-failed{
+
+.payment-failed {
   color: var(--primary-color);
 }
 
@@ -276,14 +261,15 @@
   margin-left: auto;
   margin-right: auto;
 }
-.lottie-animation{
+
+.lottie-animation {
   width: 15rem;
   height: 15rem;
 }
 
 .continue-shopping-btn {
   display: flex;
-  gap: .5rem;
+  gap: 0.5rem;
   align-items: center;
   background-color: var(--primary-color);
   color: white;
