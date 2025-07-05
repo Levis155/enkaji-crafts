@@ -26,25 +26,28 @@
   height: 3px;
   background-color: var(--primary-color);
 }
-.products-loader-container, .products-error-container{
+
+.products-loader-container,
+.products-error-container {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100px;
 }
-.products-error-container{
+
+.products-error-container {
   color: var(--primary-color);
   font-size: 1.8rem;
   text-transform: capitalize;
 }
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 30px;
-  min-height: 600px; /* Ensure consistent height between pages */
+  min-height: 600px;
 }
 
-/* Pagination styles */
 .pagination-container {
   margin-top: 40px;
   display: flex;
@@ -94,7 +97,6 @@
   cursor: not-allowed;
 }
 
-/* About Enkaji Section */
 .about-enkaji {
   padding: 80px 0;
   background-color: var(--background-light);
