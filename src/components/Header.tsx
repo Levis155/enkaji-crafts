@@ -109,7 +109,7 @@ const Header = () => {
   };
 
   const handleLogOut = async () => {
-    logoutUser();
+    logoutUser(navigate);
   };
 
   // Standard Header for normal browser width

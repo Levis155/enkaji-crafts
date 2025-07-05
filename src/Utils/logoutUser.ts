@@ -1,19 +1,16 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import apiUrl from "../Utils/apiUrl";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
 import useWishlistStore from "../stores/wishlistStore";
+import { toast } from "react-toastify";
 
-
-const logoutUser = async () => {
+const logoutUser = async (navigate?: (path: string) => void) => {
   const removeUserInfo = useUserStore.getState().removeUserInfo;
   const clearCart = useCartStore.getState().clearCart;
   const clearWishlist = useWishlistStore.getState().clearWishlist;
   const cart = useCartStore.getState().cart;
   const wishlist = useWishlistStore.getState().wishlist;
-  const navigate = useNavigate();
 
   try {
     await Promise.all([
@@ -30,7 +27,7 @@ const logoutUser = async () => {
     clearCart();
     clearWishlist();
     removeUserInfo();
-    navigate("/");
+    if (navigate) navigate("/");
   }
 };
 
