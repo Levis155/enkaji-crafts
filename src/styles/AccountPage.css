@@ -1,4 +1,4 @@
-.account-page{
+.account-page {
   min-height: 75vh;
 }
 .account-page h1 {
@@ -6,27 +6,25 @@
   margin-bottom: 25px;
   color: var(--primary-color);
 }
-
-.account-details, .account-page-shipping-address, .password-change {
+.account-details,
+.account-page-shipping-address,
+.password-change {
   margin-bottom: 30px;
   background-color: white;
   border: 1px solid var(--border-color);
 }
-
 .account-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  padding: 0.5rem .8rem;
+  padding: 0.5rem 0.8rem;
   border-bottom: 1px solid var(--border-color);
 }
-
 .account-section-header h2 {
   font-size: 1.4rem;
   color: var(--text-color);
 }
-
 .edit-button {
   background-color: transparent;
   color: var(--primary-color);
@@ -36,52 +34,40 @@
   transition: all 0.3s;
   text-align: center;
 }
-
 .edit-button:hover {
   color: var(--primary-dark);
 }
-
 .details-display {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  padding: .8rem;
+  padding: 0.8rem;
 }
-
 .detail-item {
   display: flex;
   align-items: center;
 }
-
 .detail-label {
   font-weight: 600;
   width: 120px;
   color: var(--text-light);
 }
-
 .detail-value {
   color: var(--text-color);
 }
-
-.account-details form, .account-page-shipping-address form, .password-change form {
+.account-details form,
+.account-page-shipping-address form,
+.password-change form {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  padding: .8rem;
+  padding: 0.8rem;
 }
-
-.account-page-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
 .account-page-form-actions {
   display: flex;
   gap: 10px;
   margin-top: 10px;
 }
-
 .save-button {
   background-color: var(--primary-color);
   color: white;
@@ -91,11 +77,9 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
 .save-button:hover {
   background-color: var(--primary-dark);
 }
-
 .cancel-button {
   background-color: transparent;
   color: var(--text-color);
@@ -105,28 +89,15 @@
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .cancel-button:hover {
   background-color: var(--background-light);
 }
-
-.password-link a {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.password-link a:hover {
-  text-decoration: underline;
-}
-
 @media (max-width: 768px) {
   .detail-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
-  
   .detail-label {
     width: auto;
   }
