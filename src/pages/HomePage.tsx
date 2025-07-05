@@ -141,7 +141,7 @@ const HomePage = () => {
                   <p>
                     Our store is a celebration of Maasai culture, artistry, and
                     identity. We offer a curated selection of traditional tools,
-                    attire, jewelry, and home accents — each one a reflection of
+                    attire, jewelry, and home accents, each one a reflection of
                     the Maasai's deep connection to community, craftsmanship,
                     and nature.
                   </p>
@@ -193,7 +193,7 @@ const HomePage = () => {
                 <div className="closing-message">
                   <p>
                     When you buy from Enkaji Crafts, you're not just purchasing
-                    a product — you're welcoming a piece of Africa's heritage
+                    a product, you're welcoming a piece of Africa's heritage
                     into your home. Every bead, stitch, and carving carries
                     meaning, memory, and pride.
                   </p>

@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 const Logo = () => {
   return (
-    <div style={{ width: "5rem" }}>
+    <Link to="/" style={{ width: "5rem" }}>
       <svg
         version="1.0"
         xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +23,7 @@ const Logo = () => {
           <path d="M306 667 c21 -21 5694 -28 5694 -6 0 12 -1028 19 -2853 19 -1570 0 -2848 -6 -2841 -13z" />{" "}
         </g>{" "}
       </svg>
-    </div>
+    </Link>
   );
 };
 
