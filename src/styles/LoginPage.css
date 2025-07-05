@@ -5,6 +5,7 @@
   align-items: center;
   background-color: white;
 }
+
 .login-page-wrapper form {
   background-color: var(--background-color);
   width: 60%;
@@ -13,37 +14,22 @@
   align-items: center;
   padding: 1.2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-;
 }
-@media screen and (max-width: 62.5em) {
-  .login-page-wrapper form {
-    width: 80%;
-  }
-}
-@media screen and (max-width: 37.5em) {
-  .login-page-wrapper form {
-    width: 90%;
-  }
-}
+
 .login-form-title {
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 3rem;
   color: var(--primary-color);
 }
+
 .login-form-body {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
-.auth-error {
-  background-color: #ffe6e6;
-  color: var(--danger-color);
-  padding: 10px 15px;
-  border-radius: 4px;
-  font-size: 1.4rem;
-}
+
 .login-btn {
   padding-block: 1.2rem;
   background-color: var(--primary-color);
@@ -52,11 +38,13 @@
   cursor: pointer;
   text-transform: capitalize;
 }
-.forgot-password{
+
+.forgot-password {
   text-align: end;
   margin-top: 0rem;
   font-size: 1.2rem;
 }
+
 .divider {
   display: flex;
   align-items: center;
@@ -76,10 +64,24 @@
   font-size: 1.4rem;
   color: #888;
 }
+
 .register-text {
   font-size: 1.4rem;
   margin-top: 0.5rem;
 }
+
 .register-text a {
   color: var(--primary-color);
+}
+
+@media screen and (max-width: 62.5em) {
+  .login-page-wrapper form {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 37.5em) {
+  .login-page-wrapper form {
+    width: 90%;
+  }
 }
