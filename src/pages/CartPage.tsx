@@ -3,6 +3,7 @@ import { FaAngleDoubleLeft } from "react-icons/fa";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useCartStore from "../stores/cartStore";
+import useBrowseProducts from "../hooks/useBrowseProducts";
 import useUserStore from "../stores/userStore";
 import "../styles/CartPage.css";
 
@@ -20,6 +21,7 @@ const CartPage = () => {
   const getCartTotal = useCartStore((state) => state.getTotalPrice);
   const getTotalCartQuantity = useCartStore((state) => state.getTotalQuantity);
   const navigate = useNavigate();
+  const handleContinueShopping = useBrowseProducts();
   const shippingFee = user ? user.shippingCharge : 120;
 
   const inStockItems = cart.filter((item) => item.inStock);
@@ -40,9 +42,9 @@ const CartPage = () => {
             <h1>Your Cart</h1>
             <p>Your cart is currently empty.</p>
             <div className="empty-cart-link-cont">
-              <Link to="/" className="empty-cart-link">
+              <button className="empty-cart-link" onClick={handleContinueShopping}>
                 <FaAngleDoubleLeft /> Continue Shopping
-              </Link>
+              </button>
             </div>
           </div>
         </main>
@@ -207,9 +209,9 @@ const CartPage = () => {
               {user ? "Proceed to Checkout" : "Sign In to Checkout"}
             </button>
 
-            <Link to="/" className="continue-shopping">
+            <button className="continue-shopping" onClick={handleContinueShopping}>
               <FaAngleDoubleLeft /> Continue Shopping
-            </Link>
+            </button>
           </div>
         </div>
       </main>

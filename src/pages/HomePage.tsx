@@ -59,7 +59,7 @@ const HomePage = () => {
       <main>
         <Hero />
 
-        <section id="featured-products" className="featured-products">
+        <section id="crafts-collection" className="featured-products">
           <div className="container">
             <h2 className="section-title">crafts collection</h2>
 

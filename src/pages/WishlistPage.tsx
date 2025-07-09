@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import useWishlistStore from "../stores/wishlistStore";
 import useCartStore from "../stores/cartStore";
+import useBrowseProducts from "../hooks/useBrowseProducts";
 import "../styles/WishlistPage.css";
 
 const WishlistPage = () => {
@@ -8,6 +9,7 @@ const WishlistPage = () => {
   const removeFromWishlist = useWishlistStore((state) => state.removeItem);
   const addToCart = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.cart);
+  const handleShopNow = useBrowseProducts();
 
   if (wishlistItems.length === 0) {
     return (
@@ -15,9 +17,9 @@ const WishlistPage = () => {
         <h1>My Wishlist</h1>
         <div className="empty-state">
           <p>Your wishlist is empty.</p>
-          <Link to="/" className="shop-now-btn">
+          <button className="shop-now-btn" onClick={handleShopNow}>
             Shop Now
-          </Link>
+          </button>
         </div>
       </div>
     );

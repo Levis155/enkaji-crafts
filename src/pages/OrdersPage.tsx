@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import axiosInstance from "../Utils/axiosInstance";
-import { Link } from "react-router-dom";
 import { MdOutlineRateReview } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { TextField, Rating, CircularProgress } from "@mui/material";
@@ -11,6 +10,7 @@ import { format } from "date-fns";
 import { Order, Review } from "../types";
 import "../styles/OrdersPage.css";
 import formControlStyle from "../Utils/formControlStyles";
+import useBrowseProducts from "../hooks/useBrowseProducts";
 import { toast } from "react-toastify";
 
 const OrdersPage = () => {
@@ -25,6 +25,7 @@ const OrdersPage = () => {
   });
 
   const queryClient = useQueryClient();
+  const handleShopNow = useBrowseProducts();
 
   const {
     isLoading,
@@ -131,9 +132,9 @@ const OrdersPage = () => {
             <div className="orders-page empty-orders">
               <div className="empty-state">
                 <p>You haven't placed any orders yet.</p>
-                <Link to="/" className="shop-now-btn">
+                <button className="shop-now-btn" onClick={handleShopNow}>
                   Shop Now
-                </Link>
+                </button>
               </div>
             </div>
           )}
