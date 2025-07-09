@@ -117,7 +117,7 @@ const ProductDetailPage = () => {
                 <p className="product-container-col2-brand">
                   category: <span>{product.category}</span> |{" "}
                   <span>
-                    <Link to="#">similar products</Link>
+                    <Link to={`/category/${product.category}`}>similar products</Link>
                   </span>
                 </p>
                 <div className="product-container-price-discount-container">
