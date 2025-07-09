@@ -116,9 +116,9 @@ const Header = () => {
   const standardHeader = (
     <div className="header-content">
       <div className="logo">
-        <Link to="/">
-          <Logo /> enkaji crafts
-        </Link>
+        <div>
+          <Logo /> <Link to="/">enkaji crafts</Link>
+        </div>
       </div>
 
       <div className="search-bar">
@@ -235,9 +235,9 @@ const Header = () => {
   const minimizedHeader = (
     <div className="header-content minimized">
       <div className="logo">
-        <Link to="/">
-          <Logo /> Enkaji Crafts
-        </Link>
+        <div>
+          <Logo /> <Link to="/">Enkaji Crafts</Link>
+        </div>
       </div>
 
       <div className="search-bar">
