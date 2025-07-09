@@ -76,7 +76,14 @@ const LoginPage = () => {
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
       toast.success("Login successful.");
-      navigate("/");
+      
+      const redirectPath = localStorage.getItem("redirectAfterLogin");
+      if (redirectPath) {
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirectPath);
+      } else {
+        navigate("/");
+      }
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
