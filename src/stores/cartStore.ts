@@ -88,26 +88,26 @@ const useCartStore = create<CartState>()(
           };
         });
       },
-        refreshCartStock: async () => {
-    const cart = get().cart;
-    try {
-      const updatedCart = await Promise.all(
-        cart.map(async (item) => {
-          const response = await axios.get(`${apiUrl}/products/${item.id}`);
-          const updatedProduct = response.data;
+      refreshCartStock: async () => {
+        const cart = get().cart;
+        try {
+          const updatedCart = await Promise.all(
+            cart.map(async (item) => {
+              const response = await axios.get(`${apiUrl}/products/${item.id}`);
+              const updatedProduct = response.data;
 
-          return {
-            ...item,
-            inStock: updatedProduct.inStock,
-          };
-        })
-      );
+              return {
+                ...item,
+                inStock: updatedProduct.inStock,
+              };
+            })
+          );
 
-      set({ cart: updatedCart });
-    } catch (error) {
-      console.error("Failed to refresh cart stock", error);
-    }
-  },
+          set({ cart: updatedCart });
+        } catch (error) {
+          console.error("Failed to refresh cart stock", error);
+        }
+      },
     }),
     { name: "cart_info" }
   )

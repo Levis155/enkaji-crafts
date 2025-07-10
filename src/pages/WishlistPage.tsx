@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import useWishlistStore from "../stores/wishlistStore";
 import useCartStore from "../stores/cartStore";
 import useBrowseProducts from "../hooks/useBrowseProducts";
@@ -7,9 +8,18 @@ import "../styles/WishlistPage.css";
 const WishlistPage = () => {
   const wishlistItems = useWishlistStore((state) => state.wishlist);
   const removeFromWishlist = useWishlistStore((state) => state.removeItem);
+  const refreshWishlistStock = useWishlistStore(
+    (state) => state.refreshWishlistStock
+  );
   const addToCart = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.cart);
   const handleShopNow = useBrowseProducts();
+
+  useEffect(() => {
+    const onFocus = () => refreshWishlistStock();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
 
   if (wishlistItems.length === 0) {
     return (
