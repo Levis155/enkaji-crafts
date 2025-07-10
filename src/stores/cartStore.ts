@@ -1,6 +1,8 @@
+import axios from "axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CartItem } from "../types";
+import apiUrl from "../Utils/apiUrl";
 
 interface CartState {
   cart: CartItem[];
@@ -13,6 +15,7 @@ interface CartState {
   getTotalQuantity: () => number;
   isItemInCart: (itemId: string) => boolean;
   mergeCart: (itemsFromBackend: any[]) => void;
+  refreshCartStock: () => Promise<void>;
 }
 
 const useCartStore = create<CartState>()(
@@ -85,6 +88,26 @@ const useCartStore = create<CartState>()(
           };
         });
       },
+        refreshCartStock: async () => {
+    const cart = get().cart;
+    try {
+      const updatedCart = await Promise.all(
+        cart.map(async (item) => {
+          const response = await axios.get(`${apiUrl}/products/${item.id}`);
+          const updatedProduct = response.data;
+
+          return {
+            ...item,
+            inStock: updatedProduct.inStock,
+          };
+        })
+      );
+
+      set({ cart: updatedCart });
+    } catch (error) {
+      console.error("Failed to refresh cart stock", error);
+    }
+  },
     }),
     { name: "cart_info" }
   )
