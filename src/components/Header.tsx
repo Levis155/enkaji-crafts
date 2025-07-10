@@ -324,6 +324,7 @@ const Header = () => {
                     to={category.path}
                     onClick={() => setShowMobileMenu(false)}
                   >
+                    {category.icon}
                     {category.name}
                   </Link>
                 ))}
