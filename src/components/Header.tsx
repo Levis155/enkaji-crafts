@@ -7,6 +7,7 @@ import {
   FaSearch,
   FaAngleDown,
   FaAngleUp,
+  FaTools,
 } from "react-icons/fa";
 import { TbCategory } from "react-icons/tb";
 import { BiLogOut, BiLogIn } from "react-icons/bi";
@@ -16,6 +17,7 @@ import { BsBoxArrowInLeft } from "react-icons/bs";
 import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
+import { GiBowTieRibbon } from "react-icons/gi";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
 import logoutUser from "../Utils/logoutUser";
@@ -39,8 +41,12 @@ const Header = () => {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const categories = [
-    { name: "Tools", path: "/category/tools" },
-    { name: "Accessories", path: "/category/accessories" },
+    { name: "Tools", path: "/category/tools", icon: <FaTools /> },
+    {
+      name: "Accessories",
+      path: "/category/accessories",
+      icon: <GiBowTieRibbon />,
+    },
   ];
 
   useEffect(() => {
@@ -213,6 +219,7 @@ const Header = () => {
                   to={category.path}
                   onClick={() => setShowCategoriesMenu(false)}
                 >
+                  {category.icon}
                   {category.name}
                 </Link>
               ))}
