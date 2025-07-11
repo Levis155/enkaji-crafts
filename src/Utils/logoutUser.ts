@@ -19,14 +19,13 @@ const logoutUser = async (navigate?: (path: string) => void) => {
     ]);
 
     toast.success("Logged out successfully.");
-  } catch (error) {
-    console.error("Logout error", error);
-    toast.error("Logout failed.");
-  } finally {
     clearCart();
     clearWishlist();
     removeUserInfo();
     if (navigate) navigate("/");
+  } catch (error) {
+    console.error("Logout error", error);
+    toast.error("Logout was unsuccessful.");
   }
 };
 
