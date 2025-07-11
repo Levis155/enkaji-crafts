@@ -21,7 +21,7 @@ const fetchProducts = async (
     const { data } = await axios.get(`${apiUrl}/products/category/${category}`);
     return data;
   } else {
-    const { data } = await axios.get(`${apiUrl}/products`); 
+    const { data } = await axios.get(`${apiUrl}/products`);
     return data;
   }
 };
@@ -42,19 +42,26 @@ const CategoryPage = () => {
   } = useQuery({
     queryKey: ["products", { category, query }],
     queryFn: () => fetchProducts(category, query),
-    staleTime: 1000 * 60 * 5, 
+    staleTime: 1000 * 60 * 5,
   });
 
   useEffect(() => {
     if (isError) {
       if (axios.isAxiosError(error)) {
-        const serverMessage = error.response?.data.message;
-        setFetchError(serverMessage);
+        if (!error.response) {
+          setFetchError(
+            "Network error: Please check your internet connection."
+          );
+        } else {
+          const serverMessage =
+            error.response?.data?.message || "Server error occurred.";
+          setFetchError(serverMessage);
+        }
       } else {
-        setFetchError("Something went wrong.");
+        setFetchError("An unexpected error occurred.");
       }
     }
-  }, [error]);
+  }, [isError, error]);
 
   const sortedProducts = useMemo(() => {
     const sorted = [...products];
@@ -119,7 +126,7 @@ const CategoryPage = () => {
             </div>
           ) : fetchError ? (
             <div className="category-page-error">
-               <p>{fetchError}</p>
+              <p>{fetchError}</p>
             </div>
           ) : sortedProducts.length === 0 ? (
             <div className="category-page-no-results">
