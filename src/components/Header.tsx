@@ -13,8 +13,6 @@ import { TbCategory } from "react-icons/tb";
 import { BiLogOut, BiLogIn } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { LuPackage } from "react-icons/lu";
-import { BsBoxArrowInLeft } from "react-icons/bs";
-import { HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { IoCreateOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { GiBowTieRibbon } from "react-icons/gi";
@@ -298,13 +296,13 @@ const Header = () => {
                         setShowMobileMenu(false);
                       }}
                     >
-                      <HiOutlineArrowRightOnRectangle /> Sign Out
+                      <BiLogOut /> Sign Out
                     </button>
                   </>
                 ) : (
                   <>
                     <Link to="/login" onClick={() => setShowMobileMenu(false)}>
-                      <BsBoxArrowInLeft /> Sign In
+                      <BiLogIn /> Sign In
                     </Link>
                     <Link
                       to="/register"
