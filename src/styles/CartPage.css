@@ -1,5 +1,6 @@
 .cart-page {
   padding: 4rem;
+  min-height: 85vh;
 }
 
 .cart-page h1 {
@@ -284,7 +285,9 @@
   }
 
   .cart-item {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 15px;
   }
 
@@ -292,7 +295,6 @@
     width: 100%;
     height: 200px;
   }
-
   .item-actions {
     display: flex;
     justify-content: space-between;
@@ -300,6 +302,7 @@
   }
 
   .cart-page-quantity-control {
+    width: 100%;
     margin-bottom: 0;
   }
 
