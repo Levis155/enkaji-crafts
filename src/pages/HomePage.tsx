@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import apiUrl from "../Utils/apiUrl";
 import { FaHandHoldingHeart, FaBriefcase } from "react-icons/fa";
@@ -11,11 +11,11 @@ import Hero from "../components/Hero";
 import ProductCard from "../components/ProductCard";
 import { Product } from "../types";
 import "../styles/HomePage.css";
-import { useState } from "react";
 
 const HomePage = () => {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const craftsSectionRef = useRef<HTMLElement | null>(null);
   const productsPerPage = 8;
 
   const { isLoading, data, isError, error } = useQuery({
@@ -38,7 +38,6 @@ const HomePage = () => {
     }
   }, [error]);
 
-  // Calculate pagination data
   const totalProducts = data ? data.length : 0;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
   const startIndex = currentPage * productsPerPage;
@@ -46,11 +45,23 @@ const HomePage = () => {
   const currentProducts = data ? data.slice(startIndex, endIndex) : [];
 
   const handlePrevious = () => {
-    setCurrentPage(prev => prev > 0 ? prev - 1 : 0);
+    setCurrentPage((prev) => {
+      const newPage = prev > 0 ? prev - 1 : 0;
+      setTimeout(() => {
+        craftsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
+      return newPage;
+    });
   };
 
   const handleNext = () => {
-    setCurrentPage(prev => prev < totalPages - 1 ? prev + 1 : prev);
+    setCurrentPage((prev) => {
+      const newPage = prev < totalPages - 1 ? prev + 1 : prev;
+      setTimeout(() => {
+        craftsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
+      return newPage;
+    });
   };
 
   return (
@@ -59,7 +70,11 @@ const HomePage = () => {
       <main>
         <Hero />
 
-        <section id="crafts-collection" className="featured-products">
+        <section
+          id="crafts-collection"
+          className="featured-products"
+          ref={craftsSectionRef}
+        >
           <div className="container">
             <h2 className="section-title">crafts collection</h2>
 
@@ -69,7 +84,7 @@ const HomePage = () => {
               </div>
             )}
 
-            { !isLoading && fetchError && (
+            {!isLoading && fetchError && (
               <div className="products-error-container">{fetchError}</div>
             )}
 
@@ -99,15 +114,15 @@ const HomePage = () => {
                       </span>
                     </div>
                     <div className="pagination-controls">
-                      <button 
-                        className="pagination-btn prev-btn" 
+                      <button
+                        className="pagination-btn prev-btn"
                         onClick={handlePrevious}
                         disabled={currentPage === 0}
                       >
                         ← Previous
                       </button>
-                      <button 
-                        className="pagination-btn next-btn" 
+                      <button
+                        className="pagination-btn next-btn"
                         onClick={handleNext}
                         disabled={currentPage === totalPages - 1}
                       >
@@ -121,7 +136,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section id="about-enkaji" className="about-enkaji">  
+        <section id="about-enkaji" className="about-enkaji">
           <div className="container">
             <div className="about-hero">
               <h2 className="about-title">Welcome to Enkaji Crafts</h2>
