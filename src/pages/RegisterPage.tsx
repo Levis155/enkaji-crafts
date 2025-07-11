@@ -75,7 +75,6 @@ const RegisterPage = () => {
       setFormError("Password and confirmed password must match.");
       return;
     }
-    console.log(formData);
     mutate();
   };
 

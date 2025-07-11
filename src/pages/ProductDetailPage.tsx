@@ -55,7 +55,6 @@ const ProductDetailPage = () => {
     queryKey: ["fetch-product", id],
     queryFn: async () => {
       const response = await axios.get(`${apiUrl}/products/${id}`);
-      console.log(response.data);
       return response.data;
     },
   });

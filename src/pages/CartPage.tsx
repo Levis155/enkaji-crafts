@@ -13,7 +13,6 @@ const CartPage = () => {
   const cart = useCartStore((state) => state.cart);
   const outOfStockItems = cart.filter((item) => !item.inStock);
   const refreshCartStock = useCartStore((state) => state.refreshCartStock);
-  console.log(cart);
   const incrementItemQuantity = useCartStore(
     (state) => state.incrementItemQuantity
   );
