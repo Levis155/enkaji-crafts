@@ -25,10 +25,15 @@ const ForgotPasswordPage = () => {
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        const serverMessage = err.response?.data.message;
-        setFormError(serverMessage);
+        if (!err.response) {
+          setFormError("Network error: Please check your internet connection.");
+        } else {
+          const serverMessage =
+            err.response.data?.message || "Server error occurred.";
+          setFormError(serverMessage);
+        }
       } else {
-        setFormError("Could not send reset link.");
+        setFormError("An unexpected error occurred.");
       }
     },
   });
@@ -39,43 +44,39 @@ const ForgotPasswordPage = () => {
     mutate();
   };
   return (
-      <div className="forgot-password-page-wrapper">
-        <form onSubmit={handleSubmit}>
-          <Logo />
-          <p className="forgot-password-form-title">Forgot Password</p>
+    <div className="forgot-password-page-wrapper">
+      <form onSubmit={handleSubmit}>
+        <Logo />
+        <p className="forgot-password-form-title">Forgot Password</p>
 
-          <div className="forgot-password-form-body">
-            {formError && (
-              <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
-                {formError}
-              </Alert>
+        <div className="forgot-password-form-body">
+          {formError && (
+            <Alert severity="error" sx={{ mb: "1rem", fontSize: "1.4rem" }}>
+              {formError}
+            </Alert>
+          )}
+
+          <TextField
+            label="Email"
+            variant="outlined"
+            type="email"
+            required
+            name="emailAddress"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={formControlStyle}
+          />
+
+          <button type="submit" disabled={isPending} className="send-link-btn">
+            {isPending ? (
+              <CircularProgress size="1.3rem" sx={{ color: "white" }} />
+            ) : (
+              "Send Reset Link"
             )}
-
-            <TextField
-              label="Email"
-              variant="outlined"
-              type="email"
-              required
-              name="emailAddress"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={formControlStyle}
-            />
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="send-link-btn"
-            >
-              {isPending ? (
-                <CircularProgress size="1.3rem" sx={{ color: "white" }} />
-              ) : (
-                "Send Reset Link"
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
