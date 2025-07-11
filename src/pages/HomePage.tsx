@@ -22,21 +22,24 @@ const HomePage = () => {
     queryKey: ["fetch-all-products"],
     queryFn: async () => {
       const response = await axios.get(`${apiUrl}/products`);
-      console.log(response.data);
       return response.data;
     },
   });
 
-  useEffect(() => {
-    if (isError) {
-      if (axios.isAxiosError(error)) {
-        const serverMessage = error.response?.data.message;
-        setFetchError(serverMessage);
+useEffect(() => {
+  if (isError) {
+    if (axios.isAxiosError(error)) {
+      if (!error.response) {
+        setFetchError("Network error: Please check your internet connection.");
       } else {
-        setFetchError("Something went wrong.");
+        const serverMessage = error.response.data?.message || "Server error occurred.";
+        setFetchError(serverMessage);
       }
+    } else {
+      setFetchError("An unexpected error occurred.");
     }
-  }, [error]);
+  }
+}, [isError, error]);
 
   const totalProducts = data ? data.length : 0;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
