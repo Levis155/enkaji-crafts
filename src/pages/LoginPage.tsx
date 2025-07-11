@@ -45,7 +45,7 @@ const LoginPage = () => {
       });
       mergeCart(response.data.cart);
     } catch (error) {
-      toast.error("Failed to fetch wishlist.");
+      toast.error("Failed to fetch cart.");
       console.error("Failed to fetch cart:", error);
     }
   };
@@ -76,7 +76,7 @@ const LoginPage = () => {
       await fetchAndMergeCart();
       await fetchAndSetWishlist();
       toast.success("Login successful.");
-      
+
       const redirectPath = localStorage.getItem("redirectAfterLogin");
       if (redirectPath) {
         localStorage.removeItem("redirectAfterLogin");
@@ -87,10 +87,15 @@ const LoginPage = () => {
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        const serverMessage = err.response?.data.message;
-        setFormError(serverMessage);
+        if (!err.response) {
+          setFormError("Network error: Please check your internet connection.");
+        } else {
+          const serverMessage =
+            err.response.data?.message || "Server error occurred.";
+          setFormError(serverMessage);
+        }
       } else {
-        setFormError("Something went wrong.");
+        setFormError("An unexpected error occurred.");
       }
     },
   });
