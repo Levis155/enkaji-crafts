@@ -209,6 +209,7 @@
 
   .product-card-content {
     padding: 12px;
+    align-items: center;
   }
 
   .product-card-product-name {
