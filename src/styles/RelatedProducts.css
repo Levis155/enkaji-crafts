@@ -1,11 +1,14 @@
 .product-page-similar-items-title {
+  background-color: var(--background-light);
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   font-size: 2rem;
   text-transform: capitalize;
   font-weight: 600;
 }
-
+.similar-products-swiper{
+  background-color: var(--background-light);
+}
 .similar-products-swiper .swiper-button-next,
 .similar-products-swiper .swiper-button-prev {
   color: white;
@@ -24,6 +27,7 @@
   cursor: pointer;
   padding: 0.8rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
 }
 
 .products-page-similar-items-card:hover {

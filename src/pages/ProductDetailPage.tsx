@@ -105,9 +105,6 @@ const ProductDetailPage = () => {
               <div className="product-container-col1">
                 <div className="product-container-col1-img">
                   <img src={product.image} alt={product.name} />
-                  {!product.inStock && (
-                    <div className="out-of-stock-overlay">Out of Stock</div>
-                  )}
                 </div>
               </div>
               <div className="product-container-col2">
