@@ -36,7 +36,7 @@ const OrdersPage = () => {
     queryKey: ["get-orders-by-user"],
     queryFn: async () => {
       const response = await axiosInstance.get(`/orders/user`);
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     },
   });
@@ -57,7 +57,7 @@ const OrdersPage = () => {
     },
     onSuccess: () => {
       toast.success("Published Review successfully.");
-      queryClient.invalidateQueries({queryKey: ["get-orders-by-user"]});
+      queryClient.invalidateQueries({ queryKey: ["get-orders-by-user"] });
     },
     onError: () => {
       toast.error("Error publishing review.");
@@ -166,11 +166,11 @@ const OrdersPage = () => {
                               order.status.slice(1)
                             : "Unknown"}
                         </div>
-                      </div>
-                      <div className="order-ship-to">
-                        <span className="order-ship-to-add">
-                          Ship to: {order.county}, {order.town}
-                        </span>
+                        <div className="order-ship-to">
+                          <span className="order-ship-to-add">
+                            Ship to: {order.county}, {order.town}
+                          </span>
+                        </div>
                       </div>
                     </div>
 

@@ -76,6 +76,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2px;
+  flex-wrap: wrap;
 }
 
 .order-meta {
@@ -130,6 +131,7 @@
 .order-ship-to {
   font-size: 1.3rem;
   color: var(--text-light);
+  width: 100%;
 }
 
 .order-products {
@@ -364,6 +366,12 @@
   .order-info {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 5px;
+  }
+  .order-ship-to{
+    order: 2;
+  }
+  .order-status{
+    order: 3;
   }
 }
