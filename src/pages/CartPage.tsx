@@ -45,7 +45,7 @@ const CartPage = () => {
         <Header />
         <main className="container cart-page">
           <div className="empty-cart">
-            <h1>Your Cart</h1>
+            <h1>My Cart</h1>
             <p>Your cart is currently empty.</p>
             <div className="empty-cart-link-cont">
               <button
@@ -66,7 +66,7 @@ const CartPage = () => {
     <div>
       <Header />
       <main className="cart-page">
-        <h1>Your Cart ({getTotalCartQuantity()})</h1>
+        <h1>My Cart ({getTotalCartQuantity()})</h1>
 
         <div className="cart-container">
           <div className="cart-items">

@@ -1,5 +1,4 @@
-import axios from "axios";
-import apiUrl from "../Utils/apiUrl";
+import axiosInstance from "./axiosInstance";
 import useUserStore from "../stores/userStore";
 import useCartStore from "../stores/cartStore";
 import useWishlistStore from "../stores/wishlistStore";
@@ -14,9 +13,9 @@ const logoutUser = async (navigate?: (path: string) => void) => {
 
   try {
     await Promise.all([
-      axios.post(`${apiUrl}/cart/items`, { cart }, { withCredentials: true }),
-      axios.post(`${apiUrl}/wishlist/items`, { wishlist }, { withCredentials: true }),
-      axios.post(`${apiUrl}/auth/logout`, {}, { withCredentials: true }),
+      axiosInstance.post(`/cart/items`, { cart }),
+      axiosInstance.post(`/wishlist/items`, { wishlist }),
+      axiosInstance.post(`/auth/logout`, {}),
     ]);
 
     toast.success("Logged out successfully.");

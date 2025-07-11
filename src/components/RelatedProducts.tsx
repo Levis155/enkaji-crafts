@@ -43,7 +43,7 @@ const RelatedProducts = ({ category }: RelatedProductsProps) => {
 
   return (
     <div className="product-page-similar-items">
-      <p className="product-page-similar-items-title">Related products</p>
+      <p className="product-page-similar-items-title">More products</p>
       {isLoading && <div className="related-products-loading-cont"><PulseLoader size={15} color="#e61919" />{" "}</div>}
       { !isLoading && fetchError && <div className="related-products-error-cont"><p>{fetchError}</p></div>}
       <Swiper
