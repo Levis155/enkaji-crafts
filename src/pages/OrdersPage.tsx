@@ -36,7 +36,6 @@ const OrdersPage = () => {
     queryKey: ["get-orders-by-user"],
     queryFn: async () => {
       const response = await axiosInstance.get(`/orders/user`);
-      console.log(response.data);
       return response.data;
     },
   });
@@ -70,13 +69,20 @@ const OrdersPage = () => {
   useEffect(() => {
     if (isError) {
       if (axios.isAxiosError(error)) {
-        const serverMessage = error.response?.data.message;
-        setFetchError(serverMessage);
+        if (!error.response) {
+          setFetchError(
+            "Network error: Please check your internet connection."
+          );
+        } else {
+          const serverMessage =
+            error.response?.data?.message || "Server error occurred.";
+          setFetchError(serverMessage);
+        }
       } else {
-        setFetchError("Something went wrong.");
+        setFetchError("An unexpected error occurred.");
       }
     }
-  }, [error]);
+  }, [isError, error]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
