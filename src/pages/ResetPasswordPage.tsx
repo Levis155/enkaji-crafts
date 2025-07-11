@@ -44,10 +44,15 @@ const ResetPasswordPage = () => {
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        const serverMessage = err.response?.data.message;
-        setFormError(serverMessage);
+        if (!err.response) {
+          setFormError("Network error: Please check your internet connection.");
+        } else {
+          const serverMessage =
+            err.response.data?.message || "Server error occurred.";
+          setFormError(serverMessage);
+        }
       } else {
-        setFormError("Failed to reset password.");
+        setFormError("An unexpected error occurred.");
       }
     },
   });
