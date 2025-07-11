@@ -63,13 +63,20 @@ const ProductDetailPage = () => {
   useEffect(() => {
     if (isError) {
       if (axios.isAxiosError(error)) {
-        const serverMessage = error.response?.data.message;
-        setFetchError(serverMessage);
+        if (!error.response) {
+          setFetchError(
+            "Network error: Please check your internet connection."
+          );
+        } else {
+          const serverMessage =
+            error.response.data?.message || "Server error occurred.";
+          setFetchError(serverMessage);
+        }
       } else {
-        setFetchError("Something went wrong.");
+        setFetchError("An unexpected error occurred.");
       }
     }
-  }, [error]);
+  }, [isError, error]);
 
   if (isLoading) {
     return (
@@ -114,7 +121,9 @@ const ProductDetailPage = () => {
                 <p className="product-container-col2-brand">
                   category: <span>{product.category}</span> |{" "}
                   <span>
-                    <Link to={`/category/${product.category}`}>similar products</Link>
+                    <Link to={`/category/${product.category}`}>
+                      similar products
+                    </Link>
                   </span>
                 </p>
                 <div className="product-container-price-discount-container">
@@ -146,7 +155,11 @@ const ProductDetailPage = () => {
                   </p>
                 )}
                 <div className="product-cont-col2-rating">
-                  <Rating name="read-only" value={product.averageRating} readOnly />
+                  <Rating
+                    name="read-only"
+                    value={product.averageRating}
+                    readOnly
+                  />
                 </div>
                 <p className="stock-status">
                   {product.inStock ? "in stock" : "out of stock"}
