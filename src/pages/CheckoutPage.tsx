@@ -125,13 +125,6 @@ const CheckoutPage = () => {
   });
 
   useEffect(() => {
-    if (inStockItems.length === 0 && orderStatus === null) {
-      toast.error("Your cart is empty or items are out of stock");
-      navigate("/cart");
-    }
-  }, [inStockItems, orderStatus, navigate]);
-
-  useEffect(() => {
     if (!checkoutRequestId) return;
 
     let attempts = 0;
