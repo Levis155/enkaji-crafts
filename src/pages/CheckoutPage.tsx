@@ -86,7 +86,7 @@ const CheckoutPage = () => {
         setOrderStatus("pending");
       },
       onError: (err) => {
-        let message = "Something went wrong.";
+        let message = "Failed to initiate payment.";
         if (axios.isAxiosError(err)) {
           message = err.response?.data.message || message;
         }

@@ -22,6 +22,7 @@ const RelatedProducts = ({ category }: RelatedProductsProps) => {
   const { isLoading, data:relatedProducts, isError, error } = useQuery<Product[]>({
     queryKey: ["fetch-related-products"],
     queryFn: async () => {
+      setFetchError(null);
       const response = await axios.get(
         `${apiUrl}/products/category/${category}`
       );

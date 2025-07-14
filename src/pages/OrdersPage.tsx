@@ -35,6 +35,7 @@ const OrdersPage = () => {
   } = useQuery<Order[]>({
     queryKey: ["get-orders-by-user"],
     queryFn: async () => {
+      setFetchError(null);
       const response = await axiosInstance.get(`/orders/user`);
       return response.data;
     },
