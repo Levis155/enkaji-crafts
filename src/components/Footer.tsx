@@ -33,7 +33,7 @@ const Footer = () => {
 
           <div className="footer-section contact">
             <h3>Contact Us</h3>
-            <p><FaPhoneAlt /> +254 000 000 000</p>
+            <p><FaPhoneAlt /> +254 793 038 491</p>
             <p><MdEmail /> enkajicrafts@gmail.com</p>
             <p><FaLocationDot /> Nairobi, Kenya</p>
           </div>

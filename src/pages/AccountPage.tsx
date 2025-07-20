@@ -21,7 +21,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { toast } from "react-toastify";
 import formControlStyle from "../Utils/formControlStyles";
 import useUserStore from "../stores/userStore";
-import countyTownFeeMap from "../data/regionTownFeeMap"; // Import your shipping fee map
+import countyTownFeeMap from "../data/regionTownFeeMap"; 
 import { getShippingFee, getTownsForCounty } from "../Utils/shippingUtils";
 import "../styles/AccountPage.css";
 
@@ -81,7 +81,7 @@ const AccountPage = () => {
       setIsEditingDetails(false);
       setIsEditingAddress(false);
       setIsEditingPassword(false);
-      toast.success("Updated user successfully!");
+      toast.success("Account updated successfully!");
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {

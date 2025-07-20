@@ -4,7 +4,6 @@ const countyTownFeeMap = {
     "Westlands": 150,
     "Eastleigh": 150,
     "South B": 150,
-    "Test Town": 1
   },
   "Kajiado County": {
     "Kajiado": 200,
