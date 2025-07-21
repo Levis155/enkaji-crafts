@@ -250,16 +250,19 @@
 
 .payment-failed {
   color: var(--primary-color);
+  text-align: center;
 }
 
 .order-status-cont h2 {
   color: var(--success-color);
+  text-align: center;
 }
 
 .order-status-cont p {
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 
 .lottie-animation {

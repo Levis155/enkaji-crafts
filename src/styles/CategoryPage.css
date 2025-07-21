@@ -70,10 +70,12 @@
   font-size: 1.6rem;
   color: var(--text-light);
   margin: 20px 0;
+  text-align: center;
 }
 
 .category-page-error p {
   color: var(--primary-color);
+  text-align: center;
 }
 
 .products-count {

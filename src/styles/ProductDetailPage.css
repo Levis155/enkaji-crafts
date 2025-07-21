@@ -365,10 +365,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .product-page-error-container h3 {
   color: var(--primary-color);
+  text-align: center;
 }
 
 @media screen and (max-width: 70em) {
