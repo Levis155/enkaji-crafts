@@ -5,7 +5,7 @@ import "../styles/CustomerPage.css";
 
 const CustomerPage = () => {
   return (
-    <div>
+    <>
       <Header />
       <div className="customer-page-container">
         <aside className="customer-sidebar">
@@ -37,7 +37,7 @@ const CustomerPage = () => {
         </div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 };
 
