@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FaTiktok, FaInstagram, FaPhoneAlt } from "react-icons/fa";
-import { FaXTwitter, FaLocationDot } from "react-icons/fa6";
+import { FaLocationDot } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md"
 import '../styles/Footer.css';
 
@@ -16,9 +16,8 @@ const Footer = () => {
               Supporting traditional craftsmanship and sustainable livelihoods.
             </p>
             <div className="social-icons">
-              <a href="#" aria-label="tik-tok"><FaTiktok /></a>
-              <a href="#" aria-label="Instagram"><FaInstagram /></a>
-              <a href="#" aria-label="Twitter"><FaXTwitter /></a>
+              <a href="http://tiktok.com/@maasaicurrio" target='_blank' aria-label="tik-tok"><FaTiktok /></a>
+              <a href="https://www.instagram.com/maasaicurio?igsh=MXNuengzczEwcDR4eg==" target='_blank' aria-label="Instagram"><FaInstagram /></a>
             </div>
           </div>
 
@@ -34,7 +33,7 @@ const Footer = () => {
           <div className="footer-section contact">
             <h3>Contact Us</h3>
             <p><FaPhoneAlt /> +254 793 038 491</p>
-            <p><MdEmail /> enkajicrafts@gmail.com</p>
+            <p><MdEmail /> info@enkajicrafts.co.ke</p>
             <p><FaLocationDot /> Nairobi, Kenya</p>
           </div>
         </div>
